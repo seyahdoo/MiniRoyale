@@ -140,8 +140,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63499a99a6870114897b57cd585cf33c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  settings: {fileID: 0}
-  text: {fileID: 0}
+  settings: {fileID: 11400000, guid: 09fb944eba91c1a40b2cf43c7f0282ce, type: 2}
 --- !u!4 &391746330
 Transform:
   m_ObjectHideFlags: 0
@@ -182,9 +181,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9cfe91f9398fa264f827fc65e4369f11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chat: {fileID: 391746329}
+  udp: {fileID: 391746329}
   tosend: 
   send: 0
+  hello: 0
 --- !u!4 &865102540
 Transform:
   m_ObjectHideFlags: 0

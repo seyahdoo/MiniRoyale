@@ -59,8 +59,14 @@ public class UDPConnection : MonoBehaviour
 		catch(SocketException e)
 		{
 			// This happens when a client disconnects, as we fail to send to that port.
+			Debug.Log ("catch!");
+
+		}finally{
+			Debug.Log ("Contunie Receiving");
+			connection.BeginReceive(OnReceive, null);
+		
 		}
-		connection.BeginReceive(OnReceive, null);
+
 	}
 
 	internal void Send(string message, IPEndPoint ipEndpoint)
@@ -71,8 +77,16 @@ public class UDPConnection : MonoBehaviour
 
 	public void MessageReceived(string message)
 	{
-		Debug.Log (message);
+		//Debug.Log (message);
+
+		if(MessageReceivedEvent != null)
+			MessageReceivedEvent.Invoke (message);
+	
 	}
+
+	public delegate void MessageReceivedDelegate(string message);
+	public event MessageReceivedDelegate MessageReceivedEvent;
+
 	#endregion
 }
 
