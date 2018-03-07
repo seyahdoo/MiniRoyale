@@ -25,6 +25,8 @@
 #include <cstdio>			 // For stderr
 #include <cstring>			 // For memset
 #include <cstdlib>			 // For atoi
+#include <vector>
+#include "PlayerInformation.h"
 using namespace std;
 
 /**
@@ -333,7 +335,18 @@ public:
    *   @exception SocketException thrown if unable to leave group
    */
   void leaveGroup(const string &multicastGroup) throw(SocketException);
-
+	
+	/**
+	*	Request types are explained below:
+	*	1 -> "JOIN" type request, to handle this we need to create an object for PlayerInformation class
+	*	2 -> "SAY" type request, to handle this we need to return the message contained in the packet to clients
+	*	in the format of "SAID:[playerId], [message]
+	*	3 -> "LEAVE/DELETE" type request, we need to delete the object with corresponding playerId
+	*/
+	int getRequest(const char* buffer, const string &sourceAddress, const unsigned short &sourcePort, vector<PlayerInformation*>& players);
+	
+	
+	
 private:
   void setBroadcast();
 };

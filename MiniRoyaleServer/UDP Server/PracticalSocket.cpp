@@ -19,6 +19,7 @@
 
 #include "PracticalSocket.h"
 
+
 #ifdef WIN32
   #include <winsock.h>         // For socket(), connect(), send(), and recv()
   typedef int socklen_t;
@@ -378,4 +379,76 @@ void UDPSocket::leaveGroup(const string &multicastGroup) throw(SocketException) 
                  sizeof(multicastRequest)) < 0) {
     throw SocketException("Multicast group leave failed (setsockopt())", true);
   }
+}
+
+	/**
+	*	Request types are explained below:
+	*	1 -> "JOIN" type request, to handle this we need to create an object for PlayerInformation class
+	*	2 -> "SAY" type request, to handle this we need to return the message contained in the packet to clients
+	*	in the format of "SAID:[playerId], [message]
+	*	3 -> "LEAVE/DELETE" type request, we need to delete the object with corresponding playerId
+	*/
+int UDPSocket::getRequest(const char* buffer, const string &sourceAddress, const unsigned short &sourcePort, vector<PlayerInformation*>& players){
+	const char* requestTypeJoin = "JOIN";
+	const char* requestTypeSAY = "SAY";
+
+	char *message;
+	strcpy(message, buffer);
+	message = strtok(message,";");
+	
+	char* token;	
+	token = strtok(message,":");
+		//cout << token << endl;
+
+	int requestType = -1;
+	if(strcmp(token,requestTypeJoin) == 0){
+		requestType = 1;
+		token = strtok(NULL, ":");
+		//cout << token << endl;
+		PlayerInformation *newPlayer;
+		newPlayer = new PlayerInformation(sourceAddress, sourcePort, atoi(token));
+		players.push_back(newPlayer);
+		// fonksiyonun giriş parametlersine linkli liste şeklinde playerinformation sınıfını ekle
+	}
+	else if (strcmp(token,requestTypeSAY) == 0){
+		if(players.size() > 0){
+			token = strtok(NULL, ":");
+			char *replyToPlayer = new char[256];
+			strcpy(replyToPlayer, "SAID:");
+
+			int playerIndexFromVector = 0;
+			while(playerIndexFromVector < players.size() && players[playerIndexFromVector]->getPlayerIdByAdress(sourceAddress,sourcePort) == -1){
+				++playerIndexFromVector;
+			}
+
+			if(playerIndexFromVector >= players.size())
+			{
+				requestType = -1;
+
+			}
+			else{
+
+				int playerId = players[playerIndexFromVector]->getPlayerIdByAdress(sourceAddress,sourcePort);
+				
+				string s = to_string(playerId);
+				vector<char> v(s.begin(), s.end());
+				v.push_back('\0'); // Make sure we are null-terminated
+				char* c = &v[0];
+				
+				strcat(replyToPlayer, c);
+				strcat(replyToPlayer, ", ");
+				strcat(replyToPlayer, token);
+				int sizeOfMessage = (strlen(replyToPlayer) * sizeof(char));
+				cout << replyToPlayer << endl;
+				sendTo(replyToPlayer, sizeOfMessage, sourceAddress, sourcePort);
+				requestType = 2;
+			}
+			delete [] replyToPlayer;
+		}
+		else{
+			requestType = -1;
+		}
+		
+	}
+	return requestType;
 }

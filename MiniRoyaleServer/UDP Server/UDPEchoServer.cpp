@@ -18,6 +18,7 @@
  */
 
 #include "PracticalSocket.h" // For UDPSocket and SocketException
+#include "PlayerInformation.h"	
 #include <iostream>          // For cout and cerr
 #include <cstdlib>           // For atoi()
 
@@ -40,14 +41,29 @@ int main(int argc, char *argv[]) {
     int recvMsgSize;                  // Size of received message
     string sourceAddress;             // Address of datagram source
     unsigned short sourcePort;        // Port of datagram source
+	vector<PlayerInformation*> players;
     for (;;) {  // Run forever
       // Block until receive message from a client
       recvMsgSize = sock.recvFrom(echoBuffer, ECHOMAX, sourceAddress, 
                                       sourcePort);
-  
+		int requestType = sock.getRequest(echoBuffer, sourceAddress, sourcePort, players);
+		switch(requestType){
+			case -1:
+				cout << "players.size() returns 0 or there are no playerId for given address parameters" << endl << endl;
+				break;
+			case 1:
+				cout << "Successful JOIN by " << sourceAddress << ":" << sourcePort << endl << endl;
+				break;
+			case 2:
+				cout << "Player with address " << sourceAddress << ":" << sourcePort << " has succesfully send a message" << endl << endl;
+				break;
+		}
       cout << "Received packet from " << sourceAddress << ":" 
            << sourcePort << endl;
-      sock.sendTo(echoBuffer, recvMsgSize, sourceAddress, sourcePort);
+      //sock.sendTo(echoBuffer, recvMsgSize, sourceAddress, sourcePort);
+	  
+	  // Don't forget to delete dynamically created player Information
+	  
     }
   } catch (SocketException &e) {
     cerr << e.what() << endl;
