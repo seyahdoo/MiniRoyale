@@ -45,6 +45,12 @@ public class UDPConnection : MonoBehaviour
 		connection.Send(data, data.Length, serverEndPoint);
 	}
 
+	public void Send(string message, IPEndPoint ipEndpoint)
+	{
+		byte[] data = System.Text.Encoding.UTF8.GetBytes(message);
+		connection.Send(data, data.Length, ipEndpoint);
+	}
+
 	void OnReceive(IAsyncResult ar)
 	{
 		try
@@ -59,29 +65,23 @@ public class UDPConnection : MonoBehaviour
 		catch(SocketException e)
 		{
 			// This happens when a client disconnects, as we fail to send to that port.
-			Debug.Log ("catch!");
+			Debug.LogError(e);
 
 		}finally{
-			Debug.Log ("Contunie Receiving");
+			//Debug.Log ("Contunie Receiving");
 			connection.BeginReceive(OnReceive, null);
-		
 		}
 
 	}
 
-	internal void Send(string message, IPEndPoint ipEndpoint)
-	{
-		byte[] data = System.Text.Encoding.UTF8.GetBytes(message);
-		connection.Send(data, data.Length, ipEndpoint);
-	}
+
 
 	public void MessageReceived(string message)
 	{
-		//Debug.Log (message);
+		Debug.Log ("Message Received!");
 
 		if(MessageReceivedEvent != null)
 			MessageReceivedEvent.Invoke (message);
-	
 	}
 
 	public delegate void MessageReceivedDelegate(string message);
