@@ -28,7 +28,8 @@ public class UDPConnection : MonoBehaviour
 		serverIp = IPAddress.Parse (settings.serverAdress);
 		serverEndPoint = new IPEndPoint (serverIp, settings.port);
 
-		connection = new UdpClient (settings.port);
+		//connection = new UdpClient (settings.port);
+		connection = new UdpClient ();
 		connection.BeginReceive(OnReceive, null);
 	}
 
@@ -78,7 +79,7 @@ public class UDPConnection : MonoBehaviour
 
 	public void MessageReceived(string message)
 	{
-		Debug.Log ("Message Received!");
+		//Debug.Log ("Message Received!");
 
 		if(MessageReceivedEvent != null)
 			MessageReceivedEvent.Invoke (message);
