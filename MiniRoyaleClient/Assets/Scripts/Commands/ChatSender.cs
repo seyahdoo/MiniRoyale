@@ -19,8 +19,7 @@ public class ChatSender : MonoBehaviour {
 	void Update(){
 		if (send) {
 			send = false;
-			//udp.Send (tosend);
-			udp.Send ("SAY:" + tosend +";");
+			udp.Send ("SAYY:" + tosend +";");
 		}
 
 		if (join) {

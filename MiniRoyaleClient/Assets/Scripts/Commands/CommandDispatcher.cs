@@ -26,22 +26,22 @@ public class CommandDispatcher : MonoBehaviour {
 
 		foreach (string command in splitted) {
 
-			Debug.Log ("Command: " + command +".");
+			//Debug.Log ("Command: " + command +".");
 
 			foreach (ServerCommandHandler commandHandler in CommandHandlers) {
 
 				if (command.StartsWith (commandHandler.CommandCode)) {
 
-					Debug.Log ("Parsing for: " + commandHandler.CommandCode +". Thee: "+ command);
+					//Debug.Log ("Parsing for: " + commandHandler.CommandCode +". Thee: "+ command);
 
 					if (commandHandler.ArgumentCount > 0) {
 
 						string[] args = 
-							//strip "COMMAND:" in "COMMAND:xx,yy,tt"
-							command.Substring (0, commandHandler.CommandCode.Length + 1)
+							//strip "COMMAND:" in "CMND:xx,yy,tt"
+							command.Substring (5)
 
 							//split args
-								.Split (':');
+								.Split (',');
 
 						//Debug.Log ("Triggering with args " + commandHandler);
 						//trigger the command
