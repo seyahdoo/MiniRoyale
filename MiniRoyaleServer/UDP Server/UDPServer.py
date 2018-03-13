@@ -2,13 +2,28 @@ import socketserver
 import threading
 import time
 
+import RequestTypes
 
 clientDictionary = {}
+playerDictionary = {}
 
 def getRequestType(buffer, address, host):
-    print(buffer)
+    global playerDictionary
     
-    if(buffer[:4] == "JOIN")
+    commands = buffer.split(';')
+    
+    for command in commands:
+        print('received: '+buffer)
+        cmd = buffer[:4]
+        
+        if(cmd == "JOIN"):
+            pid = buffer[5:-1]
+            print(pid)
+            print('joined '+pid)
+        
+    
+    
+        
         
 
 
@@ -23,7 +38,8 @@ class PlayerInformation:
         self.port = port
         self.playerId = playerId
     
-    
+
+
 
 class ThreadedUDPRequestHandler(socketserver.BaseRequestHandler):
 # Clientlari dictionary ile sınıfla
@@ -44,9 +60,8 @@ class ThreadedUDPRequestHandler(socketserver.BaseRequestHandler):
             current_thread = threading.current_thread()
             clientDictionary = {key: current_thread}
             print('New client, adding to dictionary.')
-            print("{}: client: {}, wrote:{}".format(current_thread.name, self.client_address, data))
-
-        print(threading.active_count())
+            print("{}: client: {}, wrote: {}".format(current_thread.name, self.client_address, data))
+        
 
 
         socket.sendto(data.upper(), self.client_address)
