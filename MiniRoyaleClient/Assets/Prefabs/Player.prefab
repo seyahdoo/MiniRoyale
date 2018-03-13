@@ -43,7 +43,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4580121727752570
 Transform:
   m_ObjectHideFlags: 1
@@ -103,7 +103,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   connection: {fileID: 0}
-  PlayerID: 0
+  PlayerID:
+    UseConstant: 0
+    ConstantValue: 6
+    Variable: {fileID: 11400000, guid: e4904221a0c96574896484d13c47e0a5, type: 2}
   Speed:
     UseConstant: 0
     ConstantValue: 0

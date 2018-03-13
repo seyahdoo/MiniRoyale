@@ -36,15 +36,16 @@ public class NetworkRivalOrchestrator : MonoBehaviour {
 	}
 
 
-
 	void Update(){
 		
 		while (EnableQueue.Count > 0) {
 			EnableQueue.Pop ().SetActive (true);
 		}
 
+		float time = Time.time;
+
 		foreach (Rival rival in rivals.Values) {
-			rival.myTransform.position = rival.CurrentPosition; 
+			rival.Interpolate (time);
 		}
 
 	}
@@ -60,10 +61,10 @@ public class NetworkRivalOrchestrator : MonoBehaviour {
 		} else {
 			//TODO: POOL THIS!
 			//Create Rival
-			Debug.Log("Orchestrator: getting Rival from pool");
+			//Debug.Log("Orchestrator: getting Rival from pool");
 			if (rivalPool.Count <= 0) {
 				//TODO
-				//Debug.LogError ("DEAL WITH THIS!!!");
+				Debug.LogError ("DEAL WITH THIS!!!");
 			}
 
 			rival = rivalPool.Pop ();

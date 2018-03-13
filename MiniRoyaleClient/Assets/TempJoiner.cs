@@ -12,9 +12,10 @@ public class TempJoiner : MonoBehaviour {
 	public GameObject player;
 
 	void Start(){
-		//PlayerID.Variable.Value = Random.Range (int.MinValue, int.MaxValue);
+		//Give Random PlayerID
+		PlayerID.Variable.SetValue(Random.Range (int.MinValue, int.MaxValue));
 
-		connection.Send ("JOIN:" + PlayerID.Value + ";");
+		connection.Send ("JOIN:" + PlayerID + ";");
 
 		player.SetActive (true);
 

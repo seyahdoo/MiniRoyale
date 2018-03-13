@@ -20,7 +20,7 @@ public class CommandDispatcher : MonoBehaviour {
 
 	void Connection_MessageReceivedEvent (string message)
 	{
-		Debug.Log ("Dispatching: " + message);
+		//Debug.Log ("Dispatching: " + message);
 
 		string[] splitted = message.Split (commandSplitter, System.StringSplitOptions.RemoveEmptyEntries);
 
@@ -30,7 +30,7 @@ public class CommandDispatcher : MonoBehaviour {
 
 			foreach (ServerCommandHandler commandHandler in CommandHandlers) {
 
-				if (command.StartsWith (commandHandler.CommandCode)) {
+				if (command.Substring(0,4) == (commandHandler.CommandCode)) {
 
 					//Debug.Log ("Parsing for: " + commandHandler.CommandCode +". Thee: "+ command);
 
