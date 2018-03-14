@@ -27,7 +27,7 @@ class Client:
         # Binded Ip
         self.server_ip = "0.0.0.0"
         # Random available Port
-        self.server_port = 54545 #random TODO: write zero here
+        self.server_port = 0 #random TODO: write zero here
         # One socket for each client
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #internet, UDP
         # Bind socket and generate a new open port
@@ -40,14 +40,20 @@ class Client:
         self.listener_thread.daemon = True
         self.listener_thread.start()
         
-        print("Before sending port")
+        #print("Before sending port")
         
         # Send newly generated socket info to client
-        self.send("PORT:"+str(self.server_port)+";");
+        self.send("PORTO:"+str(self.server_port)+";");
         
         # create or login a player
         self.player = Player()
         print("created Player for Client, player_id:{}".format(self.player.player_id))
+        
+        
+        # create a new thread ping 
+        self.ping_thread = threading.Thread(target=self.ping_routine)
+        self.ping_thread.daemon = True
+        self.ping_thread.start()
         
         # send player game info
         
@@ -63,22 +69,32 @@ class Client:
             
     def listener(self):
         # Listen to the port
-        while True:        
+        while True:   
             # Receive
-            data, addr = self.socket.recvfrom(1024)
+            data, addr = self.socket.recvfrom(1024)       
             # Decode message
             text = data.decode('utf-8') 
             # Message Received
             self.msg_received(text) 
     
+    def ping_routine(self):
+        # Send ping request every 1 seconds
+        # Disconnect if no answer has came for 60 seconds
+        while True:
+            text = "PINGO;"
+            #print("sending ping request, player_id:{}".format(self.player.player_id))
+            self.send(text)
+            time.sleep(1)
+    
+    
     def send(self,text):
-        print("sending:"+text)
+        #print("sending:"+text)
         self.socket.sendto(bytes(text, 'utf-8'),self.addr)
         
     
     # dispatch incoming player commands
     def msg_received(self,text):
-        print("UDP: received:"+text)
+        #print("UDP: received:"+text)
         
         commands = text.split(';')
         
@@ -87,10 +103,10 @@ class Client:
                 args = cmd[6:]
                 args = args.split(',')
                 
-                print(str(args))
+                #print(str(args))
                 
                 # if last packet number is > args[0] return
-                self.player.Move(args[1],args[2])
+                self.player.Move(args[0],args[1],args[2])
                 
         
         
