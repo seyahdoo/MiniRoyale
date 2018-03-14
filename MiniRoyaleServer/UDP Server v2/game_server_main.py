@@ -2,7 +2,8 @@ import socket
 import threading
 import time
 
-import Client
+import client
+import game
 
 def ConnectionServer():
     UDP_IP = "0.0.0.0"
@@ -19,14 +20,19 @@ def ConnectionServer():
         if(text[0:5] == "CNNRQ"):
             #create new connection
             #that will deal with itself
-            Client.new_connection(addr)
+            client.new_connection(addr)
             #DONE
     
 
 if __name__ == "__main__":
-
+    
+        
+    game.GameStart()
+    
+    
     connection_server_thread = threading.Thread(target=ConnectionServer)
     connection_server_thread.daemon = True
+    
 
     try:
         connection_server_thread.start()
