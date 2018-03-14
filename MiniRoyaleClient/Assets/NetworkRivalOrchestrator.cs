@@ -50,8 +50,8 @@ public class NetworkRivalOrchestrator : MonoBehaviour {
 
 	}
 
-	public void MOVD(int playerID,float posx,float posy){
-		//Debug.Log ("Orchestrator: MOVD");
+	public void MOVED(int playerID,float posx,float posy){
+		//Debug.Log ("Orchestrator: MOVED");
 
 		Rival rival;
 		//Find rival from dictionary

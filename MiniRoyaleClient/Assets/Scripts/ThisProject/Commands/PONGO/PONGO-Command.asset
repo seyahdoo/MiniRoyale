@@ -9,8 +9,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 991c3bc74e7103c419502eebd95e568d, type: 3}
-  m_Name: PONG-Command
+  m_Name: PONGO-Command
   m_EditorClassIdentifier: 
-  CommandCode: PONG
+  CommandCode: PONGO
   ArgumentCount: 0
   Event: {fileID: 11400000, guid: 9b2155b7a86b7e646a7687efc70eb193, type: 2}

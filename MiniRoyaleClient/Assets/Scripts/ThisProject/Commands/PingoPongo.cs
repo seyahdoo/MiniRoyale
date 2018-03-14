@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using seyahdoo.events;
 
-public class PingPong : GameEventUser {
+public class PingoPongo : GameEventUser {
 
 	public UDPConnection Connection;
 
@@ -11,32 +11,32 @@ public class PingPong : GameEventUser {
 
 	public System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
 
-	public bool doPing;
+	public bool doPingo;
 	void Update(){
-		if (doPing) {
-			doPing = false;
-			Ping ();
+		if (doPingo) {
+			doPingo = false;
+			Pingo ();
 		}
 	}
 
 	public override void OnEventInvoked (object eventData)
 	{
-		Debug.Log ("Ping Got! PONG!");
-		Connection.Send ("PONG;");
+		//Debug.Log ("Pingo Got! PONGO!");
+		Connection.Send ("PONGO;");
 	}
 
-	void Ping(){
+	void Pingo(){
 		stopwatch.Reset ();
 		stopwatch.Start ();
-		Connection.Send ("PING;");
+		Connection.Send ("PINGO;");
 	}
 
-	public void OnPong(){
+	public void OnPongo(){
 
 		stopwatch.Stop ();
 		ping = stopwatch.ElapsedMilliseconds;
 
-		Debug.Log ("Ping: "+ping);
+		//Debug.Log ("Pingo: "+ping);
 	}
 
 }

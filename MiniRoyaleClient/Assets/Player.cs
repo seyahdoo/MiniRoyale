@@ -41,10 +41,13 @@ public class Player : MonoBehaviour {
 		body.velocity = direction;
 	}
 
+	int pkgid = 0;
+
 	//Send Server events
 	void Tick(){
 		//We will send current position to server every tick
-		connection.Send("MOVE:"+PlayerID.Value+","+myTransform.position.x+","+myTransform.position.y+";");
+		pkgid++;
+		connection.Send("MOVER:"+ pkgid +","+myTransform.position.x+","+myTransform.position.y+";");
 
 	}
 

@@ -40,14 +40,27 @@ public class UDPConnection : MonoBehaviour
 	#endregion
 
 	#region API
+	public void ChangeIP(IPEndPoint addr){
+		serverEndPoint = addr;
+	}
+
+	public void ChangePort(int port){
+		//Debug.Log ("port changed: " + port);
+		ChangeIP (new IPEndPoint (IPAddress.Parse (settings.serverAdress), port));
+	}
+
 	public void Send(string message)
 	{
+		//Debug.Log ("Message Sending: "+message);
+
 		byte[] data = System.Text.Encoding.UTF8.GetBytes(message);
 		connection.Send(data, data.Length, serverEndPoint);
 	}
 
 	public void Send(string message, IPEndPoint ipEndpoint)
 	{
+		//Debug.Log ("Message Sending: "+message);
+
 		byte[] data = System.Text.Encoding.UTF8.GetBytes(message);
 		connection.Send(data, data.Length, ipEndpoint);
 	}
@@ -79,7 +92,7 @@ public class UDPConnection : MonoBehaviour
 
 	public void MessageReceived(string message)
 	{
-		//Debug.Log ("Message Received!");
+		//Debug.Log ("Message Received: "+message);
 
 		if(MessageReceivedEvent != null)
 			MessageReceivedEvent.Invoke (message);

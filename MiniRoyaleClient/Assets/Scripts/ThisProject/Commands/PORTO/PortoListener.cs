@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using seyahdoo.events;
 
-public class MOVDListener : GameEventUser {
+public class PortoListener : GameEventUser {
 
-	public NetworkRivalOrchestrator orchestrator;
+	public UDPConnection connection;
 
-	//MOVD
+	//PORTO
 	public override void OnEventInvoked (object eventData)
 	{
+		//Debug.Log ("PORTo!!!!!!!!");
 
 		if (eventData == null) {
-			Debug.Log ("MOVD event data must not be null");
+			Debug.Log ("PORTO event data must not be null");
 			return;
 		}
 
@@ -23,16 +24,13 @@ public class MOVDListener : GameEventUser {
 
 		string[] args = (string[])eventData;
 
-		if (args.Length != 3) {
-			Debug.Log ("MOVD will get 3 arguments!");
+		if (args.Length != 1) {
+			Debug.Log ("PORTO will get 1 arguments!");
 			return;
 		}
 
-
-		orchestrator.MOVD (int.Parse (args [0]), float.Parse (args [1]), float.Parse (args [2]));
-
+		connection.ChangePort (int.Parse (args [0]));
 
 	}
-
 
 }

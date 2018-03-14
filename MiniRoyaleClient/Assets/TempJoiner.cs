@@ -15,7 +15,8 @@ public class TempJoiner : MonoBehaviour {
 		//Give Random PlayerID
 		PlayerID.Variable.SetValue(Random.Range (int.MinValue, int.MaxValue));
 
-		connection.Send ("JOIN:" + PlayerID + ";");
+		connection.Send ("CNNRQ;");
+
 
 		player.SetActive (true);
 

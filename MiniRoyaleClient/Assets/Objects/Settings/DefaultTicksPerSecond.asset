@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Name: DefaultTicksPerSecond
   m_EditorClassIdentifier: 
   DeveloperDescription: 
-  Value: 64
+  Value: 16

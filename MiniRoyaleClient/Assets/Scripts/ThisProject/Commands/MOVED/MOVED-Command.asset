@@ -8,6 +8,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 52cd52da4d65ca147bb09f0ef9ba40a3, type: 3}
-  m_Name: PING-Event
+  m_Script: {fileID: 11500000, guid: 991c3bc74e7103c419502eebd95e568d, type: 3}
+  m_Name: MOVED-Command
   m_EditorClassIdentifier: 
+  CommandCode: MOVED
+  ArgumentCount: 4
+  Event: {fileID: 11400000, guid: ebc9142455083bd478a926c760fa2296, type: 2}

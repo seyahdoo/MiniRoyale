@@ -30,7 +30,7 @@ public class CommandDispatcher : MonoBehaviour {
 
 			foreach (ServerCommandHandler commandHandler in CommandHandlers) {
 
-				if (command.Substring(0,4) == (commandHandler.CommandCode)) {
+				if (command.Substring(0,5) == (commandHandler.CommandCode)) {
 
 					//Debug.Log ("Parsing for: " + commandHandler.CommandCode +". Thee: "+ command);
 
@@ -38,7 +38,7 @@ public class CommandDispatcher : MonoBehaviour {
 
 						string[] args = 
 							//strip "COMMAND:" in "CMND:xx,yy,tt"
-							command.Substring (5)
+							command.Substring (6)
 
 							//split args
 								.Split (',');
