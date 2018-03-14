@@ -16,7 +16,7 @@ def ConnectionServer():
         data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
         text = data.decode('utf-8')
         print ("received message:"+text+"|from:"+str(addr))
-        if(text[0,4] == "CNNRQ"):
+        if(text[0:5] == "CNNRQ"):
             #create new connection
             #that will deal with itself
             Client.new_connection(addr)
