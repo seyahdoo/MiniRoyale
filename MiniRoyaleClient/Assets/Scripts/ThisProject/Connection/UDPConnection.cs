@@ -1,106 +1,92 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using UnityEngine;
-using UnityEngine.UI;
+using MFatihMAR.EasySockets;
 using System.Net;
-using System.Net.Sockets;
 
 
-public class UDPConnection : MonoBehaviour
-{
-	#region Data
+public class UDPConnection : MonoBehaviour {
+
+	//holds ip and port data of server
 	public ConnectionSettings settings;
 
+	//connection manager object
+	UdpPeer connection = new UdpPeer ();
+
+	//Ip and port information of server (can change dynamically) 
+	IPEndPoint ServerEndPoint;
+
+	void Awake(){
+
+		//Set Server ip port
+		ServerEndPoint = new IPEndPoint (IPAddress.Parse (settings.serverAdress), settings.port);
+
+		//Start to listen server
+		connection.Start (new IPEndPoint (IPAddress.Any, 0));
+
+	}
+
+	void OnEnable(){
+		//data events
+		connection.OnData += Connection_OnData;
+	}
+		
+	void OnDisable(){
+		//data events
+		connection.OnData -= Connection_OnData;
+	}
+
 	/// <summary>
-	/// IP for clients to connect to. Null if you are the server.
+	/// Changes the port of server connection.
 	/// </summary>
-	public IPAddress serverIp;
-
-	IPEndPoint serverEndPoint;
-
-	UdpClient connection;
-	#endregion
-
-	#region Unity Events
-	public void Awake()
-	{
-		serverIp = IPAddress.Parse (settings.serverAdress);
-		serverEndPoint = new IPEndPoint (serverIp, settings.port);
-
-		//connection = new UdpClient (settings.port);
-		connection = new UdpClient ();
-		connection.BeginReceive(OnReceive, null);
-	}
-
-	private void OnApplicationQuit()
-	{
-		connection.Close();
-	}
-	#endregion
-
-	#region API
-	public void ChangeIP(IPEndPoint addr){
-		serverEndPoint = addr;
-	}
-
+	/// <param name="port">Port.</param>
 	public void ChangePort(int port){
-		//Debug.Log ("port changed: " + port);
-		ChangeIP (new IPEndPoint (IPAddress.Parse (settings.serverAdress), port));
+		ServerEndPoint.Port = port;
 	}
 
+	/// <summary>
+	/// Send the specified message to server endpoint via UDP.
+	/// </summary>
+	/// <param name="message">Message.</param>
 	public void Send(string message)
 	{
-		//Debug.Log ("Message Sending: "+message);
-
+		//Encode data as UTF8
 		byte[] data = System.Text.Encoding.UTF8.GetBytes(message);
-		connection.Send(data, data.Length, serverEndPoint);
+
+		//Send to server through connection manager
+		connection.Send (ServerEndPoint, data);
 	}
 
-	public void Send(string message, IPEndPoint ipEndpoint)
+	/// <summary>
+	/// When a Data received from client Port
+	/// </summary>
+	/// <param name="remoteIPEP">Server IP</param>
+	/// <param name="data">DATA as bytes</param>
+	void Connection_OnData (System.Net.IPEndPoint remoteIPEP, byte[] data)
 	{
-		//Debug.Log ("Message Sending: "+message);
+		//Decode data as UTF8
+		string message = System.Text.Encoding.UTF8.GetString(data);
 
-		byte[] data = System.Text.Encoding.UTF8.GetBytes(message);
-		connection.Send(data, data.Length, ipEndpoint);
+		//Invoke message received
+		MessageReceived (message);
 	}
 
-	void OnReceive(IAsyncResult ar)
-	{
-		try
-		{
-			IPEndPoint ipEndpoint = null;
-			byte[] data = connection.EndReceive(ar, ref ipEndpoint);
-
-			string message = System.Text.Encoding.UTF8.GetString(data);
-
-			MessageReceived(message);
-		}
-		catch(SocketException e)
-		{
-			// This happens when a client disconnects, as we fail to send to that port.
-			Debug.LogError(e);
-
-		}finally{
-			//Debug.Log ("Contunie Receiving");
-			connection.BeginReceive(OnReceive, null);
-		}
-
-	}
-
-
-
+	/// <summary>
+	/// Message event as decoded string
+	/// </summary>
+	/// <param name="message">Decoded message</param>
 	public void MessageReceived(string message)
 	{
 		//Debug.Log ("Message Received: "+message);
 
+		//Message Received event for listeners
 		if(MessageReceivedEvent != null)
 			MessageReceivedEvent.Invoke (message);
 	}
 
+	//Message Received Event
 	public delegate void MessageReceivedDelegate(string message);
 	public event MessageReceivedDelegate MessageReceivedEvent;
 
-	#endregion
-}
 
+}

@@ -14,6 +14,7 @@ public class MOVEDListener : GameEventUser {
 	{
 		//Debug.Log ("MOVED!");
 
+		//Argument check
 		if (eventData == null) {
 			Debug.Log ("MOVED event data must not be null");
 			return;
@@ -30,13 +31,16 @@ public class MOVEDListener : GameEventUser {
 			Debug.Log ("MOVED will get 4 arguments!");
 			return;
 		}
+		////////////////
 
+		//Drop late packets
 		int nowpkg = int.Parse (args [1]);
-
 		if (lastpkg > nowpkg) {
 			return;
 		}
+		lastpkg = nowpkg;
 
+		//Dispatch to orchestrator
 		orchestrator.MOVED (int.Parse (args [1]), float.Parse (args [2]), float.Parse (args [3]));
 
 
