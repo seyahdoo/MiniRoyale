@@ -7,6 +7,9 @@ public class CommandDispatcher : MonoBehaviour {
 	public UDPConnection Connection;
 	public List<ServerCommandHandler> CommandHandlers;
 
+	public UpdateTimer timer;
+
+	#region dispatch Module
 
 	void OnEnable(){
 		Connection.MessageReceivedEvent += Connection_MessageReceivedEvent;
@@ -18,9 +21,13 @@ public class CommandDispatcher : MonoBehaviour {
 
 	readonly char[] commandSplitter = {';'};
 
+
 	void Connection_MessageReceivedEvent (string message)
 	{
 		//Debug.Log ("Dispatching: " + message);
+
+		//LagDebugging
+		timer.Doit();
 
 		string[] splitted = message.Split (commandSplitter, System.StringSplitOptions.RemoveEmptyEntries);
 
@@ -60,6 +67,33 @@ public class CommandDispatcher : MonoBehaviour {
 
 	}
 
+	#endregion
 
+
+	#region LagModule
+
+	[SerializeField]
+	float LastPacketTime = 0f;
+
+	[SerializeField]
+	float MaxLag = float.MinValue;
+
+	[SerializeField]
+	float MinLag = float.MaxValue;
+
+	void PrintLag(){
+		float CurrentTime = Time.time;
+		float lag = CurrentTime - LastPacketTime;
+		if (lag > MaxLag)
+			MaxLag = lag;
+		if (lag < MinLag)
+			MinLag = lag;
+
+		print (lag);
+
+		LastPacketTime = CurrentTime;
+	}
+
+	#endregion
 
 }

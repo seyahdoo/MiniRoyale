@@ -7,7 +7,7 @@ public class MOVEDListener : GameEventUser {
 
 	public NetworkRivalOrchestrator orchestrator;
 
-	int lastpkg;
+	int lastpkg = -1;
 
 	//MOVED
 	public override void OnEventInvoked (object eventData)
@@ -37,8 +37,9 @@ public class MOVEDListener : GameEventUser {
 		int nowpkg = int.Parse (args [1]);
 		if (lastpkg > nowpkg) {
 			return;
+		} else {
+			lastpkg = nowpkg;
 		}
-		lastpkg = nowpkg;
 
 		//Dispatch to orchestrator
 		orchestrator.MOVED (int.Parse (args [1]), float.Parse (args [2]), float.Parse (args [3]));
