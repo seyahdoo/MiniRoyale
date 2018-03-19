@@ -2,9 +2,11 @@ import threading
 import socket
 import time
 
+from request_dispatcher import RequestDispatcher
 from player import Player
 import game
 
+ping_lock = threading.Lock()
 clients_lock = threading.Lock()
 clients = {}
 
@@ -44,7 +46,7 @@ class Client:
         
         # Send newly generated socket info to client
         self.send("PORTO:"+str(self.server_port)+";");
-        
+        print("PORTO:"+str(self.server_port)+";")
         # create or login a player
         self.player = Player()
         print("created Player for Client, player_id:{}".format(self.player.player_id))
@@ -81,11 +83,16 @@ class Client:
         # Send ping request every 1 seconds
         # Disconnect if no answer has came for 60 seconds
         while True:
-            text = "PINGO;"
-            #print("sending ping request, player_id:{}".format(self.player.player_id))
-            self.send(text)
-            time.sleep(1)
-    
+            if self.player.dropout_time < 10:
+                text = "PINGO;"
+                #print("sending ping request, player_id:{}".format(self.player.player_id))
+                self.send(text)
+                with ping_lock:
+                    self.player.dropout_time += 1
+                time.sleep(1)
+            else:
+                print("Client with player_id:{} has not responded to PINGO for {} seconds.".format(self.player.player_id,self.player.dropout_time))
+                return
     
     def send(self,text):
         #print("sending:"+text)
@@ -95,18 +102,18 @@ class Client:
     # dispatch incoming player commands
     def msg_received(self,text):
         #print("UDP: received:"+text)
+        RequestDispatcher(self,text)
+        #commands = text.split(';')
         
-        commands = text.split(';')
-        
-        for cmd in commands:
-            if(cmd[0:5] == "MOVER"):
-                args = cmd[6:]
-                args = args.split(',')
+        #for cmd in commands:
+          #  if(cmd[0:5] == "MOVER"):
+          #      args = cmd[6:]
+           #     args = args.split(',')
                 
                 #print(str(args))
                 
                 # if last packet number is > args[0] return
-                self.player.Move(args[0],args[1],args[2])
+            #    self.player.Move(args[0],args[1],args[2])
                 
         
         

@@ -10,7 +10,7 @@ class Player():
         self.posy = 0
         self.movement_speed = 0
         
-        #self.still_connected = 1
+        self.dropout_time = 0
         self.last_packet_id = 0
         self.sent_packet_id = 0
         # generate random player id and add it to the list
@@ -34,7 +34,7 @@ class Player():
             return
         else:
             self.last_packet_id = int(packet_id)
-        
+            # can use dropout_time = 0 
         try:
             self.posx = float(posx)
             self.posy = float(posy)

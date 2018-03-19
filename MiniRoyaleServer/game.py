@@ -8,7 +8,7 @@ class Game():
     def __init__(self):
         print("initiating game")
         
-        self.tickrate = 64
+        self.tickrate = 32
         
         self.players_lock = threading.Lock()
         self.players = {}
