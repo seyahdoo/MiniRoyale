@@ -1,5 +1,10 @@
-import random
+import os
+wd = os.getcwd()    # save current working directory
+os.chdir('./Inventory')    # change to directory containing main.py  
+import inventory    # import your stuff
+os.chdir(wd)    # change back to directory containing sub.pyimport random
 
+import random
 import game
 
 class Player():
@@ -21,9 +26,9 @@ class Player():
             game.game_instance.players[player_id] = self
             self.player_id = player_id
         
-        
+        self.inventory = inventory.Inventory()
         print("player initiated, id:{}".format(self.player_id))
-        
+        self.addCheatItemsForTesting()
         
     def Move(self,packet_id,posx,posy):
         #print("playerid:{} trying to move to ({},{})".format(str(self.player_id), str(posx), str(posy)))
@@ -52,6 +57,9 @@ class Player():
             tosend += "MOVED:{},{},{},{};".format(self.sent_packet_id,rid,rival.posx,rival.posy)
         self.sent_packet_id += 1
         client.send(tosend)
+        
+    def addCheatItemsForTesting(self):
+        self.inventory.addItem(random.randint(1,5000))
         
     #def send_ping(self,client):
        # text = ""
