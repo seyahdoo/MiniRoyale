@@ -14,6 +14,7 @@ clients = {}
 class Client:
     
     def __init__(self, addr):
+        
         print("Client Init")
         
         # Client Address
