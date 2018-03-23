@@ -50,6 +50,8 @@ public class UDPConnection : MonoBehaviour {
 	/// <param name="message">Message.</param>
 	public void Send(string message)
 	{
+		//Debug.Log ("UDP:Sending:" + message);
+
 		//Encode data as UTF8
 		byte[] data = System.Text.Encoding.UTF8.GetBytes(message);
 
@@ -77,7 +79,7 @@ public class UDPConnection : MonoBehaviour {
 	/// <param name="message">Decoded message</param>
 	public void MessageReceived(string message)
 	{
-		//Debug.Log ("Message Received: "+message);
+		//Debug.Log ("UDP:Received:"+message);
 
 		//Message Received event for listeners
 		if(MessageReceivedEvent != null)

@@ -33,13 +33,17 @@ public class MOVEDListener : GameEventUser {
 		}
 		////////////////
 
+
 		//Drop late packets
-		int nowpkg = int.Parse (args [1]);
+		int nowpkg = int.Parse (args [0]);
 		if (lastpkg > nowpkg) {
+			Debug.LogError ("Dropping Late Package!");
 			return;
 		} else {
 			lastpkg = nowpkg;
 		}
+
+
 
 		//Dispatch to orchestrator
 		orchestrator.MOVED (int.Parse (args [1]), float.Parse (args [2]), float.Parse (args [3]));

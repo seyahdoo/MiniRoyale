@@ -40,7 +40,7 @@ public class UpdateTimer : MonoBehaviour {
 		if (Lag < MinLag)
 			MinLag = Lag;
 
-		print (Lag);
+		//print (Lag);
 
 		LastPacketTime = CurrentTime;
 	}

@@ -6,6 +6,8 @@ public class Rival : MonoBehaviour {
 
 	public int PlayerID;
 
+	public Pawn pawn;
+
 	public Vector2 NewPosition;
 	public float NewPositionTime;
 	public Vector2 OldPosition;
@@ -15,6 +17,7 @@ public class Rival : MonoBehaviour {
 	public GameObject myGameObject;
 
 	bool positionJustUpdated = false;
+
 
 	void Awake(){
 		myTransform = transform;

@@ -5,28 +5,30 @@ using seyahdoo.events;
 
 public class NetworkRivalOrchestrator : MonoBehaviour {
 
-	public Dictionary<int,Rival> rivals;
+	private Dictionary<int,Rival> rivals;
 
-	public GameObject rivalPrefab;
+	[SerializeField]
+	private GameObject rivalPrefab;
 
-	public Stack<Rival> rivalPool;
+	private Stack<Rival> rivalPool;
 
-	public Stack<GameObject> EnableQueue;
+	private Stack<GameObject> EnableQueue;
 
-	public int rivalStartpoolCount = 10;
+	[SerializeField]
+	private int rivalStartpoolCount = 10;
 
 	void Awake(){
 		rivals = new Dictionary<int, Rival> ();
 		rivalPool = new Stack<Rival> ();
 
 		for (int i = 0; i < rivalStartpoolCount; i++) {
-			CreateRival ();
+			GrowRivalPool ();
 		}
 
 		EnableQueue = new Stack<GameObject> ();
 	}
 
-	void CreateRival(){
+	void GrowRivalPool(){
 	
 		GameObject rivalobj = Instantiate (rivalPrefab);
 		Rival rival = rivalobj.GetComponent<Rival> ();
@@ -50,8 +52,16 @@ public class NetworkRivalOrchestrator : MonoBehaviour {
 
 	}
 
-	public void MOVED(int playerID,float posx,float posy){
-		//Debug.Log ("Orchestrator: MOVED");
+	public void CreateRival(int playerID){
+		
+		
+	}
+
+	public NetworkItemOrchestrator itemOrchestrator;
+
+	public Rival GetRival(int playerID){
+
+		//Debug.LogError ("NetworkItemOrchestrator:GetRival:" + playerID);
 
 		Rival rival;
 		//Find rival from dictionary
@@ -59,6 +69,8 @@ public class NetworkRivalOrchestrator : MonoBehaviour {
 			//Debug.Log("Orchestrator: Found Rival in dictionary");
 			rival = rivals [playerID];
 		} else {
+
+
 			//TODO: POOL THIS!
 			//Create Rival
 			//Debug.Log("Orchestrator: getting Rival from pool");
@@ -70,10 +82,23 @@ public class NetworkRivalOrchestrator : MonoBehaviour {
 			rival = rivalPool.Pop ();
 			rival.PlayerID = playerID;
 
+			//TODO
 			EnableQueue.Push (rival.myGameObject);
 
 			rivals.Add (playerID, rival);
+
+			//Request player Info (like what he wears)
+			itemOrchestrator.RequestItemInfo (playerID);
 		}
+
+		return rival;
+	}
+
+
+	public void MOVED(int playerID,float posx,float posy){
+		//Debug.LogWarning ("Orchestrator: MOVED");
+
+		Rival rival = GetRival (playerID);
 
 		rival.setPosition (new Vector2(posx,posy));
 	}

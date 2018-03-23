@@ -33,7 +33,7 @@ public class CommandDispatcher : MonoBehaviour {
 
 		foreach (string command in splitted) {
 
-			//Debug.Log ("Command: " + command +".");
+			//Debug.Log ("CommandDispatcher:" + command);
 
 			foreach (ServerCommandHandler commandHandler in CommandHandlers) {
 
@@ -50,7 +50,9 @@ public class CommandDispatcher : MonoBehaviour {
 							//split args
 								.Split (',');
 
-						//Debug.Log ("Triggering with args " + commandHandler);
+						//TODO Check argcount == command.argcount
+
+						//Debug.Log ("Triggering with args " + commandHandler.CommandCode);
 						//trigger the command
 						commandHandler.TriggerCommand (args);
 					} else {
