@@ -1,5 +1,6 @@
 import client
-import timeit
+import game
+#import timeit
 
 min_lag = 10000
 max_lag = 0
@@ -7,21 +8,21 @@ old_time = 0
 
 def RequestDispatcher(client_thread, buffer):
     #print("UDP: received:"+buffer)
-    global min_lag
-    global max_lag
-    global old_time
+   # global min_lag
+   # global max_lag
+   # global old_time
     
     
-    current_time = timeit.default_timer()
+   # current_time = timeit.default_timer()
     
-    lag = current_time - old_time
-    if lag < min_lag:
-        min_lag = lag
-    if lag > max_lag:
-        max_lag = lag
+    #lag = current_time - old_time
+   # if lag < min_lag:
+   #     min_lag = lag
+   # if lag > max_lag:
+    #    max_lag = lag
         
-    old_time = current_time
-    print("current lag:{}, min_lag ={}, max_lag ={}".format(lag, min_lag, max_lag))
+    #old_time = current_time
+   # print("current lag:{}, min_lag ={}, max_lag ={}".format(lag, min_lag, max_lag))
         
         
     commands = buffer.split(';')    
@@ -51,3 +52,22 @@ def RequestDispatcher(client_thread, buffer):
             player_message += str(";")
             print(player_message)
             client_thread.send(player_message)
+            
+        elif(cmd[0:5] == "PCKEQ"):
+            item_id = cmd[6:]
+            #print("equip request has come")
+            client_thread.player.inventory.addItem(int(item_id))
+        elif(cmd[0:5] == "PIREQ"):
+            player_id = int(cmd[6:])
+            player_information = ""
+            if game.player_list.get(player_id) is not None:
+                player_information += str("PINFO:{},KekistPersonInTheTown,[{}];".format(player_id,game.player_list[player_id].inventory.getItemList()))
+           #  PINFO:12342,SnowDaddy,[232323+1.3332131+2]
+            print(player_information)
+            client_thread.send(player_information)
+
+            
+            
+            
+            
+            

@@ -30,7 +30,7 @@ class Client:
         # Binded Ip
         self.server_ip = "0.0.0.0"
         # Random available Port
-        self.server_port = 0 #random TODO: write zero here
+        self.server_port = 24000 #random TODO: write zero here
         # One socket for each client
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #internet, UDP
         # Bind socket and generate a new open port
@@ -52,6 +52,8 @@ class Client:
         self.player = Player()
         print("created Player for Client, player_id:{}".format(self.player.player_id))
         
+        # Add created player to player_list
+        game.player_list[self.player.player_id] = self.player
         
         # create a new thread ping 
         self.ping_thread = threading.Thread(target=self.ping_routine)
@@ -62,7 +64,12 @@ class Client:
         
         antitickrate = 1/game.game_instance.tickrate
         
+        # TODO send spawned item information to player
+        #self.spawnedItemInformation()
+        
+        
         while True:
+            # send info first
             
             self.player.GetInfo(self)
             
@@ -83,8 +90,9 @@ class Client:
     def ping_routine(self):
         # Send ping request every 1 seconds
         # Disconnect if no answer has came for 60 seconds
+        dropout_time = 60
         while True:
-            if self.player.dropout_time < 10:
+            if self.player.dropout_time < dropout_time:
                 text = "PINGO;"
                 #print("sending ping request, player_id:{}".format(self.player.player_id))
                 self.send(text)
@@ -116,7 +124,7 @@ class Client:
                 # if last packet number is > args[0] return
             #    self.player.Move(args[0],args[1],args[2])
                 
-        
+
         
 
 
