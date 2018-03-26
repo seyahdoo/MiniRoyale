@@ -5,10 +5,10 @@ import time
 from request_dispatcher import RequestDispatcher
 from player import Player
 import game
+import bullet
 
 ping_lock = threading.Lock()
-clients_lock = threading.Lock()
-clients = {}
+
 
 
 class Client:
@@ -30,7 +30,7 @@ class Client:
         # Binded Ip
         self.server_ip = "0.0.0.0"
         # Random available Port
-        self.server_port = 24000 #random TODO: write zero here
+        self.server_port = 0 #random TODO: write zero here
         # One socket for each client
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #internet, UDP
         # Bind socket and generate a new open port
@@ -42,7 +42,7 @@ class Client:
         self.listener_thread = threading.Thread(target=self.listener)
         self.listener_thread.daemon = True
         self.listener_thread.start()
-        
+        self.sent_packet_id = 0
         #print("Before sending port")
         
         # Send newly generated socket info to client
@@ -53,7 +53,7 @@ class Client:
         print("created Player for Client, player_id:{}".format(self.player.player_id))
         
         # Add created player to player_list
-        game.player_list[self.player.player_id] = self.player
+        game.game_instance.players[self.player.player_id] = self.player
         
         # create a new thread ping 
         self.ping_thread = threading.Thread(target=self.ping_routine)
@@ -62,19 +62,10 @@ class Client:
         
         # send player game info
         
-        antitickrate = 1/game.game_instance.tickrate
         
         # TODO send spawned item information to player
         #self.spawnedItemInformation()
-        
-        
-        while True:
-            # send info first
-            
-            self.player.GetInfo(self)
-            
-            time.sleep(antitickrate)
-        
+                
         
             
     def listener(self):
@@ -90,6 +81,7 @@ class Client:
     def ping_routine(self):
         # Send ping request every 1 seconds
         # Disconnect if no answer has came for 60 seconds
+        # Close main thread and delete player information in players dictionary
         dropout_time = 60
         while True:
             if self.player.dropout_time < dropout_time:
@@ -124,20 +116,30 @@ class Client:
                 # if last packet number is > args[0] return
             #    self.player.Move(args[0],args[1],args[2])
                 
-
+    def sendGameInfo(self):
         
-
-
+        tosend = ""
+        for rid, rival in game.game_instance.players.items():
+            tosend += "MOVED:{},{},{},{},{};".format(self.sent_packet_id,rid,rival.posx,rival.posy,rival.rotation)
+            self.sent_packet_id += 1
+            
+        for b_id, current_bullet in game.game_instance.bullets.items():
+            tosend += "SHOTT:{},{},{},{};".format(self.sent_packet_id,b_id,current_bullet.posx,current_bullet.posy)
+            self.sent_packet_id += 1
+        
+        # print(tosend)
+        self.send(tosend)
+        
   
 
 
 def new_connection(addr):
     
-    with clients_lock:
-        if not addr in clients:
+    with game.game_instance.clients_lock:
+        if not addr in game.game_instance.clients:
             print("new connection will commence")
             c = Client(addr)
-            clients[addr] = c
+            game.game_instance.clients[addr] = c
         else:
             print("no new connection")
     

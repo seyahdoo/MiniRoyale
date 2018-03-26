@@ -1,11 +1,15 @@
-import os
-wd = os.getcwd()    # save current working directory
-os.chdir('./Items')    # change to directory containing main.py  
-import item    # import your stuff
-os.chdir('..')    # change to directory containing main.py  
-os.chdir('..')    # change to directory containing main.py  
+import sys
+sys.path.append('./Items')
+import item    # import your stuffimport os
+
+#import os
+#wd = os.getcwd()    # save current working directory
+#os.chdir('./Items')    # change to directory containing main.py  
+#import item    # import your stuff
+#os.chdir('..')    # change to directory containing main.py  
+#os.chdir('..')    # change to directory containing main.py  
 import game    # import your stuff
-os.chdir(wd)    # change back to directory containing sub.pyimport random
+#os.chdir(wd)    # change back to directory containing sub.pyimport random
 
 
 class Inventory:

@@ -6,6 +6,8 @@ min_lag = 10000
 max_lag = 0
 old_time = 0
 
+
+
 def RequestDispatcher(client_thread, buffer):
     #print("UDP: received:"+buffer)
    # global min_lag
@@ -34,7 +36,7 @@ def RequestDispatcher(client_thread, buffer):
             #print(str(args))
             
             # if last packet number is > args[0] return
-            client_thread.player.Move(args[0],args[1],args[2])
+            client_thread.player.Move(args[0],args[1],args[2],args[3])
             
         elif(cmd[0:5] == "PONGO"):
             # Succesfull Ping-Pong relationship
@@ -60,11 +62,21 @@ def RequestDispatcher(client_thread, buffer):
         elif(cmd[0:5] == "PIREQ"):
             player_id = int(cmd[6:])
             player_information = ""
-            if game.player_list.get(player_id) is not None:
-                player_information += str("PINFO:{},KekistPersonInTheTown,[{}];".format(player_id,game.player_list[player_id].inventory.getItemList()))
+            if game.game_instance.players.get(player_id) is not None:
+                player_information += str("PINFO:{},KekistPersonInTheTown,[{}];".format(player_id,game.game_instance.players[player_id].inventory.getItemList()))
            #  PINFO:12342,SnowDaddy,[232323+1.3332131+2]
             print(player_information)
             client_thread.send(player_information)
+            
+        elif(cmd[0:5] == "SHOOT"):
+            #player_id = client_thread.player.player_id
+            
+            client_thread.player.shoot()
+            print("Succesfull shoot action!")
+            
+            
+            #TODO, Create bullet class with neccessarry attributes
+            
 
             
             

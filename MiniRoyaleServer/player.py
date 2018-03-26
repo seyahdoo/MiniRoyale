@@ -1,11 +1,15 @@
-import os
-wd = os.getcwd()    # save current working directory
-os.chdir('./Inventory')    # change to directory containing main.py  
-import inventory    # import your stuff
-os.chdir(wd)    # change back to directory containing sub.pyimport random
+import sys
+sys.path.append('./Inventory')
+import inventory    # import your stuffimport os
+
+#wd = os.getcwd()    # save current working directory
+#os.chdir('./Inventory')    # change to directory containing main.py  
+#import inventory    # import your stuff
+#os.chdir(wd)    # change back to directory containing sub.pyimport random
 
 import random
 import game
+import bullet
 
 class Player():
     
@@ -15,9 +19,13 @@ class Player():
         self.posy = 0
         self.movement_speed = 0
         
+        self.rotation = float(0)
+        
         self.dropout_time = 0
         self.last_packet_id = 0
         self.sent_packet_id = 0
+        
+        self.current_weapon_in_hand = None
         # generate random player id and add it to the list
         player_id = random.randint(1,5000)
         with game.game_instance.players_lock:
@@ -30,7 +38,7 @@ class Player():
         print("player initiated, id:{}".format(self.player_id))
         self.addCheatItemsForTesting()
         
-    def Move(self,packet_id,posx,posy):
+    def Move(self,packet_id,posx,posy,rotation):
         #print("playerid:{} trying to move to ({},{})".format(str(self.player_id), str(posx), str(posy)))
         #check speed
         
@@ -43,23 +51,35 @@ class Player():
         try:
             self.posx = float(posx)
             self.posy = float(posy)
+            self.rotation = (float(rotation) % 360)
+
+            
         except:
-            print("Error: not a float number. Playerid:{} ".format(self.player_id))
+            print("Error: Can not parse position info. Playerid:{} ".format(self.player_id))
             
         
         #print("playerid:{} current position ({},{})".format(str(self.player_id), str(self.posx), str(self.posy)))
         
-    
-    def GetInfo(self,client):
-        
-        tosend = ""
-        for rid, rival in game.game_instance.players.items():
-            tosend += "MOVED:{},{},{},{};".format(self.sent_packet_id,rid,rival.posx,rival.posy)
-        self.sent_packet_id += 1
-        client.send(tosend)
-        
+
     def addCheatItemsForTesting(self):
-        self.inventory.addItem(random.randint(1,5000))
+        weapon_id = random.randint(1,5000)
+        self.inventory.addItem(weapon_id)
+        self.current_weapon_in_hand = self.inventory.equipped_items[weapon_id]
+        print("Weapon with weapon_id:{} and weapon_type:{} is currenty equipped in main hand".format(self.current_weapon_in_hand.item_id,self.current_weapon_in_hand.item_type_id))
+        
+    def shoot(self):
+        weapon_type_id = self.current_weapon_in_hand.item_type_id
+            
+        if weapon_type_id == 1001:
+            # 32 is the game tick rate
+            speed = 5
+            damage = 15
+        elif weapon_type_id == 1002:
+            speed = 5
+            damage = 20
+           
+        bullet.Bullet(self.player_id,self.posx,self.posy,self.rotation,speed,damage)
+        
         
     #def send_ping(self,client):
        # text = ""
