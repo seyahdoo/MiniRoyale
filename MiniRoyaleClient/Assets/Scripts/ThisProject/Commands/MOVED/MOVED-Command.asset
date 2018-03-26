@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Name: MOVED-Command
   m_EditorClassIdentifier: 
   CommandCode: MOVED
-  ArgumentCount: 4
+  ArgumentCount: 5
   Event: {fileID: 11400000, guid: ebc9142455083bd478a926c760fa2296, type: 2}

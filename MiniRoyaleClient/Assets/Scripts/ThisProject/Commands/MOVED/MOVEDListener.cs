@@ -27,8 +27,8 @@ public class MOVEDListener : GameEventUser {
 
 		string[] args = (string[])eventData;
 
-		if (args.Length != 4) {
-			Debug.Log ("MOVED will get 4 arguments!");
+		if (args.Length != 5) {
+			Debug.Log ("MOVED will get 5 arguments!");
 			return;
 		}
 		////////////////
@@ -46,7 +46,7 @@ public class MOVEDListener : GameEventUser {
 
 
 		//Dispatch to orchestrator
-		orchestrator.MOVED (int.Parse (args [1]), float.Parse (args [2]), float.Parse (args [3]));
+		orchestrator.MOVED (int.Parse (args [1]), float.Parse (args [2]), float.Parse (args [3]),float.Parse(args[4]));
 
 
 	}

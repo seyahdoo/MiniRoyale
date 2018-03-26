@@ -95,12 +95,12 @@ public class NetworkRivalOrchestrator : MonoBehaviour {
 	}
 
 
-	public void MOVED(int playerID,float posx,float posy){
+	public void MOVED(int playerID,float posx,float posy,float rot){
 		//Debug.LogWarning ("Orchestrator: MOVED");
 
 		Rival rival = GetRival (playerID);
 
-		rival.setPosition (new Vector2(posx,posy));
+		rival.setPosition (new Vector2(posx,posy),rot);
 	}
 
 

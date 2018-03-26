@@ -16,10 +16,17 @@ public class Player : MonoBehaviour {
 	private Transform myTransform;
 	private Rigidbody2D body;
 
+	public Camera cam;
+
+	public GameObject crosshair;
+
+	public bool shootCommand = false;
+
 	//Initialize
 	void Awake(){
 		myTransform = transform;
 		body = GetComponent<Rigidbody2D> ();
+
 	}
 
 	//TICK EVENT
@@ -39,6 +46,18 @@ public class Player : MonoBehaviour {
 		direction *= Speed.Value;
 
 		body.velocity = direction;
+
+		Vector2 mousePos = Input.mousePosition;
+		Vector3 look = cam.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, 10));
+
+		transform.right = look - transform.position;
+
+		crosshair.transform.position = look;
+
+		if (Input.GetButtonDown ("Fire1")) {
+			shootCommand = true;
+		}
+
 	}
 
 	int pkgid = 0;
@@ -47,7 +66,20 @@ public class Player : MonoBehaviour {
 	void Tick(){
 		//We will send current position to server every tick
 		pkgid++;
-		connection.Send("MOVER:"+ pkgid +","+myTransform.position.x+","+myTransform.position.y+";");
+
+		string tosend = "MOVER:" 
+			+ pkgid + "," 
+			+ myTransform.position.x + "," 
+			+ myTransform.position.y + "," 
+			+ myTransform.localEulerAngles.z + ";";
+		
+		if (shootCommand) {
+			shootCommand = false;
+			tosend += "SHOOT;";
+		}
+
+		Debug.Log (tosend);
+		connection.Send(tosend);
 
 	}
 

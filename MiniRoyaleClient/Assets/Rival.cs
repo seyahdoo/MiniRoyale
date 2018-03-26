@@ -10,8 +10,12 @@ public class Rival : MonoBehaviour {
 
 	public Vector2 NewPosition;
 	public float NewPositionTime;
+
 	public Vector2 OldPosition;
 	public float OldPositionTime;
+
+	public float NewRotation;
+	public float OldRotation;
 
 	public Transform myTransform;
 	public GameObject myGameObject;
@@ -25,11 +29,13 @@ public class Rival : MonoBehaviour {
 	}
 
 
-	public void setPosition(Vector2 pos){
+	public void setPosition(Vector2 pos,float rot){
 		OldPosition = NewPosition;
 		OldPositionTime = NewPositionTime;
 
 		NewPosition = pos;
+
+
 
 		positionJustUpdated = true;
 	}
@@ -46,7 +52,13 @@ public class Rival : MonoBehaviour {
 			              (currentTime - NewPositionTime) / (NewPositionTime - OldPositionTime)
 		              );
 
+		float rot = Mathf.Lerp (
+			            OldRotation, NewRotation,
+			            (currentTime - NewPositionTime) / (NewPositionTime - OldPositionTime)
+		            );
+
 		myTransform.position = pos;
+		myTransform.localEulerAngles = new Vector3 (0f, 0f, rot);
 
 	}
 
