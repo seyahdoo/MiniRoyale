@@ -32,9 +32,11 @@ public class Rival : MonoBehaviour {
 	public void setPosition(Vector2 pos,float rot){
 		OldPosition = NewPosition;
 		OldPositionTime = NewPositionTime;
-
 		NewPosition = pos;
 
+
+		OldRotation = NewRotation;
+		NewRotation = rot;
 
 
 		positionJustUpdated = true;

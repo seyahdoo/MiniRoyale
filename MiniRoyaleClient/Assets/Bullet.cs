@@ -4,13 +4,25 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
+	[SerializeField]
+	private Rigidbody2D rb;
+
+	public void SHOTT(float posx, float posy, float angle, float speed){
+
+		transform.position = new Vector2 (posx, posy);
+		rb.velocity = new Vector2 (
+			Mathf.Cos (Mathf.Deg2Rad * angle),
+			Mathf.Sin (Mathf.Deg2Rad * angle)) 
+			* speed
+			;
+
+
+
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
+
+
+
+
+
 }

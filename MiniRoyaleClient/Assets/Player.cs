@@ -78,7 +78,7 @@ public class Player : MonoBehaviour {
 			tosend += "SHOOT;";
 		}
 
-		Debug.Log (tosend);
+		//Debug.Log (tosend);
 		connection.Send(tosend);
 
 	}

@@ -54,12 +54,14 @@ public class CommandDispatcher : MonoBehaviour {
 
 						//Debug.Log ("Triggering with args " + commandHandler.CommandCode);
 						//trigger the command
-						commandHandler.TriggerCommand (args);
+						//commandHandler.TriggerCommand (args);
+						triggerQueue.Enqueue (new TriggerQueueElement (commandHandler, args));
 					} else {
 
 						//Debug.Log ("Triggering " + commandHandler);
 						//trigger the command
-						commandHandler.TriggerCommand (null);
+						//commandHandler.TriggerCommand (null);
+						triggerQueue.Enqueue (new TriggerQueueElement (commandHandler, null));
 					}
 
 				}
@@ -69,6 +71,34 @@ public class CommandDispatcher : MonoBehaviour {
 
 	}
 
+	#endregion
+
+	#region TriggerQueue
+	private class TriggerQueueElement
+	{
+		ServerCommandHandler handler;
+		string[] args;
+
+		public TriggerQueueElement(ServerCommandHandler handler, string[] args){
+			this.handler = handler;
+			this.args = args;
+		}
+
+		public void Trigger(){
+			handler.TriggerCommand (args);
+		}
+	}
+
+	Queue<TriggerQueueElement> triggerQueue = new Queue<TriggerQueueElement>();
+
+	void Update(){
+
+		while (triggerQueue.Count > 0) {
+			triggerQueue.Dequeue ().Trigger ();
+		}
+
+
+	}
 	#endregion
 
 

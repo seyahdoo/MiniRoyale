@@ -43,8 +43,8 @@ TextureImporter:
   spriteMode: 3
   spriteExtrude: 1
   spriteMeshType: 1
-  alignment: 9
-  spritePivot: {x: 0.4944444, y: -0.0055556144}
+  alignment: 4
+  spritePivot: {x: 0, y: 0.5}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spritePixelsToUnits: 4
   alphaUsage: 1
@@ -70,11 +70,10 @@ TextureImporter:
     serializedVersion: 2
     sprites: []
     outline:
-    - - {x: 0.044444323, y: 0.19999981}
-      - {x: -0.3777777, y: 0.46666694}
-      - {x: -0.3111112, y: -2}
-      - {x: 0.3111112, y: -2}
-      - {x: 0.42222238, y: 0.48888898}
+    - - {x: 0.08222151, y: 0.48666716}
+      - {x: -2, y: 0.52}
+      - {x: -2, y: -0.15999997}
+      - {x: 0.08222294, y: -0.17111099}
     physicsShape:
     - - {x: -2, y: -2}
       - {x: -2, y: 2}
