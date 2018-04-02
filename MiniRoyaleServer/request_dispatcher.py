@@ -35,12 +35,12 @@ def request_dispatcher(client_thread, buffer):
         elif cmd[0:5] == "PCKEQ":
             item_id = cmd[6:]
             # print("equip request has come")
-            client_thread.player.inventory.addItem(int(item_id))
+            client_thread.player.inventory.add_item(int(item_id))
         elif cmd[0:5] == "PIREQ":
             player_id = int(cmd[6:])
             player_information = ""
             if game.game_instance.players.get(player_id) is not None:
-                player_information += str("PINFO:{},KekistPersonInTheTown,[{}];".format(player_id,game.game_instance.players[player_id].inventory.getItemList()))
+                player_information += str("PINFO:{},KekistPersonInTheTown,[{}];".format(player_id, game.game_instance.players[player_id].inventory.get_item_list()))
             # PINFO:12342,SnowDaddy,[232323+1.3332131+2]
             print(player_information)
             client_thread.send(player_information)

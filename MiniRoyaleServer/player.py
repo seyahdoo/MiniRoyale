@@ -50,7 +50,7 @@ class Player:
         
     def add_cheat_items_for_testing(self):
         weapon_id = random.randint(1, 5000)
-        self.inventory.addItem(weapon_id)
+        self.inventory.add_item(weapon_id)
         self.current_weapon_in_hand = self.inventory.equipped_items[weapon_id]
         print("Weapon with weapon_id:{} and weapon_type:{} is currenty equipped in main hand".format(self.current_weapon_in_hand.item_id,self.current_weapon_in_hand.item_type_id))
         
