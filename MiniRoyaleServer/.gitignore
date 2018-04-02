@@ -1,2 +1,3 @@
-# spyder cache files
+# cache files
 __pycache__/
+venv/

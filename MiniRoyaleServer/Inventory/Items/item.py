@@ -1,4 +1,6 @@
 
+globalx = 123
+
 class Item:
     
     def __init__(self, item_id, item_type_id):

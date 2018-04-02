@@ -1,11 +1,6 @@
-import sys
-sys.path.append('./Inventory/Items')
-import item    # import your stuff
 
-#import os
-#wd = os.getcwd()    # save current working directory
-#os.chdir('./Inventory/Items')    # change to directory containing main.py
-#os.chdir(wd)    # change back to directory containing sub.pyimport random
+from Inventory.Items.item import Item  # import your stuff
+
 
 import random
 import threading
@@ -67,7 +62,8 @@ class Game():
         self.game_thread = threading.Thread(target=self.run)
         self.game_thread.daemon = True
         self.game_thread.start()
-        
+
+
     def run(self):
         anti_tickrate = 1/self.tickrate
         while(True):
@@ -102,7 +98,7 @@ class Game():
         test_item_type = 1
         while spawned_item_list.get(test_item_id) is not None:
             test_item_id = random.randint(1,5000)
-        spawned_item_list[test_item_id] = item.Item(test_item_id, test_item_type)
+        spawned_item_list[test_item_id] = Item(test_item_id, test_item_type)
         
         #print("Succesfully spawned an item with item_id:{}, item_type_id:{}".format(spawned_item_list[test_item_id].item_id,spawned_item_list[test_item_id].item_type_id))
 
