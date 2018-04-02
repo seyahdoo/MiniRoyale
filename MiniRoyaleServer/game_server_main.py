@@ -1,38 +1,35 @@
 import socket
 import threading
 import time
-
 import client
 import game
 
-def ConnectionServer():
-    UDP_IP = "0.0.0.0"
-    UDP_PORT = 11999 
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #internet, UDP
-    sock.bind((UDP_IP, UDP_PORT))
 
-    print("Server started at {} port {}".format(UDP_IP, UDP_PORT))
+def connection_server():
+    udp_ip = "0.0.0.0"
+    udp_port = 11999
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # internet, UDP
+    sock.bind((udp_ip, udp_port))
+
+    print("Server started at {} port {}".format(udp_ip, udp_port))
     
-    while True:        
-        data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
+    while True:
+        data, address = sock.recvfrom(1024) # buffer size is 1024 bytes
         text = data.decode('utf-8')
-        #print ("received message:"+text+"|from:"+str(addr))
-        if(text[0:5] == "CNNRQ"):
-            #create new connection
-            #that will deal with itself
-            client.new_connection(addr)
-            #DONE
+        # print ("received message:"+text+"|from:"+str(address))
+        if text[0:5] == "CNNRQ":
+            # create new connection
+            # that will deal with itself
+            client.new_connection(address)
+            # DONE
     
 
 if __name__ == "__main__":
-    
-        
-    game.GameStart()
-    
-    
-    connection_server_thread = threading.Thread(target=ConnectionServer)
+
+    game.game_start()
+
+    connection_server_thread = threading.Thread(target=connection_server)
     connection_server_thread.daemon = True
-    
 
     try:
         connection_server_thread.start()

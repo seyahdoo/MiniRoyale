@@ -42,10 +42,10 @@ class Inventory:
         
         items_in_inventory = ""
         for item_id in self.equipped_items.keys():
-            items_in_inventory += "{}.".format(self.equipped_items[item_id].getItemInformation())
+            items_in_inventory += "{}.".format(self.equipped_items[item_id].get_item_information())
         
         for item_id in self.un_equipped_items.items():
-            items_in_inventory += "{}.".format(self.un_equipped_items[item_id].getItemInformation())
+            items_in_inventory += "{}.".format(self.un_equipped_items[item_id].get_item_information())
         
         items_in_inventory = items_in_inventory[:-1]
         print("In inventory, the message is:{}".format(items_in_inventory))

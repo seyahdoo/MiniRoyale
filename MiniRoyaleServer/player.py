@@ -1,22 +1,13 @@
-import sys
-sys.path.append('./Inventory')
-import inventory    # import your stuffimport os
-
-#wd = os.getcwd()    # save current working directory
-#os.chdir('./Inventory')    # change to directory containing main.py  
-#import inventory    # import your stuff
-#os.chdir(wd)    # change back to directory containing sub.pyimport random
-
+from Inventory.inventory import Inventory
 import random
 import game
 import bullet
 
-class Player():
-    
+
+class Player:
     def __init__(self):
-        
-        self.posx = 0
-        self.posy = 0
+        self.pos_x = 0
+        self.pos_y = 0
         self.movement_speed = 0
         
         self.rotation = float(0)
@@ -27,42 +18,38 @@ class Player():
         
         self.current_weapon_in_hand = None
         # generate random player id and add it to the list
-        player_id = random.randint(1,5000)
+        player_id = random.randint(1, 5000)
         with game.game_instance.players_lock:
             while player_id in game.game_instance.players:
-                player_id = random.randint(1,5000)
+                player_id = random.randint(1, 5000)
             game.game_instance.players[player_id] = self
             self.player_id = player_id
         
-        self.inventory = inventory.Inventory()
+        self.inventory = Inventory()
         print("player initiated, id:{}".format(self.player_id))
-        self.addCheatItemsForTesting()
+        self.add_cheat_items_for_testing()
         
-    def Move(self,packet_id,posx,posy,rotation):
-        #print("playerid:{} trying to move to ({},{})".format(str(self.player_id), str(posx), str(posy)))
-        #check speed
+    def move(self, packet_id, pos_x, pos_y, rotation):
+        # print("player_id:{} trying to move to ({},{})".format(str(self.player_id), str(pos_x), str(pos_y)))
+        # check speed
         
-        #drop packet id
+        # drop packet id
         if self.last_packet_id > int(packet_id):
             return
         else:
             self.last_packet_id = int(packet_id)
             # can use dropout_time = 0 
         try:
-            self.posx = float(posx)
-            self.posy = float(posy)
+            self.pos_x = float(pos_x)
+            self.pos_y = float(pos_y)
             self.rotation = (float(rotation) % 360)
-
-            
         except:
             print("Error: Can not parse position info. Playerid:{} ".format(self.player_id))
             
+        # print("player_id:{} current position ({},{})".format(str(self.player_id), str(self.pos_x), str(self.pos_y)))
         
-        #print("playerid:{} current position ({},{})".format(str(self.player_id), str(self.posx), str(self.posy)))
-        
-
-    def addCheatItemsForTesting(self):
-        weapon_id = random.randint(1,5000)
+    def add_cheat_items_for_testing(self):
+        weapon_id = random.randint(1, 5000)
         self.inventory.addItem(weapon_id)
         self.current_weapon_in_hand = self.inventory.equipped_items[weapon_id]
         print("Weapon with weapon_id:{} and weapon_type:{} is currenty equipped in main hand".format(self.current_weapon_in_hand.item_id,self.current_weapon_in_hand.item_type_id))
@@ -77,17 +64,4 @@ class Player():
         elif weapon_type_id == 1002:
             speed = 5
             damage = 20
-           
-        bullet.Bullet(self.player_id,self.posx,self.posy,self.rotation,speed,damage)
-        
-        
-    #def send_ping(self,client):
-       # text = ""
-       # for rid, rival in game.game_instance.players.items():
-       #     text += "PINGO;"
-       #     print("sending ping request, player_id:{}".format(self.game_instance.players[0]))
-      #  client.send(bytes(text, 'utf-8'), client)
-        
-        
-        
-        
+        bullet.Bullet(self.player_id, self.pos_x, self.pos_y, self.rotation, speed, damage)
