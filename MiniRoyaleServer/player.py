@@ -10,7 +10,7 @@ class Player:
         self.pos_y = 0
         self.movement_speed = 0
         
-        self.rotation = float(0)
+        self.angle = float(0)
         
         self.dropout_time = 0
         self.last_packet_id = 0
@@ -29,10 +29,12 @@ class Player:
         print("player initiated, id:{}".format(self.player_id))
         self.add_cheat_items_for_testing()
         
-    def move(self, packet_id, pos_x, pos_y, rotation):
+    def move(self, packet_id, pos_x, pos_y, angle):
         # print("player_id:{} trying to move to ({},{})".format(str(self.player_id), str(pos_x), str(pos_y)))
         # check speed
-        
+
+        #TODO make pysics engine deal with this.
+
         # drop packet id
         if self.last_packet_id > int(packet_id):
             return
@@ -42,7 +44,7 @@ class Player:
         try:
             self.pos_x = float(pos_x)
             self.pos_y = float(pos_y)
-            self.rotation = (float(rotation) % 360)
+            self.angle = (float(angle) % 360)
         except:
             print("Error: Can not parse position info. Playerid:{} ".format(self.player_id))
             
@@ -64,4 +66,5 @@ class Player:
         elif weapon_type_id == 1002:
             speed = 5
             damage = 20
-        bullet.Bullet(self.player_id, self.pos_x, self.pos_y, self.rotation, speed, damage)
+
+        bullet.Bullet(self.player_id, self.pos_x, self.pos_y, self.angle, speed, damage)

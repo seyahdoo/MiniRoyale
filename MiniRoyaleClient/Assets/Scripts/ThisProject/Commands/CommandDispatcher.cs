@@ -76,8 +76,8 @@ public class CommandDispatcher : MonoBehaviour {
 	#region TriggerQueue
 	private class TriggerQueueElement
 	{
-		ServerCommandHandler handler;
-		string[] args;
+		public ServerCommandHandler handler;
+		public string[] args;
 
 		public TriggerQueueElement(ServerCommandHandler handler, string[] args){
 			this.handler = handler;
@@ -92,9 +92,25 @@ public class CommandDispatcher : MonoBehaviour {
 	Queue<TriggerQueueElement> triggerQueue = new Queue<TriggerQueueElement>();
 
 	void Update(){
+		
+		TriggerQueueElement cmd = null;
 
 		while (triggerQueue.Count > 0) {
-			triggerQueue.Dequeue ().Trigger ();
+
+			try {
+				cmd = triggerQueue.Peek();
+				cmd.Trigger ();
+				triggerQueue.Dequeue();
+			} catch (System.Exception ex) {
+				Debug.Log (cmd);
+				Debug.Log (cmd.handler.name);
+				Debug.Log (cmd.args);
+
+			}
+
+
+			//triggerQueue.Dequeue ().Trigger ();
+
 		}
 
 

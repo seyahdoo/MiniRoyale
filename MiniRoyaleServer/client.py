@@ -108,13 +108,24 @@ class Client:
     def send_game_info(self):
         to_send = ""
         for rid, rival in game.game_instance.players.items():
-            to_send += "MOVED:{},{},{},{},{};".format(self.sent_packet_id, rid, rival.posx, rival.posy, rival.rotation)
+            to_send += "MOVED:{},{},{},{},{};".format(self.sent_packet_id, rid, rival.pos_x, rival.pos_y, rival.angle)
             self.sent_packet_id += 1
+            if(len(to_send) > 400):
+                self.send(to_send)
+                to_send = ""
+
             
         for b_id, current_bullet in game.game_instance.bullets.items():
-            to_send += "SHOTT:{},{},{},{};".format(self.sent_packet_id, b_id, current_bullet.posx, current_bullet.posy)
+            to_send += "SHOTT:{},{},{},{},{};".format(b_id,
+                                                      current_bullet.body.position[0],
+                                                      current_bullet.body.position[1],
+                                                      current_bullet.angle,
+                                                      current_bullet.speed)
             self.sent_packet_id += 1
-        
+            if (len(to_send) > 400):
+                self.send(to_send)
+                to_send = ""
+
         # print(to_send)
         self.send(to_send)
 

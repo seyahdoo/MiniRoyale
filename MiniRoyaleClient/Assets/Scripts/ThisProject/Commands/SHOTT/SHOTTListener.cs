@@ -11,7 +11,7 @@ public class SHOTTListener : GameEventUser {
 	//SHOTT
 	public override void OnEventInvoked (object eventData)
 	{
-		Debug.Log ("SHOTT!");
+		//Debug.Log ("SHOTT!");
 
 		//Argument check
 		if (eventData == null) {

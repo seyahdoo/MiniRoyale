@@ -5,6 +5,14 @@ import threading
 import timeit
 import time
 
+import pymunk
+
+collision_types = {
+    "player": 1,
+    "bullet": 2,
+    "prop": 3,
+}
+
 
 class Game:
     def __init__(self):
@@ -25,7 +33,9 @@ class Game:
         print("initiated game")
         
         self.spawn_items()
-        
+
+        self.space = pymunk.Space()
+
         self.game_thread = threading.Thread(target=self.run)
         self.game_thread.daemon = True
         self.game_thread.start()
@@ -36,19 +46,30 @@ class Game:
             delete = []
             # get current time
             enter_time = timeit.default_timer()
-            
+
+            # Get current actions
+            # Create new bullets
+            # move players
+
+            # Update Physics
+            self.space.step(anti_tick_rate)
+
+            # Update Bullets
             for b_id, current_bullet in self.bullets.items():
                 if not current_bullet.update():
                     # Mark for delete
                     delete.append(b_id)
                     
-            # Delete marked bullets      
+            # Delete marked (timed out) bullets
             for i in delete:
                 del self.bullets[i]
-                
+
+            # Send updated game info to all players
             for addr, current_client in self.clients.items():
                 current_client.send_game_info()
-            
+
+            # TODO what if server dont have enough time to update
+            # calculated_sleep < 0 !!!
             calculated_sleep = anti_tick_rate - (timeit.default_timer() - enter_time)
             if calculated_sleep > 0:
                 time.sleep(calculated_sleep)
