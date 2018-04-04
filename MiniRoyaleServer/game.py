@@ -19,7 +19,7 @@ class Game:
         print("initiating game")
         
         self.tick_rate = 32
-        
+        self.prop_id_counter = 0
         self.players_lock = threading.Lock()
         self.players = {}
         
@@ -28,8 +28,9 @@ class Game:
         self.clients_lock = threading.Lock()
 
         self.bullets = {}
-
+        self.bullets_to_be_spawned = []
         self.spawned_item_list = {}
+
         print("initiated game")
         
         self.spawn_items()
@@ -49,6 +50,15 @@ class Game:
 
             # Get current actions
             # Create new bullets
+            for current_bullet in self.bullets_to_be_spawned:
+                bullet_id = self.prop_id_counter
+                self.prop_id_counter += 1
+                current_bullet.bullet_id = bullet_id
+
+                self.bullets[bullet_id] = current_bullet
+                self.space.add(current_bullet.body, current_bullet.shape)
+            self.bullets_to_be_spawned = []
+
             # move players
 
             # Update Physics
@@ -59,11 +69,14 @@ class Game:
                 if not current_bullet.update():
                     # Mark for delete
                     delete.append(b_id)
-                    
+
             # Delete marked (timed out) bullets
             for i in delete:
+                self.space.remove(self.bullets[i].body, self.bullets[i].shape)
                 del self.bullets[i]
+                print("Successfully deleted bullet")
 
+            # TODO Implement thread safe client
             # Send updated game info to all players
             for addr, current_client in self.clients.items():
                 current_client.send_game_info()
@@ -73,10 +86,6 @@ class Game:
             calculated_sleep = anti_tick_rate - (timeit.default_timer() - enter_time)
             if calculated_sleep > 0:
                 time.sleep(calculated_sleep)
-            
-    def update_bullets(self):
-         for b_id, current_bullet in self.bullets.items():
-            current_bullet.update()
 
     def spawn_items(self):
         test_item_id = random.randint(1,5000)

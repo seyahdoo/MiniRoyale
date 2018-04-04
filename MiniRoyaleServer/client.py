@@ -5,7 +5,7 @@ import time
 from request_dispatcher import request_dispatcher
 from player import Player
 import game
-
+from math import degrees
 ping_lock = threading.Lock()
 
 
@@ -44,20 +44,22 @@ class Client:
         self.socket.bind((self.server_ip, self.server_port))
         # Store generated port
         self.server_port = self.socket.getsockname()[1]  # new port
-        
+
+        # Send newly generated socket info to client
+        self.send("PORTO:"+str(self.server_port)+";")
+        print("PORTO:"+str(self.server_port)+";")
+
+        self.player = Player()
+        print("created Player for Client, player_id:{}".format(self.player.player_id))
+
         # listen with a new thread
         self.listener_thread = threading.Thread(target=self.listener)
         self.listener_thread.daemon = True
         self.listener_thread.start()
         # print("Before sending port")
-        
-        # Send newly generated socket info to client
-        self.send("PORTO:"+str(self.server_port)+";")
-        print("PORTO:"+str(self.server_port)+";")
+
         # create or login a player
-        self.player = Player()
-        print("created Player for Client, player_id:{}".format(self.player.player_id))
-        
+
         # Add created player to player_list
         game.game_instance.players[self.player.player_id] = self.player
         
@@ -108,13 +110,12 @@ class Client:
     def send_game_info(self):
         to_send = ""
         for rid, rival in game.game_instance.players.items():
-            to_send += "MOVED:{},{},{},{},{};".format(self.sent_packet_id, rid, rival.pos_x, rival.pos_y, rival.angle)
+            to_send += "MOVED:{},{},{},{},{};".format(self.sent_packet_id, rid, rival.body.position[0], rival.body.position[1], degrees(rival.body.angle))
             self.sent_packet_id += 1
-            if(len(to_send) > 400):
+            if len(to_send) > 400:
                 self.send(to_send)
                 to_send = ""
 
-            
         for b_id, current_bullet in game.game_instance.bullets.items():
             to_send += "SHOTT:{},{},{},{},{};".format(b_id,
                                                       current_bullet.body.position[0],
@@ -122,7 +123,7 @@ class Client:
                                                       current_bullet.angle,
                                                       current_bullet.speed)
             self.sent_packet_id += 1
-            if (len(to_send) > 400):
+            if len(to_send) > 400:
                 self.send(to_send)
                 to_send = ""
 

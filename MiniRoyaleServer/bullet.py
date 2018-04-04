@@ -1,11 +1,9 @@
 import random
 import game
 
-import  pymunk
+import pymunk
 from pymunk import Vec2d
-
-from math import cos
-from math import sin
+from math import radians
 
 
 class Bullet:
@@ -18,14 +16,7 @@ class Bullet:
         self.damage = damage
         
         self.frame_count = 0
-        
-        bullet_id = random.randint(1, 15000)
-        while game.game_instance.bullets.get(bullet_id) is not None:
-            bullet_id = random.randint(1, 15000)
-        self.bullet_id = bullet_id
-        game.game_instance.bullets[self.bullet_id] = self
-
-        ###
+        # Pymunk stuff
         self.body = pymunk.Body(1, pymunk.inf)
         self.body.position = (self.pos_x, self.pos_y)
 
@@ -33,29 +24,26 @@ class Bullet:
         self.shape.elasticity = 1.0
         self.shape.collision_type = game.collision_types["bullet"]
 
-        #self.body.apply_impulse_at_local_point(Vec2d((cos(self.angle),sin(self.angle))))
-
+        impulse = Vec2d(1, 0)
+        impulse.rotate(radians(self.angle))
+        self.body.apply_impulse_at_local_point(impulse, self.body.position)
         # Keep bullet velocity at a static value
+
         def constant_velocity(body, gravity, damping, dt):
-            body.velocity = body.velocity.normalized() * 400
+            body.velocity = body.velocity.normalized() * self.speed
 
         self.body.velocity_func = constant_velocity
 
-        game.game_instance.space.add(self.body, self.shape)
+        # game.game_instance.space.add(self.body, self.shape)
 
         ###
 
+        game.game_instance.bullets_to_be_spawned.append(self)
         print("Successfully created bullet from player_id:{}".format(self.player_id))
         
     def update(self):
         if self.frame_count < game.game_instance.tick_rate * 20:
             # TODO DELETE -> Moved to physics
-            #new_pos_x = self.pos_x + (cos(self.rotation) * self.speed * 1 / game.game_instance.tickrate)
-            #new_pos_y = self.pos_y + (sin(self.rotation) * self.speed * 1 / game.game_instance.tickrate)
-     
-            #self.pos_x = new_pos_x
-            #self.pos_y = new_pos_y
-
             self.frame_count += 1
             return True
         else:

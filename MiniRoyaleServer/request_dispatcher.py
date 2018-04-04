@@ -4,7 +4,8 @@ import game
 
 def request_dispatcher(client_thread, buffer):
     # print("UDP: received:"+buffer)
-    commands = buffer.split(';')    
+    commands = buffer.split(';')
+    # print(commands)
     for cmd in commands:
         if cmd[0:5] == "MOVER":
             args = cmd[6:]
@@ -42,7 +43,7 @@ def request_dispatcher(client_thread, buffer):
             if game.game_instance.players.get(player_id) is not None:
                 player_information += str("PINFO:{},KekistPersonInTheTown,[{}];".format(player_id, game.game_instance.players[player_id].inventory.get_item_list()))
             # PINFO:12342,SnowDaddy,[232323+1.3332131+2]
-            print(player_information)
+            print("PIREQ: " + player_information)
             client_thread.send(player_information)
             
         elif cmd[0:5] == "SHOOT":
