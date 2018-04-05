@@ -15,14 +15,11 @@ players_lock = threading.Lock()
 
 
 class Player:
+
     def __init__(self):
         global players
         global players_lock
-        self.pos_x = 0
-        self.pos_y = 0
         self.movement_speed = 0
-        
-        self.angle = float(0)
         
         self.dropout_time = 0
         self.last_packet_id = 0
@@ -30,6 +27,7 @@ class Player:
         
         self.current_weapon_in_hand = None
         # generate random player id and add it to the list
+        #TODO make player id count from 0-inf incremented (like prop_id)
         player_id = random.randint(1, 5000)
         with players_lock:
             while player_id in players:
@@ -41,16 +39,16 @@ class Player:
         print("player initiated, id:{}".format(self.player_id))
         self.add_cheat_items_for_testing()
 
-        # Pymunk stuff
+        # physics stuff
         self.body = pymunk.Body(500, pymunk.inf)
-        self.body.position = (self.pos_x, self.pos_y)
+        self.body.position = (0, 0)
 
         self.shape = pymunk.Circle(self.body, 0.55)
         self.shape.elasticity = 0
         self.shape.collision_type = game.collision_types["player"]
         self.body.position = Vec2d(0, 0)
         game.game_instance.space.add(self.body, self.shape)
-        
+
     def move(self, packet_id, pos_x, pos_y, angle):
         # print("player_id:{} trying to move to ({},{})".format(str(self.player_id), str(pos_x), str(pos_y)))
         # drop packet id

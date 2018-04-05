@@ -16,8 +16,10 @@ collision_types = {
 class Game:
     def __init__(self):
         print("initiating game")
-        
+
+        #TODO make tickrate global -> game.tick_rate
         self.tick_rate = 32
+
         self.prop_id_counter = 0
         
         self.props = {}

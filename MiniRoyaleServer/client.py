@@ -11,7 +11,6 @@ clients = {}
 clients_lock = threading.Lock()
 ping_lock = threading.Lock()
 
-
 class Client:
     
     def __init__(self, address):
@@ -48,30 +47,24 @@ class Client:
         # Store generated port
         self.server_port = self.socket.getsockname()[1]  # new port
 
-        # Send newly generated socket info to client
-        self.send("PORTO:"+str(self.server_port)+";")
-        print("PORTO:"+str(self.server_port)+";")
-
-        self.player = Player()
-        print("created Player for Client, player_id:{}".format(self.player.player_id))
-
         # listen with a new thread
         self.listener_thread = threading.Thread(target=self.listener)
         self.listener_thread.daemon = True
         self.listener_thread.start()
         # print("Before sending port")
 
+        # Send newly generated socket info to client
+        self.send("PORTO:" + str(self.server_port) + ";")
+        print("PORTO:" + str(self.server_port) + ";")
+
         # create or login a player
+        self.player = Player()
+        print("created Player for Client, player_id:{}".format(self.player.player_id))
 
-        # Add created player to player_list
-
-        # create a new thread ping 
+        # create ping thread
         self.ping_thread = threading.Thread(target=self.ping_routine)
         self.ping_thread.daemon = True
         self.ping_thread.start()
-
-        # TODO send spawned item information to player
-        # self.spawnedItemInformation()
 
     def listener(self):
         # Listen to the port
@@ -101,15 +94,18 @@ class Client:
                 return
     
     def send(self,text):
-        # print("sending:"+text)
+        # print("UDP:Sending:"+text)
         self.socket.sendto(bytes(text, 'utf-8'), self.address)
 
     # dispatch incoming player commands
     def msg_received(self,text):
-        # print("UDP: received:"+text)
+        # print("UDP:Received:"+text)
         request_dispatcher(self, text)
 
     def send_game_info(self):
+
+        # TODO send spawned item information to player
+
         to_send = ""
         for rid, rival in player.players.items():
             to_send += "MOVED:{},{},{},{},{};".format(self.sent_packet_id, rid, rival.body.position[0], rival.body.position[1], degrees(rival.body.angle))
