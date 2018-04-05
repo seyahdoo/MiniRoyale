@@ -1,4 +1,5 @@
 import game
+import physics
 
 import pymunk
 from pymunk import Vec2d
@@ -8,6 +9,8 @@ bullets = {}
 bullets_to_be_spawned = []
 bullet_indexes_to_be_deleted = []
 
+bullet_shape_to_bullet = {}
+
 
 class Bullet:
     def __init__(self, player_id, pos_x, pos_y, angle, speed, damage):
@@ -16,7 +19,9 @@ class Bullet:
         self.player_id = int(player_id)
         self.speed = speed
         self.damage = damage
-        
+
+        self.angle = angle
+
         self.frame_count = 0
 
         # physics stuff
@@ -25,7 +30,9 @@ class Bullet:
 
         self.shape = pymunk.Circle(self.body, 0.2)
         self.shape.elasticity = 1.0
-        self.shape.collision_type = game.collision_types["bullet"]
+        self.shape.collision_type = physics.collision_types["bullet"]
+
+        bullet_shape_to_bullet[self.shape] = self
 
         impulse = Vec2d(1, 0)
         impulse.rotate(radians(angle))
@@ -64,7 +71,7 @@ def spawn_bullets_to_be_spawned():
         current_bullet.bullet_id = bullet_id
 
         bullets[bullet_id] = current_bullet
-        game.game_instance.space.add(current_bullet.body, current_bullet.shape)
+        physics.space.add(current_bullet.body, current_bullet.shape)
     bullets_to_be_spawned = []
 
 
@@ -79,7 +86,7 @@ def delete_marked_bullets():
     global bullets
     global bullet_indexes_to_be_deleted
     for i in bullet_indexes_to_be_deleted:
-        game.game_instance.space.remove(bullets[i].body, bullets[i].shape)
+        physics.space.remove(bullets[i].body, bullets[i].shape)
         del bullets[i]
         # print("Successfully deleted bullet")
     bullet_indexes_to_be_deleted = []

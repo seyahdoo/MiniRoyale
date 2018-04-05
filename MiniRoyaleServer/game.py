@@ -6,11 +6,7 @@ import time
 import client
 import pymunk
 
-collision_types = {
-    "player": 1,
-    "bullet": 2,
-    "prop": 3,
-}
+import physics
 
 
 class Game:
@@ -24,9 +20,10 @@ class Game:
         
         self.props = {}
 
+        physics.setup()
+
         print("initiated game")
 
-        self.space = pymunk.Space()
         # Spawn items
         item.spawn_items()
 
@@ -47,7 +44,7 @@ class Game:
             # move players
 
             # Update Physics
-            self.space.step(anti_tick_rate)
+            physics.tick(anti_tick_rate)
 
             # Update Bullets, mark for delete if collision has occurred or timeout
             bullet.update_bullet_state()
