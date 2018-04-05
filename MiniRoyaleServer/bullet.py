@@ -6,6 +6,7 @@ from math import radians
 
 bullets = {}
 bullets_to_be_spawned = []
+bullets_to_be_deleted = []
 
 
 class Bullet:
@@ -55,3 +56,35 @@ class Bullet:
             # game.game_instance.bullets.pop(self.bullet_id,None)
             # print("Successfully deleted bullet!")
             return False
+
+
+def spawn_bullets_to_be_spawned():
+    global bullets_to_be_spawned
+    global bullets
+    for current_bullet in bullets_to_be_spawned:
+        game.game_instance.prop_id_counter += 1
+        bullet_id = game.game_instance.prop_id_counter
+        current_bullet.bullet_id = bullet_id
+
+        bullets[bullet_id] = current_bullet
+        game.game_instance.space.add(current_bullet.body, current_bullet.shape)
+    bullets_to_be_spawned = []
+
+
+def update_bullet_state():
+    global bullets
+    global bullets_to_be_deleted
+    for b_id, current_bullet in bullets.items():
+        if not current_bullet.update():
+            # Mark for delete
+            bullets_to_be_deleted.append(b_id)
+
+# TODO send DELET information to client
+def delete_marked_bullets():
+    global bullets
+    global bullets_to_be_deleted
+    for i in bullets_to_be_deleted:
+        game.game_instance.space.remove(bullets[i].body, bullets[i].shape)
+        del bullets[i]
+        # print("Successfully deleted bullet")
+    bullets_to_be_deleted = []

@@ -45,7 +45,6 @@ class Player:
         self.body = pymunk.Body(500, pymunk.inf)
         self.body.position = (self.pos_x, self.pos_y)
 
-        # 0.6 1.1
         self.shape = pymunk.Circle(self.body, 0.55)
         self.shape.elasticity = 0
         self.shape.collision_type = game.collision_types["player"]
@@ -54,20 +53,12 @@ class Player:
         
     def move(self, packet_id, pos_x, pos_y, angle):
         # print("player_id:{} trying to move to ({},{})".format(str(self.player_id), str(pos_x), str(pos_y)))
-        # check speed
-
-        # TODO make pysics engine deal with this.
-
         # drop packet id
         if self.last_packet_id > int(packet_id):
             return
         else:
             self.last_packet_id = int(packet_id)
-            # can use dropout_time = 0 
         try:
-            # self.pos_x = float(pos_x)
-            # self.pos_y = float(pos_y)
-            # self.angle = (float(angle) % 360)
             self.body.position = Vec2d(float(pos_x), float(pos_y))
             self.body.angle = radians(float(angle))
         except:
@@ -76,17 +67,19 @@ class Player:
         # print("player_id:{} current position ({},{})".format(str(self.player_id), str(self.pos_x), str(self.pos_y)))
         
     def add_cheat_items_for_testing(self):
-        weapon_id = item.item_id_counter
         item.item_id_counter += 1
+        weapon_id = item.item_id_counter
         self.inventory.add_item(weapon_id)
         self.current_weapon_in_hand = self.inventory.equipped_items[weapon_id]
         print("Weapon with weapon_id:{} and weapon_type:{} is currenty equipped in main hand".format(self.current_weapon_in_hand.item_id,self.current_weapon_in_hand.item_type_id))
         
     def shoot(self):
         weapon_type_id = self.current_weapon_in_hand.item_type_id
-            
+
+        speed = 1
+        damage = 0
+
         if weapon_type_id == 1001:
-            # 32 is the game tick rate
             speed = 15
             damage = 15
         elif weapon_type_id == 1002:

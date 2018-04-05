@@ -64,8 +64,7 @@ class Client:
         # create or login a player
 
         # Add created player to player_list
-        player.players[self.player.player_id] = self.player
-        
+
         # create a new thread ping 
         self.ping_thread = threading.Thread(target=self.ping_routine)
         self.ping_thread.daemon = True
@@ -144,3 +143,10 @@ def new_connection(address):
             clients[address] = c
         else:
             print("no new connection")
+
+
+def send_game_info_to_all_clients():
+    # TODO Implement thread safe client
+    global clients
+    for current_client in clients.values():
+        current_client.send_game_info()
