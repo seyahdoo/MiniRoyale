@@ -1,13 +1,17 @@
-import random
 import game
 
 import pymunk
 from pymunk import Vec2d
 from math import radians
 
+bullets = {}
+bullets_to_be_spawned = []
+
 
 class Bullet:
     def __init__(self, player_id, pos_x, pos_y, angle, speed, damage):
+        global bullets_to_be_spawned
+
         self.player_id = int(player_id)
         self.pos_x = pos_x
         self.pos_y = pos_y
@@ -38,7 +42,7 @@ class Bullet:
 
         ###
 
-        game.game_instance.bullets_to_be_spawned.append(self)
+        bullets_to_be_spawned.append(self)
         print("Successfully created bullet from player_id:{}".format(self.player_id))
         
     def update(self):

@@ -1,5 +1,8 @@
 from Inventory.inventory import Inventory
+import Inventory.Items.item as item
+
 import random
+import threading
 import game
 import bullet
 import pymunk
@@ -7,8 +10,14 @@ from math import radians
 from pymunk import Vec2d
 from math import degrees
 
+players = {}
+players_lock = threading.Lock()
+
+
 class Player:
     def __init__(self):
+        global players
+        global players_lock
         self.pos_x = 0
         self.pos_y = 0
         self.movement_speed = 0
@@ -22,10 +31,10 @@ class Player:
         self.current_weapon_in_hand = None
         # generate random player id and add it to the list
         player_id = random.randint(1, 5000)
-        with game.game_instance.players_lock:
-            while player_id in game.game_instance.players:
+        with players_lock:
+            while player_id in players:
                 player_id = random.randint(1, 5000)
-            game.game_instance.players[player_id] = self
+            players[player_id] = self
             self.player_id = player_id
         
         self.inventory = Inventory()
@@ -67,7 +76,8 @@ class Player:
         # print("player_id:{} current position ({},{})".format(str(self.player_id), str(self.pos_x), str(self.pos_y)))
         
     def add_cheat_items_for_testing(self):
-        weapon_id = random.randint(1, 5000)
+        weapon_id = item.item_id_counter
+        item.item_id_counter += 1
         self.inventory.add_item(weapon_id)
         self.current_weapon_in_hand = self.inventory.equipped_items[weapon_id]
         print("Weapon with weapon_id:{} and weapon_type:{} is currenty equipped in main hand".format(self.current_weapon_in_hand.item_id,self.current_weapon_in_hand.item_type_id))

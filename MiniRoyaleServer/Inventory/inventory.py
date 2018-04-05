@@ -1,5 +1,4 @@
-from Inventory.Items.item import Item
-import game    # import your stuff
+import Inventory.Items.item as item
 
 
 class Inventory:
@@ -14,14 +13,14 @@ class Inventory:
         # print("Player is trying to pick an item with item_id:{}".format(item_id))
         # print(game.spawned_item_list.get(item_id))
 
-        if game.game_instance.spawned_item_list.get(item_id) is not None:
+        if item.spawned_item_list.get(item_id) is not None:
             # print("Trying to pick up item from spawn_item_list")
-            self.equipped_items[item_id] = game.game_instance.spawned_item_list[item_id]
-            game.game_instance.spawned_item_list.pop(item_id)
+            self.equipped_items[item_id] = item.spawned_item_list[item_id]
+            item.spawned_item_list.pop(item_id)
             print("Successfully picked an item with item_id:{}, item_type_id:{}".format(self.equipped_items[item_id].item_id,self.equipped_items[item_id].item_type_id))
         
         # This section is for cheating purposes!
-        self.equipped_items[item_id] = Item(item_id, 1001)
+        self.equipped_items[item_id] = item.Item(item_id, 1001)
         print("Successfully equipped an item with item_id:{}, item_type_id:{}".format(self.equipped_items[item_id].item_id,self.equipped_items[item_id].item_type_id))
         
     def get_item_list(self):

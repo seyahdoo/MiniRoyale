@@ -1,5 +1,5 @@
 import client
-import game
+import player
 
 
 def request_dispatcher(client_thread, buffer):
@@ -40,8 +40,8 @@ def request_dispatcher(client_thread, buffer):
         elif cmd[0:5] == "PIREQ":
             player_id = int(cmd[6:])
             player_information = ""
-            if game.game_instance.players.get(player_id) is not None:
-                player_information += str("PINFO:{},KekistPersonInTheTown,[{}];".format(player_id, game.game_instance.players[player_id].inventory.get_item_list()))
+            if player.players.get(player_id) is not None:
+                player_information += str("PINFO:{},KekistPersonInTheTown,[{}];".format(player_id, player.players[player_id].inventory.get_item_list()))
             # PINFO:12342,SnowDaddy,[232323+1.3332131+2]
             print("PIREQ: " + player_information)
             client_thread.send(player_information)

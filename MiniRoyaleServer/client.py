@@ -1,11 +1,14 @@
 import threading
 import socket
 import time
-
+import player
+import bullet
 from request_dispatcher import request_dispatcher
 from player import Player
-import game
 from math import degrees
+
+clients = {}
+clients_lock = threading.Lock()
 ping_lock = threading.Lock()
 
 
@@ -61,7 +64,7 @@ class Client:
         # create or login a player
 
         # Add created player to player_list
-        game.game_instance.players[self.player.player_id] = self.player
+        player.players[self.player.player_id] = self.player
         
         # create a new thread ping 
         self.ping_thread = threading.Thread(target=self.ping_routine)
@@ -109,14 +112,14 @@ class Client:
 
     def send_game_info(self):
         to_send = ""
-        for rid, rival in game.game_instance.players.items():
+        for rid, rival in player.players.items():
             to_send += "MOVED:{},{},{},{},{};".format(self.sent_packet_id, rid, rival.body.position[0], rival.body.position[1], degrees(rival.body.angle))
             self.sent_packet_id += 1
             if len(to_send) > 400:
                 self.send(to_send)
                 to_send = ""
 
-        for b_id, current_bullet in game.game_instance.bullets.items():
+        for b_id, current_bullet in bullet.bullets.items():
             to_send += "SHOTT:{},{},{},{},{};".format(b_id,
                                                       current_bullet.body.position[0],
                                                       current_bullet.body.position[1],
@@ -132,11 +135,12 @@ class Client:
 
 
 def new_connection(address):
-    
-    with game.game_instance.clients_lock:
-        if address not in game.game_instance.clients:
+    global clients
+    global clients_lock
+    with clients_lock:
+        if address not in clients:
             print("new connection will commence")
             c = Client(address)
-            game.game_instance.clients[address] = c
+            clients[address] = c
         else:
             print("no new connection")
