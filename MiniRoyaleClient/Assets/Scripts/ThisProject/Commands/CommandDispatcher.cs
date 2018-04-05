@@ -21,13 +21,12 @@ public class CommandDispatcher : MonoBehaviour {
 
 	readonly char[] commandSplitter = {';'};
 
-
 	void Connection_MessageReceivedEvent (string message)
 	{
 		//Debug.Log ("Dispatching: " + message);
 
-		//LagDebugging
-		timer.Doit();
+		//Lag Debugging
+		//timer.Doit();
 
 		string[] splitted = message.Split (commandSplitter, System.StringSplitOptions.RemoveEmptyEntries);
 
@@ -50,21 +49,26 @@ public class CommandDispatcher : MonoBehaviour {
 							//split args
 								.Split (',');
 
-						//TODO Check argcount == command.argcount
+						TriggerQueueElement tqe = new TriggerQueueElement (commandHandler, args);
 
-						//Debug.Log ("Triggering with args " + commandHandler.CommandCode);
-						//trigger the command
-						//commandHandler.TriggerCommand (args);
-						triggerQueue.Enqueue (new TriggerQueueElement (commandHandler, args));
+						lock (triggerQueueLock) {
+							//Queue the command
+							triggerQueue.Enqueue (tqe);
+						}
+
 					} else {
 
-						//Debug.Log ("Triggering " + commandHandler);
-						//trigger the command
-						//commandHandler.TriggerCommand (null);
-						triggerQueue.Enqueue (new TriggerQueueElement (commandHandler, null));
+						TriggerQueueElement tqe = new TriggerQueueElement (commandHandler, null);
+
+						lock (triggerQueueLock) {
+							//Queue the command
+							triggerQueue.Enqueue (tqe);
+						}
+
 					}
 
 				}
+
 			}
 
 		}
@@ -90,58 +94,20 @@ public class CommandDispatcher : MonoBehaviour {
 	}
 
 	Queue<TriggerQueueElement> triggerQueue = new Queue<TriggerQueueElement>();
+	private Object triggerQueueLock = new Object();
 
 	void Update(){
-		
-		TriggerQueueElement cmd = null;
 
-		while (triggerQueue.Count > 0) {
+		lock (triggerQueueLock) {
 
-			try {
-				cmd = triggerQueue.Peek();
-				cmd.Trigger ();
-				triggerQueue.Dequeue();
-			} catch (System.Exception ex) {
-				Debug.Log (cmd);
-				Debug.Log (cmd.handler.name);
-				Debug.Log (cmd.args);
-
+			while (triggerQueue.Count > 0) {
+				triggerQueue.Dequeue ().Trigger ();
 			}
-
-
-			//triggerQueue.Dequeue ().Trigger ();
 
 		}
 
-
 	}
 	#endregion
 
-
-	#region LagModule
-
-	[SerializeField]
-	float LastPacketTime = 0f;
-
-	[SerializeField]
-	float MaxLag = float.MinValue;
-
-	[SerializeField]
-	float MinLag = float.MaxValue;
-
-	void PrintLag(){
-		float CurrentTime = Time.time;
-		float lag = CurrentTime - LastPacketTime;
-		if (lag > MaxLag)
-			MaxLag = lag;
-		if (lag < MinLag)
-			MinLag = lag;
-
-		print (lag);
-
-		LastPacketTime = CurrentTime;
-	}
-
-	#endregion
 
 }

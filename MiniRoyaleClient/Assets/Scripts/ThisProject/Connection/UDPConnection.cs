@@ -14,7 +14,7 @@ public class UDPConnection : MonoBehaviour {
 	UdpPeer connection = new UdpPeer ();
 
 	//Ip and port information of server (can change dynamically) 
-	IPEndPoint ServerEndPoint;
+	public IPEndPoint ServerEndPoint;
 
 	void Awake(){
 

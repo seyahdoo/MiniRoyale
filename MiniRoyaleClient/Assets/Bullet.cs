@@ -21,6 +21,12 @@ public class Bullet : MonoBehaviour {
 
 	}
 
+	public void Delete(){
+
+		//TODO pool This
+		Destroy (this.gameObject);
+
+	}
 
 
 

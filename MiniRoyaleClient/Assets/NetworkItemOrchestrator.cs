@@ -11,7 +11,9 @@ public class NetworkItemOrchestrator : MonoBehaviour {
 
 
 	public void RequestItemInfo(int playerID){
-	
+
+		//Debug.Log (connection.ServerEndPoint.Address+":"+connection.ServerEndPoint.Port + ">" +"Requesting item info");
+
 		connection.Send ("PIREQ:" + playerID + ";");
 
 	}
