@@ -103,5 +103,13 @@ public class NetworkRivalOrchestrator : MonoBehaviour {
 		rival.setPosition (new Vector2(posx,posy),rot);
 	}
 
+	public void KILED(int playerID){
+	
+
+		Rival rival = GetRival (playerID);
+
+		rival.Killed ();
+
+	}
 
 }

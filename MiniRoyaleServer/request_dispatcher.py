@@ -50,9 +50,7 @@ def request_dispatcher(client_thread, buffer):
         # PIREQ:playerid;
         elif cmd[0:5] == "PIREQ":
             player_id = int(cmd[6:])
-            player_information = ""
-            if player.players.get(player_id) is not None:
-                player_information += str("PINFO:{},KekistPersonInTheTown,[{}];".format(player_id, player.players[player_id].inventory.get_item_list()))
+            player_information = player.get_player_info_command_message(player_id)
             # PINFO:12342,SnowDaddy,[232323+1.3332131+2]
             print("PIREQ: " + player_information)
             client_thread.send(player_information)

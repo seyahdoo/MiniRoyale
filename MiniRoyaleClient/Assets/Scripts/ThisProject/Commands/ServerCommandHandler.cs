@@ -8,6 +8,7 @@ public class ServerCommandHandler : ScriptableObject {
 
 	public string CommandCode;
 	public int ArgumentCount = 0;
+	public bool DEBUG = false;
 
 	public GameEvent Event;
 
@@ -25,6 +26,10 @@ public class ServerCommandHandler : ScriptableObject {
 		if (args.Length != ArgumentCount) {
 			Debug.LogError ("Error: Argument count mismatch on command "+CommandCode+"! Expecting: "+ArgumentCount+" Received: "+args.Length+"!");
 			return;
+		}
+			
+		if (DEBUG) {
+			Debug.Log ("DEBUG:" + CommandCode + ":" + args.ToString());
 		}
 
 		Event.Raise (args);

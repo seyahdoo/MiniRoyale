@@ -22,6 +22,7 @@ public class Rival : MonoBehaviour {
 
 	bool positionJustUpdated = false;
 
+	public Sprite DeadSprite;
 
 	void Awake(){
 		myTransform = transform;
@@ -63,5 +64,18 @@ public class Rival : MonoBehaviour {
 		myTransform.localEulerAngles = new Vector3 (0f, 0f, rot);
 
 	}
+
+	public void Killed ()
+	{
+
+		Debug.Log ("im dead");
+
+		pawn.bodyRenderer.sprite = DeadSprite;
+		pawn.weaponRenderer.sprite = null;
+
+	}
+
+
+
 
 }

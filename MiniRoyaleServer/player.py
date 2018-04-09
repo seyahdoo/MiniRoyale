@@ -9,6 +9,7 @@ import pymunk
 from math import radians
 from pymunk import Vec2d
 from math import degrees
+import client
 
 import physics
 
@@ -20,11 +21,16 @@ player_shape_to_player = {}
 
 class Player:
 
-    def __init__(self):
+    def __init__(self,_client):
         global players
         global players_lock
+
+        self.client = _client
+
         self.movement_speed = 0
         self.health = 100
+        self.dead = False
+        self.name = "Unknown"
 
         self.dropout_time = 0
         self.last_packet_id = 0
@@ -106,3 +112,21 @@ class Player:
     def on_bullet_hit(self, bullet_obj):
         self.health -= bullet_obj.damage
         print('got hit! ' + str(self.health))
+        if self.health < 0:
+            self.killed()
+
+    def killed(self):
+        self.health = 0
+        self.dead = True
+        print("im dead as {}".format(self.name))
+        # send info to clients
+        client.send_message_to_nearby_clients(self.client, "KILED:{}".format(self.player_id))
+
+
+def get_player_info_command_message(player_id):
+    player_information = ""
+    p = players.get(player_id)
+    if p is not None:
+        player_information += str("PINFO:{},{},[{}];".format(player_id, p.name, p.inventory.get_item_list()))
+
+    return player_information

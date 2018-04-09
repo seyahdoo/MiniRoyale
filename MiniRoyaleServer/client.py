@@ -11,11 +11,12 @@ clients = {}
 clients_lock = threading.Lock()
 ping_lock = threading.Lock()
 
+
 class Client:
-    
+
     def __init__(self, address):
         print("Client Init")
-        
+
         # Client Address
         self.address = address
         self.server_ip = None
@@ -58,7 +59,7 @@ class Client:
         print("PORTO:" + str(self.server_port) + ";")
 
         # create or login a player
-        self.player = Player()
+        self.player = Player(self)
         print("created Player for Client, player_id:{}".format(self.player.player_id))
 
         # create ping thread
@@ -68,14 +69,14 @@ class Client:
 
     def listener(self):
         # Listen to the port
-        while True:   
+        while True:
             # Receive
             data, address = self.socket.recvfrom(1024)
             # Decode message
-            text = data.decode('utf-8') 
+            text = data.decode('utf-8')
             # Message Received
-            self.msg_received(text) 
-    
+            self.msg_received(text)
+
     def ping_routine(self):
         # Send ping request every 1 seconds
         # Disconnect if no answer has came for 60 seconds
@@ -92,7 +93,7 @@ class Client:
             else:
                 print("Client with player_id:{} has not responded to PINGO for {} seconds.".format(self.player.player_id,self.player.dropout_time))
                 return
-    
+
     def send(self,text):
         # print("UDP:Sending:"+text)
         self.socket.sendto(bytes(text, 'utf-8'), self.address)
@@ -146,3 +147,11 @@ def send_game_info_to_all_clients():
     global clients
     for current_client in clients.values():
         current_client.send_game_info()
+
+
+def send_message_to_nearby_clients(client_object,message):
+    global clients
+    for current_client in clients.values():
+        current_client.send(message)
+
+    # TODO optimize this

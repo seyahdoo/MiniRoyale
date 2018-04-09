@@ -194,6 +194,7 @@ MonoBehaviour:
   OldRotation: 0
   myTransform: {fileID: 4891784477114346}
   myGameObject: {fileID: 1542345916099422}
+  DeadSprite: {fileID: 21300000, guid: f5415c40eb111354bbbda3fb9c878305, type: 3}
 --- !u!212 &212675612061609416
 SpriteRenderer:
   m_ObjectHideFlags: 1

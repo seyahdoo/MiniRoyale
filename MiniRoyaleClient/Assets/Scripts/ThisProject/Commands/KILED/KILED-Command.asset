@@ -9,9 +9,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 991c3bc74e7103c419502eebd95e568d, type: 3}
-  m_Name: PINFO-Command
+  m_Name: KILED-Command
   m_EditorClassIdentifier: 
-  CommandCode: PINFO
-  ArgumentCount: 3
+  CommandCode: KILED
+  ArgumentCount: 1
   DEBUG: 1
-  Event: {fileID: 11400000, guid: 7b11fdf1c45a0aa4a807b53c0f700758, type: 2}
+  Event: {fileID: 11400000, guid: f3afb7a338465c24c88eebc92e70df04, type: 2}

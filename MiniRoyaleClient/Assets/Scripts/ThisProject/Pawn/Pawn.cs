@@ -35,7 +35,7 @@ public class Pawn : MonoBehaviour {
 
 
 		item.item.Equip(this);
-		inventory.Add (item.id,item.item);
+		//inventory.Add (item.id,item.item);
 	}
 
 	public void EquipThreadSafe(UniqueItem item){
