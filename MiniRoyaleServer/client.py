@@ -149,9 +149,10 @@ def send_game_info_to_all_clients():
         current_client.send_game_info()
 
 
-def send_message_to_nearby_clients(client_object,message):
+def send_message_to_nearby_clients(pos_x, pos_y, message):
     global clients
     for current_client in clients.values():
         current_client.send(message)
+        # print(message)
 
     # TODO optimize this

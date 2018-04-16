@@ -1,6 +1,6 @@
 import game
 import physics
-
+import client
 import pymunk
 from pymunk import Vec2d
 from math import radians
@@ -49,7 +49,9 @@ class Bullet:
         #print("Successfully created bullet from player_id:{}".format(self.player_id))
         
     def update(self):
-        if self.frame_count < game.game_instance.tick_rate * 20:
+        # Delete bullet in 3 seconds
+        bullet_delete_timer = 3
+        if self.frame_count < game.game_instance.tick_rate * bullet_delete_timer:
             self.frame_count += 1
             return True
         else:
@@ -81,12 +83,19 @@ def update_bullet_state():
         current_bullet.update()
 
 
-# TODO send DELET information to client
+# TODO send DELBL information to client
 def delete_marked_bullets():
     global bullets
     global bullet_indexes_to_be_deleted
     for i in bullet_indexes_to_be_deleted:
+        # Store the bullet to be deleted next's information
+        deleted_bullet_info = "DELBL:{};".format(bullets[i].bullet_id)
+        deleted_bullet_pos_x = bullets[i].body.position[0]
+        deleted_bullet_pos_y = bullets[i].body.position[1]
+        # Delete the bullet first
         physics.space.remove(bullets[i].body, bullets[i].shape)
         del bullets[i]
+        # Then send information of the deleted bullet
+        client.send_message_to_nearby_clients(deleted_bullet_pos_x, deleted_bullet_pos_y, deleted_bullet_info)
         # print("Successfully deleted bullet")
     bullet_indexes_to_be_deleted = []

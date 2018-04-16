@@ -1,6 +1,5 @@
 from Inventory.inventory import Inventory
 import Inventory.Items.item as item
-
 import random
 import threading
 import game
@@ -61,8 +60,12 @@ class Player:
         player_shape_to_player[self.shape] = self
 
         physics.space.add(self.body, self.shape)
+        # self.max_angle = 0.0
+        # self.min_angle = 10.0
 
     def move(self, packet_id, pos_x, pos_y, angle):
+        if self.dead:
+            return
         # print("player_id:{} trying to move to ({},{})".format(str(self.player_id), str(pos_x), str(pos_y)))
         # drop packet id
         if self.last_packet_id > int(packet_id):
@@ -71,14 +74,23 @@ class Player:
             self.last_packet_id = int(packet_id)
         try:
             self.body.position = Vec2d(float(pos_x), float(pos_y))
-            self.body.angle = radians(float(angle))
+            self.body.angle = (float(angle) / 1000)
+            # self.body.angle = radians(float(angle) / 1000)
+            # if float(angle) > self.max_angle:
+            #     self.max_angle = float(angle)
+            # if float(angle) < self.min_angle:
+            #     self.min_angle = float(angle)
             # TODO solve 0 angle problem
-            # print('Angle:'+ angle)
+            # print('Angle:'+ str(float(angle) / 1000))
+            # print('Max Angle:'+ str(self.max_angle / 1000))
+            # print('Min Angle:'+ str(self.min_angle / 1000))
+            # print('Current Radians: ' + str(radians(float(angle) / 1000)))
+            # print('rad1: ' +str(radians(0.01)))
+            # print('rad2: ' +str(radians(359.90)))
             # print('Radians:'+ str(radians(float(angle))))
             # if -1 < float(angle) < 1:
             #    print('fucked up')
             #    print(self.body.angle)
-
 
         except:
             print("Error: Can not parse position info. Playerid:{} ".format(self.player_id))
@@ -94,6 +106,8 @@ class Player:
             self.current_weapon_in_hand.item_id, self.current_weapon_in_hand.item_type_id))
 
     def shoot(self):
+        if self.dead:
+            return
         weapon_type_id = self.current_weapon_in_hand.item_type_id
 
         speed = 1
@@ -101,7 +115,7 @@ class Player:
 
         if weapon_type_id == 1001:
             speed = 15
-            damage = 15
+            damage = 55
         elif weapon_type_id == 1002:
             speed = 15
             damage = 20
@@ -120,7 +134,9 @@ class Player:
         self.dead = True
         print("im dead as {}".format(self.name))
         # send info to clients
-        client.send_message_to_nearby_clients(self.client, "KILED:{}".format(self.player_id))
+        client.send_message_to_nearby_clients(self.body.position[0], self.body.position[1], "KILED:{}".format(self.player_id))
+        physics.space.remove(self.body, self.shape)
+
 
 
 def get_player_info_command_message(player_id):
