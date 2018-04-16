@@ -13,5 +13,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CommandCode: PINFO
   ArgumentCount: 3
-  DEBUG: 1
+  DEBUG: 0
   Event: {fileID: 11400000, guid: 7b11fdf1c45a0aa4a807b53c0f700758, type: 2}

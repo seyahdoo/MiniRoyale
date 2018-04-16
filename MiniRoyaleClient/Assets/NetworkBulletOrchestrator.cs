@@ -37,7 +37,7 @@ public class NetworkBulletOrchestrator : MonoBehaviour {
 	/// <returns><c>true</c>, if bullet was deleted, <c>false</c> if there is no bullet with given id.</returns>
 	/// <param name="id">Identifier.</param>
 	public bool TryDeleteBullet(int id){
-	
+
 		if (bullets.ContainsKey (id)) {
 			Bullet b = bullets [id];
 			b.Delete ();

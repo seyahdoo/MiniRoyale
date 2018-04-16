@@ -73,6 +73,7 @@ class Player:
         else:
             self.last_packet_id = int(packet_id)
         try:
+            # TODO make this with pymunk
             self.body.position = Vec2d(float(pos_x), float(pos_y))
             self.body.angle = (float(angle) / 1000)
             # self.body.angle = radians(float(angle) / 1000)

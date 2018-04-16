@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using seyahdoo.events;
 
-public class DELETListener : GameEventUser {
+public class DELBLListener : GameEventUser {
 
 	public NetworkBulletOrchestrator bulletOrchestrator;
 

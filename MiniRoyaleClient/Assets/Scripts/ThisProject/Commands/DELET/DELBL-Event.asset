@@ -8,9 +8,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 991c3bc74e7103c419502eebd95e568d, type: 3}
-  m_Name: DELET-Command
+  m_Script: {fileID: 11500000, guid: 52cd52da4d65ca147bb09f0ef9ba40a3, type: 3}
+  m_Name: DELBL-Event
   m_EditorClassIdentifier: 
-  CommandCode: DELET
-  ArgumentCount: 1
-  Event: {fileID: 11400000, guid: 8051eeed1a030d84894c48c0b298192a, type: 2}

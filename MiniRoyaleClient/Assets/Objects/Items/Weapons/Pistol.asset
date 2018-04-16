@@ -13,7 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   typeId: 1001
   itemName: Pistol
-  description: Basic pistol, use with coution
+  description: Basic pistol, use with caution
   fireRate: 0.4
   gunSprite: {fileID: 21300000, guid: c70de3013205f3742a736f323831ebb5, type: 3}
   color: {r: 0.3372549, g: 0.3372549, b: 0.3372549, a: 1}

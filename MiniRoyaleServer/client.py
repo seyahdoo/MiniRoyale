@@ -38,6 +38,7 @@ class Client:
     def run(self):
         print("creating socket")
         # Binding of Ip
+        # TODO not any ip, player ip DAMN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         self.server_ip = "0.0.0.0"
         # Random available Port
         self.server_port = 0  # random write zero here
@@ -92,6 +93,7 @@ class Client:
                 time.sleep(1)
             else:
                 print("Client with player_id:{} has not responded to PINGO for {} seconds.".format(self.player.player_id,self.player.dropout_time))
+                # TODO terminate client
                 return
 
     def send(self,text):
