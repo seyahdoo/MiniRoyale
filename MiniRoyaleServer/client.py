@@ -8,6 +8,7 @@ from player import Player
 from math import degrees
 
 clients = {}
+clients_to_be_added = []
 clients_lock = threading.Lock()
 ping_lock = threading.Lock()
 
@@ -49,6 +50,11 @@ class Client:
         # Store generated port
         self.server_port = self.socket.getsockname()[1]  # new port
 
+        # create or login a player
+        self.player = Player(self)
+        print("created Player for Client, player_id:{}".format(self.player.player_id))
+        self.send("PIREQ: " + player.get_player_info_command_message(self.player.player_id))
+
         # listen with a new thread
         self.listener_thread = threading.Thread(target=self.listener)
         self.listener_thread.daemon = True
@@ -58,10 +64,6 @@ class Client:
         # Send newly generated socket info to client
         self.send("PORTO:" + str(self.server_port) + ";")
         print("PORTO:" + str(self.server_port) + ";")
-
-        # create or login a player
-        self.player = Player(self)
-        print("created Player for Client, player_id:{}".format(self.player.player_id))
 
         # create ping thread
         self.ping_thread = threading.Thread(target=self.ping_routine)
@@ -132,7 +134,7 @@ class Client:
         self.send(to_send)
 
 
-def new_connection(address):
+def new_connection_old(address):
     global clients
     global clients_lock
     with clients_lock:
@@ -140,6 +142,19 @@ def new_connection(address):
             print("new connection will commence")
             c = Client(address)
             clients[address] = c
+        else:
+            print("no new connection")
+
+
+def new_connection(address):
+    global clients
+    global clients_lock
+    global clients_to_be_added
+    with clients_lock:
+        if address not in clients:
+            print("new connection will commence")
+            c = Client(address)
+            clients_to_be_added.append(c)
         else:
             print("no new connection")
 
@@ -156,5 +171,22 @@ def send_message_to_nearby_clients(pos_x, pos_y, message):
     for current_client in clients.values():
         current_client.send(message)
         # print(message)
-
     # TODO optimize this
+
+
+def send_winner_information_to_all_players(winner_player):
+    # global clients
+    #
+    # for current_client in clients.values():
+    #     current_client.send()
+    pass
+
+
+def add_clients_to_be_added():
+    global clients_to_be_added
+    global clients
+
+    for current_client in clients_to_be_added:
+        clients[current_client.address] = current_client
+
+    clients_to_be_added = []

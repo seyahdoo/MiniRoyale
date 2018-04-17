@@ -26,7 +26,7 @@ def connection_server():
 
 if __name__ == "__main__":
 
-    game.game_start()
+    game.game_init()
 
     connection_server_thread = threading.Thread(target=connection_server)
     connection_server_thread.daemon = True

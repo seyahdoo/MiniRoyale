@@ -50,20 +50,19 @@ class Player:
         self.add_cheat_items_for_testing()
 
         # physics stuff
-        self.body = pymunk.Body(500, pymunk.inf)
-        self.body.position = Vec2d(0, 0)
+        self.body = None
+        self.shape = None
+        self.create_body()
 
-        self.shape = pymunk.Circle(self.body, 0.55)
-        self.shape.elasticity = 0
-        self.shape.collision_type = physics.collision_types["player"]
-
-        player_shape_to_player[self.shape] = self
-
-        physics.space.add(self.body, self.shape)
+        # TODO Carry this to game_start() function
+        self.body.position = Vec2d(random.uniform(-100, 100), random.uniform(-100, 100))
+        # print('Body Position: ' + str(self.body.position))
         # self.max_angle = 0.0
         # self.min_angle = 10.0
 
     def move(self, packet_id, pos_x, pos_y, angle):
+        # TODO computate max possible distance player can move since last move request
+        # TODO and make this computation done by pymunk
         if self.dead:
             return
         # print("player_id:{} trying to move to ({},{})".format(str(self.player_id), str(pos_x), str(pos_y)))
@@ -73,26 +72,8 @@ class Player:
         else:
             self.last_packet_id = int(packet_id)
         try:
-            # TODO make this with pymunk
             self.body.position = Vec2d(float(pos_x), float(pos_y))
-            self.body.angle = (float(angle) / 1000)
-            # self.body.angle = radians(float(angle) / 1000)
-            # if float(angle) > self.max_angle:
-            #     self.max_angle = float(angle)
-            # if float(angle) < self.min_angle:
-            #     self.min_angle = float(angle)
-            # TODO solve 0 angle problem
-            # print('Angle:'+ str(float(angle) / 1000))
-            # print('Max Angle:'+ str(self.max_angle / 1000))
-            # print('Min Angle:'+ str(self.min_angle / 1000))
-            # print('Current Radians: ' + str(radians(float(angle) / 1000)))
-            # print('rad1: ' +str(radians(0.01)))
-            # print('rad2: ' +str(radians(359.90)))
-            # print('Radians:'+ str(radians(float(angle))))
-            # if -1 < float(angle) < 1:
-            #    print('fucked up')
-            #    print(self.body.angle)
-
+            self.body.angle = radians(float(angle))
         except:
             print("Error: Can not parse position info. Playerid:{} ".format(self.player_id))
 
@@ -138,12 +119,67 @@ class Player:
         client.send_message_to_nearby_clients(self.body.position[0], self.body.position[1], "KILED:{}".format(self.player_id))
         physics.space.remove(self.body, self.shape)
 
+        game.game_logic()
+
+    def create_body(self):
+        self.body = pymunk.Body(500, pymunk.inf)
+
+        self.shape = pymunk.Circle(self.body, 0.55)
+        self.shape.elasticity = 0
+        self.shape.collision_type = physics.collision_types["player"]
+
+        player_shape_to_player[self.shape] = self
+
+        physics.space.add(self.body, self.shape)
 
 
 def get_player_info_command_message(player_id):
     player_information = ""
     p = players.get(player_id)
-    if p is not None:
+
+    try:
         player_information += str("PINFO:{},{},[{}];".format(player_id, p.name, p.inventory.get_item_list()))
+        if p.dead:
+            player_information += str("KILED:{};".format(player_id))
+    except:
+        pass
 
     return player_information
+
+
+# Return the alive player number by checking status of "dead" variable
+def get_alive_player_count():
+    global players
+    alive_player_count = 0
+
+    for current_player in players.values():
+        if not current_player.dead:
+            alive_player_count += 1
+
+    return alive_player_count
+
+
+# Buraya bak
+def get_winner_player():
+    global players
+
+    winner_player = None
+
+    for current_player in players.values():
+        if not current_player.dead:
+            winner_player = current_player
+            return winner_player
+
+    return None
+
+
+def grant_life_to_all_defilers():
+    global players
+
+    for current_player in players.values():
+        current_player.dead = False
+        current_player.health = 100
+        current_player.create_body()
+
+        # TODO Carry this to game_start() function
+        current_player.body.position = Vec2d(random.uniform(-100, 100), random.uniform(-100, 100))
