@@ -173,6 +173,7 @@ MonoBehaviour:
   PlayerName: 
   bodyRenderer: {fileID: 212675612061609416}
   weaponRenderer: {fileID: 212705199436974040}
+  rival: {fileID: 114816234183061138}
 --- !u!114 &114816234183061138
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -186,15 +187,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlayerID: 0
   pawn: {fileID: 114556213005500238}
-  NewPosition: {x: 0, y: 0}
   NewPositionTime: 0
-  OldPosition: {x: 0, y: 0}
   OldPositionTime: 0
+  NewPosition: {x: 0, y: 0}
+  OldPosition: {x: 0, y: 0}
   NewRotation: 0
   OldRotation: 0
   myTransform: {fileID: 4891784477114346}
   myGameObject: {fileID: 1542345916099422}
   DeadSprite: {fileID: 21300000, guid: f5415c40eb111354bbbda3fb9c878305, type: 3}
+  isDead: 0
 --- !u!212 &212675612061609416
 SpriteRenderer:
   m_ObjectHideFlags: 1

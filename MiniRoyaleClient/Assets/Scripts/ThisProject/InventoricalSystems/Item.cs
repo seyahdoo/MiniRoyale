@@ -23,7 +23,11 @@ public class Item : ScriptableObject {
 
 	public virtual void Equip(Pawn pawn){
 
-		///Maybe Change Body color?
+		//Dont draw weapon if player is dead
+		if(pawn.rival.isDead){
+			pawn.weaponRenderer.enabled = false;
+
+		}
 
 	}
 

@@ -13,6 +13,8 @@ public class Pawn : MonoBehaviour {
 
 	public Dictionary<int,Item> inventory = new Dictionary<int,Item>();
 
+	public Rival rival;
+
 	Queue<UniqueItem> EquipItemQueue = new Queue<UniqueItem>();
 	Queue<UniqueItem> DeEquipItemQueue = new Queue<UniqueItem>();
 

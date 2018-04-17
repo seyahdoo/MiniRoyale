@@ -26,12 +26,13 @@ public class Weapon : Item {
 
 	public override void Equip (Pawn pawn)
 	{
-
+		
 		pawn.weaponRenderer.sprite = gunSprite;
 		pawn.weaponRenderer.color = color;
 
 		pawn.weaponRenderer.enabled = true;
 
+		base.Equip (pawn);
 	}
 
 	public override void DeQuip (Pawn pawn)

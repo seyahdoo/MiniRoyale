@@ -1078,7 +1078,7 @@ Prefab:
       objectReference: {fileID: 1005560707}
     - target: {fileID: 1396733476159676, guid: db9f75739249f65468c69517bb740cae, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114144986196243964, guid: db9f75739249f65468c69517bb740cae,
         type: 2}
@@ -1090,6 +1090,14 @@ Prefab:
       propertyPath: crosshair
       value: 
       objectReference: {fileID: 1005560707}
+    - target: {fileID: 4966924471243666, guid: db9f75739249f65468c69517bb740cae, type: 2}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4966924471243666, guid: db9f75739249f65468c69517bb740cae, type: 2}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: db9f75739249f65468c69517bb740cae, type: 2}
   m_IsPrefabParent: 0
