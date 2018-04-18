@@ -37,10 +37,8 @@ public class Rival : MonoBehaviour {
 		OldPositionTime = NewPositionTime;
 		NewPosition = pos;
 
-		OldRotation = (NewRotation + 360) % 360;
 
-		//Debug.Log ("Modded OldRotation:" + NewRotation +","+ OldRotation);
-
+		OldRotation = NewRotation;
 		NewRotation = rot;
 
 		positionJustUpdated = true;
@@ -59,14 +57,10 @@ public class Rival : MonoBehaviour {
 		              );
 
 
-
-		//TODO Fix 1 to 359 interpolation bug
-		if(NewRotation - OldRotation > 185){
-			NewRotation -= 360;
-		}
-
-		if(OldRotation - NewRotation > 185){
-			NewRotation += 360;
+		if(NewRotation - OldRotation > 180f){
+			OldRotation += 360f;
+		}else if(OldRotation - NewRotation > 180f){
+			OldRotation -= 360f;
 		}
 
 		float rot = Mathf.Lerp (
