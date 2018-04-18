@@ -9,7 +9,6 @@ from math import degrees
 
 clients = {}
 clients_to_be_added = []
-clients_lock = threading.Lock()
 ping_lock = threading.Lock()
 
 
@@ -53,7 +52,7 @@ class Client:
         # create or login a player
         self.player = Player(self)
         print("created Player for Client, player_id:{}".format(self.player.player_id))
-        self.send("PIREQ: " + player.get_player_info_command_message(self.player.player_id))
+        self.send("PIREQ:" + player.get_player_info_command_message(self.player.player_id))
 
         # listen with a new thread
         self.listener_thread = threading.Thread(target=self.listener)
@@ -136,17 +135,14 @@ class Client:
 
 def new_connection(address):
     global clients
-    global clients_lock
     global clients_to_be_added
 
-    # TODO wtf
-    with clients_lock:
-        if address not in clients:
-            print("new connection will commence")
-            c = Client(address)
-            clients_to_be_added.append(c)
-        else:
-            print("no new connection")
+    if address not in clients:
+        print("new connection will commence")
+        c = Client(address)
+        clients_to_be_added.append(c)
+    else:
+        print("no new connection")
 
 
 def send_game_info_to_all_clients():
