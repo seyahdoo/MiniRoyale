@@ -4,8 +4,7 @@ import threading
 import timeit
 import time
 import client
-import player
-import pymunk
+import director
 
 import physics
 
@@ -62,13 +61,6 @@ class Game:
             # Send updated game info to all players
             client.send_game_info_to_all_clients()
 
-            # Check whether game is over or not every time a specific event has occurred
-            # Like when a player has died
-            if self.winner_player is not None:
-                print('Winner name and player_id: {}, {}'.format(self.winner_player.name, self.winner_player.player_id))
-                self.winner_player = None
-                game_restart()
-
             # TODO what if server don't have enough time to update
             # calculated_sleep < 0 !!!
             calculated_sleep = anti_tick_rate - (timeit.default_timer() - enter_time)
@@ -76,24 +68,6 @@ class Game:
                 time.sleep(calculated_sleep)
 
         # print("Successfully spawned an item with item_id:{}, item_type_id:{}".format(spawned_item_list[test_item_id].item_id,spawned_item_list[test_item_id].item_type_id))
-
-
-# Return True if the game is over else, return False
-def game_logic():
-    alive_player_count = player.get_alive_player_count()
-    total_player_count = len(player.players)
-
-    # If remaining player number is lower than 2, this means game is over
-    if alive_player_count < 2 < total_player_count:
-        game_instance.winner_player = player.get_winner_player()
-        return True
-
-    return False
-
-
-def game_restart():
-    player.grant_life_to_all_defilers()
-
 
 def game_init():
     global game_instance

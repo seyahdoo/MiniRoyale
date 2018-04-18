@@ -23,6 +23,9 @@ def setup():
 
 def tick(anti_tick_rate):
     global space
+
+    thread_safe_remove_body()
+
     space.step(anti_tick_rate)
 
 
@@ -48,3 +51,8 @@ def on_bullet_player_collision_begin(arbiter, space, data):
     bullet.bullet_indexes_to_be_deleted.append(bullet_obj.bullet_id)
 
     return False
+
+
+# TODO remove body thread safely
+def thread_safe_remove_body(body, shape):
+    pass

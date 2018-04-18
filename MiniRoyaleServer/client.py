@@ -52,7 +52,7 @@ class Client:
         # create or login a player
         self.player = Player(self)
         print("created Player for Client, player_id:{}".format(self.player.player_id))
-        self.send("PIREQ:" + player.get_player_info_command_message(self.player.player_id))
+        self.send(player.get_player_info_command_message(self.player.player_id))
 
         # listen with a new thread
         self.listener_thread = threading.Thread(target=self.listener)

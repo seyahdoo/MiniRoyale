@@ -2,7 +2,7 @@ from Inventory.inventory import Inventory
 import Inventory.Items.item as item
 import random
 import threading
-import game
+import director
 import bullet
 import pymunk
 from math import radians
@@ -16,6 +16,12 @@ players = {}
 players_lock = threading.Lock()
 
 player_shape_to_player = {}
+
+alive_player_count = 0
+alive_player_count_lock = threading.Lock()
+
+total_player_count = 0
+total_player_count_lock = threading.Lock()
 
 
 class Player:
@@ -56,9 +62,15 @@ class Player:
 
         # TODO Carry this to game_start() function
         self.body.position = Vec2d(random.uniform(-100, 100), random.uniform(-100, 100))
-        # print('Body Position: ' + str(self.body.position))
-        # self.max_angle = 0.0
-        # self.min_angle = 10.0
+
+        global total_player_count
+        global alive_player_count
+
+        with total_player_count_lock:
+            total_player_count += 1
+
+        with alive_player_count_lock:
+            alive_player_count += 1
 
     def move(self, packet_id, pos_x, pos_y, angle):
         # TODO computate max possible distance player can move since last move request
@@ -119,7 +131,12 @@ class Player:
         client.send_message_to_nearby_clients(self.body.position[0], self.body.position[1], "KILED:{}".format(self.player_id))
         physics.space.remove(self.body, self.shape)
 
-        game.game_logic()
+        global alive_player_count
+
+        with alive_player_count_lock:
+            alive_player_count -= 1
+
+        director.on_player_killed()
 
     def create_body(self):
         self.body = pymunk.Body(500, pymunk.inf)
@@ -147,18 +164,6 @@ def get_player_info_command_message(player_id):
     return player_information
 
 
-# Return the alive player number by checking status of "dead" variable
-def get_alive_player_count():
-    global players
-    alive_player_count = 0
-
-    for current_player in players.values():
-        if not current_player.dead:
-            alive_player_count += 1
-
-    return alive_player_count
-
-
 # Buraya bak
 def get_winner_player():
     global players
@@ -183,3 +188,11 @@ def grant_life_to_all_defilers():
 
         # TODO Carry this to game_start() function
         current_player.body.position = Vec2d(random.uniform(-100, 100), random.uniform(-100, 100))
+
+    global alive_player_count
+    global total_player_count
+
+    with alive_player_count_lock:
+        with total_player_count_lock:
+            alive_player_count = total_player_count
+
