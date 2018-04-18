@@ -134,22 +134,12 @@ class Client:
         self.send(to_send)
 
 
-def new_connection_old(address):
-    global clients
-    global clients_lock
-    with clients_lock:
-        if address not in clients:
-            print("new connection will commence")
-            c = Client(address)
-            clients[address] = c
-        else:
-            print("no new connection")
-
-
 def new_connection(address):
     global clients
     global clients_lock
     global clients_to_be_added
+
+    # TODO wtf
     with clients_lock:
         if address not in clients:
             print("new connection will commence")
