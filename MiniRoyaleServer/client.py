@@ -78,6 +78,11 @@ class Client:
                 data, address = self.socket.recvfrom(1024)
                 # Decode message
                 text = data.decode('utf-8')
+                # Message Received
+                self.msg_received(text)
+            except:
+                pass
+                # print('Did not receive incoming message')
 
     def ping_routine(self):
         # Send ping request every 1 seconds
@@ -106,7 +111,7 @@ class Client:
         # print("UDP:Received:"+text)
         request_dispatcher(self, text)
 
-    def send_game_info(self):
+    def send_game_info(self, copy_of_bullets, copy_of_players):
 
         # TODO send spawned item information to player
 
