@@ -2,12 +2,13 @@ import game
 import physics
 import client
 import pymunk
+import threading
 from pymunk import Vec2d
 from math import radians
 
 bullets = {}
-bullets_to_be_spawned = []
-bullet_indexes_to_be_deleted = []
+bullets_to_be_updated = {}
+bullets_lock = threading.RLock()
 
 bullet_shape_to_bullet = {}
 
@@ -45,8 +46,18 @@ class Bullet:
         self.body.velocity_func = constant_velocity
         ###
 
-        bullets_to_be_spawned.append(self)
-        #print("Successfully created bullet from player_id:{}".format(self.player_id))
+        with bullets_lock:
+            global bullets
+
+            game.game_instance.prop_id_counter += 1
+            bullet_id = game.game_instance.prop_id_counter
+
+            self.bullet_id = bullet_id
+
+            with physics.physics_lock:
+                physics.space.add(self.body, self.shape)
+
+            bullets[bullet_id] = self
         
     def update(self):
         # Delete bullet in 3 seconds
@@ -57,45 +68,31 @@ class Bullet:
         else:
             print("Trying to delete bullet_id:{}".format(self.bullet_id))
 
+            with bullets_lock:
+                deleted_bullet_info = "DELBL:{};".format(self.bullet_id)
+                deleted_bullet_pos_x = self.body.position[0]
+                deleted_bullet_pos_y = self.body.position[1]
+
+                with physics.physics_lock:
+                    physics.space.remove(self.body, self.shape)
+
+                del bullets[self.bullet_id]
+
+                client.send_message_to_nearby_clients(deleted_bullet_pos_x, deleted_bullet_pos_y, deleted_bullet_info)
+
             # Mark for delete
-            bullet_indexes_to_be_deleted.append(self.bullet_id)
+            # bullet_indexes_to_be_deleted.append(self.bullet_id)
 
             # TODO DELETE -> Send player info
             return False
 
 
-def spawn_bullets_to_be_spawned():
-    global bullets_to_be_spawned
-    global bullets
-    for current_bullet in bullets_to_be_spawned:
-        game.game_instance.prop_id_counter += 1
-        bullet_id = game.game_instance.prop_id_counter
-        current_bullet.bullet_id = bullet_id
-
-        bullets[bullet_id] = current_bullet
-        physics.space.add(current_bullet.body, current_bullet.shape)
-    bullets_to_be_spawned = []
-
-
 def update_bullet_state():
-    global bullets
-    for current_bullet in bullets.values():
-        current_bullet.update()
+    global bullets, bullets_to_be_updated
+    bullets_to_be_updated = bullets.copy()
 
+    with bullets_lock:
+        for current_bullet in bullets_to_be_updated.values():
+            current_bullet.update()
 
-# TODO send DELBL information to client
-def delete_marked_bullets():
-    global bullets
-    global bullet_indexes_to_be_deleted
-    for i in bullet_indexes_to_be_deleted:
-        # Store the bullet to be deleted next's information
-        deleted_bullet_info = "DELBL:{};".format(bullets[i].bullet_id)
-        deleted_bullet_pos_x = bullets[i].body.position[0]
-        deleted_bullet_pos_y = bullets[i].body.position[1]
-        # Delete the bullet first
-        physics.space.remove(bullets[i].body, bullets[i].shape)
-        del bullets[i]
-        # Then send information of the deleted bullet
-        client.send_message_to_nearby_clients(deleted_bullet_pos_x, deleted_bullet_pos_y, deleted_bullet_info)
-        # print("Successfully deleted bullet")
-    bullet_indexes_to_be_deleted = []
+    bullets_to_be_updated = {}

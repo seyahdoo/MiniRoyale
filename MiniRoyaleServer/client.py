@@ -3,6 +3,7 @@ import socket
 import time
 import player
 import bullet
+import physics
 from request_dispatcher import request_dispatcher
 from player import Player
 from math import degrees
@@ -73,11 +74,10 @@ class Client:
         # Listen to the port
         while True:
             # Receive
-            data, address = self.socket.recvfrom(1024)
-            # Decode message
-            text = data.decode('utf-8')
-            # Message Received
-            self.msg_received(text)
+            try:
+                data, address = self.socket.recvfrom(1024)
+                # Decode message
+                text = data.decode('utf-8')
 
     def ping_routine(self):
         # Send ping request every 1 seconds
@@ -111,14 +111,14 @@ class Client:
         # TODO send spawned item information to player
 
         to_send = ""
-        for rid, rival in player.players.items():
+        for rid, rival in copy_of_players.items():
             to_send += "MOVED:{},{},{},{},{};".format(self.sent_packet_id, rid, rival.body.position[0], rival.body.position[1], degrees(rival.body.angle))
             self.sent_packet_id += 1
             if len(to_send) > 400:
                 self.send(to_send)
                 to_send = ""
 
-        for b_id, current_bullet in bullet.bullets.items():
+        for b_id, current_bullet in copy_of_bullets.items():
             to_send += "SHOTT:{},{},{},{},{};".format(b_id,
                                                       current_bullet.body.position[0],
                                                       current_bullet.body.position[1],
@@ -148,8 +148,11 @@ def new_connection(address):
 def send_game_info_to_all_clients():
     # TODO Implement thread safe client
     global clients
+    copy_of_bullets = bullet.bullets.copy()
+    copy_of_players = player.players.copy()
+
     for current_client in clients.values():
-        current_client.send_game_info()
+        current_client.send_game_info(copy_of_bullets, copy_of_players)
 
 
 def send_message_to_nearby_clients(pos_x, pos_y, message):

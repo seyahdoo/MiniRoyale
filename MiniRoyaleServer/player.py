@@ -2,7 +2,7 @@ from Inventory.inventory import Inventory
 import Inventory.Items.item as item
 import random
 import threading
-import director
+import game
 import bullet
 import pymunk
 from math import radians
@@ -17,16 +17,10 @@ players_lock = threading.Lock()
 
 player_shape_to_player = {}
 
-alive_player_count = 0
-alive_player_count_lock = threading.Lock()
-
-total_player_count = 0
-total_player_count_lock = threading.Lock()
-
 
 class Player:
 
-    def __init__(self,_client):
+    def __init__(self, _client):
         global players
         global players_lock
 
@@ -58,19 +52,26 @@ class Player:
         # physics stuff
         self.body = None
         self.shape = None
-        self.create_body()
+        self.body = pymunk.Body(500, pymunk.inf)
+
+        self.shape = pymunk.Circle(self.body, 0.55)
+        self.shape.elasticity = 0
+        self.shape.collision_type = physics.collision_types["player"]
+
+        player_shape_to_player[self.shape] = self
+
+        with players_lock:
+
+            self.create_body()
+            players[self.player_id] = self
+
+        # player_to_be_added.append(self)
 
         # TODO Carry this to game_start() function
-        self.body.position = Vec2d(random.uniform(-100, 100), random.uniform(-100, 100))
-
-        global total_player_count
-        global alive_player_count
-
-        with total_player_count_lock:
-            total_player_count += 1
-
-        with alive_player_count_lock:
-            alive_player_count += 1
+        # self.body.position = Vec2d(random.uniform(-100, 100), random.uniform(-100, 100))
+        # print('Body Position: ' + str(self.body.position))
+        # self.max_angle = 0.0
+        # self.min_angle = 10.0
 
     def move(self, packet_id, pos_x, pos_y, angle):
         # TODO computate max possible distance player can move since last move request
@@ -129,14 +130,11 @@ class Player:
         print("im dead as {}".format(self.name))
         # send info to clients
         client.send_message_to_nearby_clients(self.body.position[0], self.body.position[1], "KILED:{}".format(self.player_id))
-        physics.space.remove(self.body, self.shape)
 
-        global alive_player_count
+        with physics.physics_lock:
+            physics.space.remove(self.body, self.shape)
 
-        with alive_player_count_lock:
-            alive_player_count -= 1
-
-        director.on_player_killed()
+        game.game_logic()
 
     def create_body(self):
         self.body = pymunk.Body(500, pymunk.inf)
@@ -147,7 +145,8 @@ class Player:
 
         player_shape_to_player[self.shape] = self
 
-        physics.space.add(self.body, self.shape)
+        with physics.physics_lock:
+            physics.space.add(self.body, self.shape)
 
 
 def get_player_info_command_message(player_id):
@@ -162,6 +161,18 @@ def get_player_info_command_message(player_id):
         pass
 
     return player_information
+
+
+# Return the alive player number by checking status of "dead" variable
+def get_alive_player_count():
+    global players
+    alive_player_count = 0
+
+    for current_player in players.values():
+        if not current_player.dead:
+            alive_player_count += 1
+
+    return alive_player_count
 
 
 # Buraya bak
@@ -188,11 +199,3 @@ def grant_life_to_all_defilers():
 
         # TODO Carry this to game_start() function
         current_player.body.position = Vec2d(random.uniform(-100, 100), random.uniform(-100, 100))
-
-    global alive_player_count
-    global total_player_count
-
-    with alive_player_count_lock:
-        with total_player_count_lock:
-            alive_player_count = total_player_count
-

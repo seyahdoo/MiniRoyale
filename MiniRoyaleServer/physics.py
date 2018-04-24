@@ -1,6 +1,8 @@
 import pymunk
 import player
 import bullet
+import threading
+import client
 
 collision_types = {
     "player": 1,
@@ -9,6 +11,8 @@ collision_types = {
 }
 
 space = None
+
+physics_lock = threading.Lock()
 
 
 def setup():
@@ -23,9 +27,6 @@ def setup():
 
 def tick(anti_tick_rate):
     global space
-
-    thread_safe_remove_body()
-
     space.step(anti_tick_rate)
 
 
@@ -47,12 +48,19 @@ def on_bullet_player_collision_begin(arbiter, space, data):
 
     player_obj.on_bullet_hit(bullet_obj)
 
+    # Store bullet to be deleted object's necessary information
+    deleted_bullet_info = "DELBL:{};".format(bullet_obj.bullet_id)
+    deleted_bullet_pos_x = bullet_obj.body.position[0]
+    deleted_bullet_pos_y = bullet_obj.body.position[1]
+
+    with physics_lock:
+        space.remove(bullet_obj.body, bullet_obj.shape)
+
+    with bullet.bullets_lock:
+        del bullet.bullets[bullet_obj.bullet_id]
     # mark bullet to be deleted
-    bullet.bullet_indexes_to_be_deleted.append(bullet_obj.bullet_id)
+    # bullet.bullet_indexes_to_be_deleted.append(bullet_obj.bullet_id)
+
+    client.send_message_to_nearby_clients(deleted_bullet_pos_x, deleted_bullet_pos_y, deleted_bullet_info)
 
     return False
-
-
-# TODO remove body thread safely
-def thread_safe_remove_body(body, shape):
-    pass
