@@ -29,7 +29,7 @@ class Bullet:
         self.body = pymunk.Body(1, pymunk.inf)
         self.body.position = (pos_x, pos_y)
 
-        self.shape = pymunk.Circle(self.body, 0.2)
+        self.shape = pymunk.Circle(self.body, 0.1)
         self.shape.elasticity = 1.0
         self.shape.collision_type = physics.collision_types["bullet"]
 

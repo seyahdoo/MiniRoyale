@@ -6,6 +6,10 @@ import time
 import client
 import player
 import physics
+import director
+
+# Global Variables
+game_instance = None
 
 
 class Game:
@@ -23,10 +27,10 @@ class Game:
 
         physics.setup()
 
-        print("initiated game")
-
         # Spawn items
-        item.spawn_items()
+        director.spawn_items()
+
+        print("initiated game")
 
         self.game_thread = threading.Thread(target=self.run)
         self.game_thread.daemon = True
@@ -65,12 +69,12 @@ class Game:
             if self.winner_player is not None:
                 print('Winner name and player_id: {}, {}'.format(self.winner_player.name, self.winner_player.player_id))
                 self.winner_player = None
-                game_restart()
+                director.game_restart()
 
             # TODO what if server don't have enough time to update
             # calculated_sleep < 0 !!!
             calculated_sleep = anti_tick_rate - (timeit.default_timer() - enter_time)
-            print('Time passed: {}'.format((timeit.default_timer() - enter_time)))
+            # print('Time passed: {}'.format((timeit.default_timer() - enter_time)))
             if calculated_sleep > 0:
                 time.sleep(calculated_sleep)
 
@@ -92,12 +96,11 @@ def game_logic():
 
 def game_restart():
     player.grant_life_to_all_defilers()
+    player.spawn_players()
+    #
 
 
 def game_init():
     global game_instance
     game_instance = Game()
-
-
-game_instance = None
 

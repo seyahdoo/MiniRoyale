@@ -3,7 +3,7 @@ import socket
 import time
 import player
 import bullet
-import physics
+import pickup
 from request_dispatcher import request_dispatcher
 from player import Player
 from math import degrees
@@ -111,7 +111,7 @@ class Client:
         # print("UDP:Received:"+text)
         request_dispatcher(self, text)
 
-    def send_game_info(self, copy_of_bullets, copy_of_players):
+    def send_game_info(self, copy_of_bullets, copy_of_players, copy_of_pickups):
 
         # TODO send spawned item information to player
 
@@ -134,6 +134,18 @@ class Client:
                 self.send(to_send)
                 to_send = ""
 
+        for p_id, current_pickup in copy_of_pickups.items():
+            to_send += "PCKIN:{},{},{},{},{};".format(p_id,
+                                                      current_pickup.item_type,
+                                                      current_pickup.body.position[0],
+                                                      current_pickup.body.position[1],
+                                                      current_pickup.quantity)
+            self.sent_packet_id += 1
+            if len(to_send) > 400:
+                self.send(to_send)
+                to_send = ""
+
+
         # print(to_send)
         self.send(to_send)
 
@@ -155,16 +167,17 @@ def send_game_info_to_all_clients():
     global clients
     copy_of_bullets = bullet.bullets.copy()
     copy_of_players = player.players.copy()
+    copy_of_pickup = pickup.pickups.copy()
 
     for current_client in clients.values():
-        current_client.send_game_info(copy_of_bullets, copy_of_players)
+        current_client.send_game_info(copy_of_bullets, copy_of_players, copy_of_pickup)
 
 
 def send_message_to_nearby_clients(pos_x, pos_y, message):
     global clients
     for current_client in clients.values():
         current_client.send(message)
-        # print(message)
+        # print("Inside client:" + message)
     # TODO optimize this
 
 

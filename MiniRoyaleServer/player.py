@@ -2,9 +2,10 @@ from Inventory.inventory import Inventory
 import Inventory.Items.item as item
 import random
 import threading
-import game
+import director
 import bullet
 import pymunk
+import pickup
 from math import radians
 from pymunk import Vec2d
 from math import degrees
@@ -16,6 +17,12 @@ players = {}
 players_lock = threading.Lock()
 
 player_shape_to_player = {}
+
+alive_player_count = 0
+alive_player_count_lock = threading.Lock()
+
+total_player_count = 0
+total_player_count_lock = threading.Lock()
 
 
 class Player:
@@ -35,7 +42,6 @@ class Player:
         self.last_packet_id = 0
         self.sent_packet_id = 0
 
-        self.current_weapon_in_hand = None
         # generate random player id and add it to the list
         # TODO make player id count from 0-inf incremented (like prop_id)
         player_id = random.randint(1, 5000)
@@ -47,12 +53,14 @@ class Player:
 
         self.inventory = Inventory()
         print("player initiated, id:{}".format(self.player_id))
+
         self.add_cheat_items_for_testing()
+        print("player cheat items, id:{}".format(self.player_id))
 
         # physics stuff
         self.body = None
         self.shape = None
-        self.body = pymunk.Body(500, pymunk.inf)
+        self.body = pymunk.Body(99999, pymunk.inf)
 
         self.shape = pymunk.Circle(self.body, 0.55)
         self.shape.elasticity = 0
@@ -65,13 +73,16 @@ class Player:
             self.create_body()
             players[self.player_id] = self
 
-        # player_to_be_added.append(self)
+        global total_player_count
+        global alive_player_count
 
-        # TODO Carry this to game_start() function
-        # self.body.position = Vec2d(random.uniform(-100, 100), random.uniform(-100, 100))
-        # print('Body Position: ' + str(self.body.position))
-        # self.max_angle = 0.0
-        # self.min_angle = 10.0
+        with total_player_count_lock:
+            total_player_count += 1
+
+        with alive_player_count_lock:
+            alive_player_count += 1
+
+        print("player body initiated, id:{}".format(self.player_id))
 
     def move(self, packet_id, pos_x, pos_y, angle):
         # TODO computate max possible distance player can move since last move request
@@ -93,17 +104,29 @@ class Player:
         # print("player_id:{} current position ({},{})".format(str(self.player_id), str(self.pos_x), str(self.pos_y)))
 
     def add_cheat_items_for_testing(self):
-        item.item_id_counter += 1
-        weapon_id = item.item_id_counter
-        self.inventory.add_item(weapon_id)
-        self.current_weapon_in_hand = self.inventory.equipped_items[weapon_id]
-        print("Weapon with weapon_id:{} and weapon_type:{} is currenty equipped in main hand".format(
-            self.current_weapon_in_hand.item_id, self.current_weapon_in_hand.item_type_id))
+        with item.item_id_lock:
+            item.item_id_counter += 1
+            weapon_id = item.item_id_counter
+
+        # Add pistol
+        item_type = 1001
+
+        self.inventory.add_item(weapon_id, item_type)
+        self.inventory.equip_item_to_main_hand(weapon_id)
+        # self.current_weapon_in_hand = self.inventory.equipped_items[weapon_id]
+        # print("Weapon with weapon_id:{} and weapon_type:{} is currenty equipped in main hand".format(
+        #     self.current_weapon_in_hand.item_id, self.current_weapon_in_hand.item_type_id))
 
     def shoot(self):
         if self.dead:
             return
-        weapon_type_id = self.current_weapon_in_hand.item_type_id
+
+        weapon_type_id = self.inventory.main_hand_item.item_type_id
+
+        if self.inventory.ammo_nine_mm_count <= 0:
+            return
+
+        self.inventory.ammo_nine_mm_count -= 1
 
         speed = 1
         damage = 0
@@ -134,7 +157,7 @@ class Player:
         with physics.physics_lock:
             physics.space.remove(self.body, self.shape)
 
-        game.game_logic()
+        director.on_player_killed()
 
     def create_body(self):
         self.body = pymunk.Body(500, pymunk.inf)
@@ -147,6 +170,33 @@ class Player:
 
         with physics.physics_lock:
             physics.space.add(self.body, self.shape)
+
+    def pickup_item(self, pickup_id, quantity):
+        print("Pickup item and quantity:{}, {}".format(pickup_id, quantity))
+
+        if pickup.pickups[pickup_id].item_type == 5009:
+            self.inventory.ammo_nine_mm_count += quantity
+
+        elif pickup.pickups[pickup_id].item_type == 1001:
+            with item.item_id_lock:
+                item.item_id_counter += 1
+                item_id = item.item_id_counter
+
+            self.inventory.add_item(item_id, pickup.pickups[pickup_id].item_type)
+
+        # TODO Make this in another function
+        with pickup.pickup_lock:
+            deleted_pickup_info = "PCKDL:{};".format(pickup.pickups[pickup_id].pickup_id)
+            deleted_pickup_pos_x = pickup.pickups[pickup_id].body.position[0]
+            deleted_pickup_pos_y = pickup.pickups[pickup_id].body.position[1]
+
+            with physics.physics_lock:
+                physics.space.remove(pickup.pickups[pickup_id].body, pickup.pickups[pickup_id].shape)
+
+            del pickup.pickups[pickup.pickups[pickup_id].pickup_id]
+
+            # print(deleted_pickup_info + str(deleted_pickup_pos_x) + str(deleted_pickup_pos_y))
+            client.send_message_to_nearby_clients(deleted_pickup_pos_x, deleted_pickup_pos_y, deleted_pickup_info)
 
 
 def get_player_info_command_message(player_id):
@@ -198,4 +248,19 @@ def grant_life_to_all_defilers():
         current_player.create_body()
 
         # TODO Carry this to game_start() function
+        current_player.body.position = Vec2d(random.uniform(-100, 100), random.uniform(-100, 100))
+
+        global alive_player_count
+        global total_player_count
+
+        with alive_player_count_lock:
+            with total_player_count_lock:
+                alive_player_count = total_player_count
+
+
+def spawn_players():
+    global players
+    copy_of_players = players.copy()
+
+    for current_player in copy_of_players.values():
         current_player.body.position = Vec2d(random.uniform(-100, 100), random.uniform(-100, 100))

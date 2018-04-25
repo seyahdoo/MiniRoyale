@@ -8,6 +8,7 @@ collision_types = {
     "player": 1,
     "bullet": 2,
     "prop": 3,
+    "pickup": 4,
 }
 
 space = None
@@ -19,10 +20,23 @@ def setup():
     global space
     space = pymunk.Space()
 
-    h = space.add_collision_handler(
+    # handler_[X Y]
+    # X is first letter of collision first object's name
+    # Y is first letter of collision second object's name
+    handler_pb = space.add_collision_handler(
         collision_types["player"],
         collision_types["bullet"])
-    h.begin = on_bullet_player_collision_begin
+    handler_pb.begin = on_player_bullet_collision_begin
+
+    handler_pp = space.add_collision_handler(
+        collision_types["player"],
+        collision_types["pickup"])
+    handler_pp.begin = on_pickup_player_collision_begin
+
+    handler_bp = space.add_collision_handler(
+        collision_types["bullet"],
+        collision_types["pickup"])
+    handler_bp.begin = on_bullet_pickup_collision_begin
 
 
 def tick(anti_tick_rate):
@@ -30,8 +44,7 @@ def tick(anti_tick_rate):
     space.step(anti_tick_rate)
 
 
-# Make bricks be removed when hit by ball
-def on_bullet_player_collision_begin(arbiter, space, data):
+def on_player_bullet_collision_begin(arbiter, space, data):
     bullet_shape = arbiter.shapes[1]
     # if 2 object collide at the same time
     if not bullet_shape:
@@ -64,3 +77,12 @@ def on_bullet_player_collision_begin(arbiter, space, data):
     client.send_message_to_nearby_clients(deleted_bullet_pos_x, deleted_bullet_pos_y, deleted_bullet_info)
 
     return False
+
+
+def on_pickup_player_collision_begin(arbiter, space, data):
+    return False
+
+
+def on_bullet_pickup_collision_begin(arbiter, space, data):
+    return False
+

@@ -1,6 +1,8 @@
-
+import Inventory.Items.item as item
 import player
 import game
+import pickup
+import random
 
 
 # Check whether game is over or not every time a specific event has occurred
@@ -16,6 +18,15 @@ def on_player_killed():
         return
 
     return
+
+
+def spawn_items():
+    # test_item_id = item.item_id_counter
+    # item.item_id_counter += 1
+    # test_item_type = 1
+    # item.spawned_item_list[test_item_id] = item.Item(test_item_id, test_item_type, "boi", "bios")
+    for i in range(0, 5):
+        pickup.Pickup(random.uniform(-3, 3), random.uniform(-3, 3), 5, 5009)
 
 
 def game_restart():

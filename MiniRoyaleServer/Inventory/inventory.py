@@ -1,4 +1,5 @@
 import Inventory.Items.item as item
+import Inventory.Items.Weapons.weapon as weapon
 
 
 class Inventory:
@@ -8,21 +9,50 @@ class Inventory:
         self.equipped_items = {}
         self.un_equipped_items = {}
 
-    # TODO - Check if player is near enough to take an item from loot or spawnItem
-    def add_item(self, item_id):
-        # print("Player is trying to pick an item with item_id:{}".format(item_id))
-        # print(game.spawned_item_list.get(item_id))
+        self.main_hand_item = None
+        self.ammo_nine_mm_count = 5
 
-        if item.spawned_item_list.get(item_id) is not None:
-            # print("Trying to pick up item from spawn_item_list")
-            self.equipped_items[item_id] = item.spawned_item_list[item_id]
-            item.spawned_item_list.pop(item_id)
-            print("Successfully picked an item with item_id:{}, item_type_id:{}".format(self.equipped_items[item_id].item_id,self.equipped_items[item_id].item_type_id))
-        
+
+    # TODO - Check if player is near enough to take an item from loot or spawnItem
+    def add_item(self, item_id, item_type):
         # This section is for cheating purposes!
-        self.equipped_items[item_id] = item.Item(item_id, 1001)
-        print("Successfully equipped an item with item_id:{}, item_type_id:{}".format(self.equipped_items[item_id].item_id,self.equipped_items[item_id].item_type_id))
-        
+        # Switch item_type
+        # 1001: Basic pistol
+        # 1111: m4
+        # 1102: ak47
+        # 1113: m16
+        # 1114: scar
+        # 1201: m24
+
+        item_name = None
+        item_description = None
+
+        if item_type == 1001:
+            item_name = "USP"
+            item_description = "Trusted weapons of officers because of it's strong power"
+        elif item_type == 1111:
+            item_name = "M4"
+            item_description = "Trusted weapons of officers because of it's strong power"
+        elif item_type == 1112:
+            item_name = "AK47"
+            item_description = "Trusted weapons of officers because of it's strong power"
+        elif item_type == 1113:
+            item_name = "M16"
+            item_description = "Trusted weapons of officers because of it's strong power"
+        elif item_type == 1114:
+            item_name = "SCAR"
+            item_description = "Trusted weapons of officers because of it's strong power"
+        elif item_type == 1201:
+            item_name = "M24"
+            item_description = "Trusted weapons of officers because of it's strong power"
+
+        self.equipped_items[item_id] = item.Item(item_id, item_type, item_name, item_description)
+        print("Successfully equipped an item with item_id:{}, item_type_id:{}".format(self.equipped_items[item_id].item_id, self.equipped_items[item_id].item_type_id))
+
+    def equip_item_to_main_hand(self, item_id):
+        if self.equipped_items[item_id] is not None:
+            self.main_hand_item = self.equipped_items[item_id]
+
     def get_item_list(self):
         items_in_inventory = ""
         for item_id in self.equipped_items.keys():
