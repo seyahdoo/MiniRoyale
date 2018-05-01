@@ -31,13 +31,10 @@ def spawn_items():
 
 
 def spawn_props():
-    # for i in range(0, 6):
-    #     rand_x = random.uniform(-10, 10)
-    #     rand_y = random.uniform(-10, 10)
-    #     prop.Prop(0, 7001, rand_x, rand_y)
-    #     print('prop coordinate x and y:' + str(rand_x) + ', ' + str(rand_y))
     for i in range(0, 6):
-        prop.Prop(0, 7002, random.uniform(-10, 10), random.uniform(-10, 10))
+        prop.Prop(0, 7001, random.uniform(-10.0, 10.0), random.uniform(-10.0, 10.0))
+    for i in range(0, 6):
+        prop.Prop(0, 7002, random.uniform(-10.0, 10.0), random.uniform(-10.0, 10.0))
 
 
 def game_restart():

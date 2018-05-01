@@ -12,6 +12,8 @@ bullets_lock = threading.RLock()
 
 bullet_shape_to_bullet = {}
 
+bullet_id_counter_lock = threading.Lock()
+bullet_id_counter = 10000
 
 class Bullet:
     def __init__(self, player_id, pos_x, pos_y, angle, speed, damage):
@@ -48,16 +50,16 @@ class Bullet:
 
         with bullets_lock:
             global bullets
+            global bullet_id_counter
 
-            game.game_instance.prop_id_counter += 1
-            bullet_id = game.game_instance.prop_id_counter
-
-            self.bullet_id = bullet_id
+            with bullet_id_counter_lock:
+                bullet_id_counter += 1
+                self.bullet_id = bullet_id_counter
 
             with physics.physics_lock:
                 physics.space.add(self.body, self.shape)
 
-            bullets[bullet_id] = self
+            bullets[self.bullet_id] = self
         
     def update(self):
         # Delete bullet in 3 seconds

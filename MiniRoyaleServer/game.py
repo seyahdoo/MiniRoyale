@@ -21,10 +21,6 @@ class Game:
         # TODO make tickrate global -> game.tick_rate
         self.tick_rate = 32
 
-        self.prop_id_counter = 0
-        
-        self.props = {}
-
         physics.setup()
 
         # Spawn items

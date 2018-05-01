@@ -98,11 +98,6 @@ def on_bullet_prop_collision_begin(arbiter, space, data):
     bullet_shape = arbiter.shapes[1]
     prop_shape = arbiter.shapes[0]
 
-
-
     # if 2 object collide at the same time
     if not bullet_shape:
         return
-
-
-

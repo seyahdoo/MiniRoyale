@@ -13,5 +13,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CommandCode: PROPP
   ArgumentCount: 5
-  DEBUG: 1
+  DEBUG: 0
   Event: {fileID: 11400000, guid: 5ed9561d6258fa74e9e8cb01ff55c2b2, type: 2}

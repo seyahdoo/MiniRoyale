@@ -14,8 +14,8 @@ props_lock = threading.Lock()
 prop_shape_to_prop = {}
 
 prop_types = {
-    7001: ('rectangle', (1, 1)),
-    7002: ('circle', 0.5),
+    7001: ('rectangle', (1.10, 1.10)),
+    7002: ('circle', 0.55),
 }
 
 
@@ -46,19 +46,18 @@ class Prop:
         if self.body_type == 'rectangle':
             if self.is_dynamic:
                 self.body = pymunk.Body(body_type=pymunk.Body.DYNAMIC)
-                self.body.position = pos_x, pos_y
             else:
                 self.body = pymunk.Body(body_type=pymunk.Body.KINEMATIC)
-                self.body.position = pos_x, pos_y
 
             self.shape = pymunk.Poly.create_box(self.body, (float(prop_types[self.prop_type][1][0]), float(prop_types[self.prop_type][1][1])))
 
         elif self.body_type == 'circle':
-            self.body = pymunk.Body(100, pymunk.inf)
-
+            self.body = pymunk.Body(100, pymunk.inf, body_type=pymunk.Body.KINEMATIC)
             self.shape = pymunk.Circle(self.body, float(prop_types[self.prop_type][1]))
 
-        self.shape.elasticity = 0.0
+        self.body.position = pos_x, pos_y
+
+        self.shape.elasticity = 1.0
         self.shape.collision_type = physics.collision_types["prop"]
 
         self.body.angle = radians(float(random.uniform(0, 360)))

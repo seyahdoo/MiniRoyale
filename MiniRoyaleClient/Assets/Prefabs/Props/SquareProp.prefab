@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4810261320529464}
   - component: {fileID: 212185837854881742}
   - component: {fileID: 114064280908889218}
-  - component: {fileID: 61517818363646576}
+  - component: {fileID: 61662587227360002}
   m_Layer: 0
   m_Name: SquareProp
   m_TagString: Untagged
@@ -42,7 +42,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!61 &61517818363646576
+--- !u!61 &61662587227360002
 BoxCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
