@@ -19,6 +19,7 @@ physics_lock = threading.Lock()
 def setup():
     global space
     space = pymunk.Space()
+    space.damping = 0.9
 
     # handler_[X Y]
     # X is first letter of collision first object's name
@@ -93,8 +94,12 @@ def on_bullet_pickup_collision_begin(arbiter, space, data):
 
 
 def on_bullet_prop_collision_begin(arbiter, space, data):
-    return False
+    return True
     bullet_shape = arbiter.shapes[1]
+    prop_shape = arbiter.shapes[0]
+
+
+
     # if 2 object collide at the same time
     if not bullet_shape:
         return

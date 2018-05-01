@@ -13,7 +13,7 @@ public class Player : MonoBehaviour {
 	public FloatReference Speed;
 	public FloatReference TickPerSecond;
 
-	private Transform myTransform;
+	private Transform my_transform;
 	private Rigidbody2D body;
 
 	public Camera cam;
@@ -24,7 +24,7 @@ public class Player : MonoBehaviour {
 
 	//Initialize
 	void Awake(){
-		myTransform = transform;
+		my_transform = transform;
 		body = GetComponent<Rigidbody2D> ();
 
 	}
@@ -46,11 +46,12 @@ public class Player : MonoBehaviour {
 		direction *= Speed.Value;
 
 		body.velocity = direction;
+		//body.AddForce(direction);
 
 		Vector2 mousePos = Input.mousePosition;
 		Vector3 look = cam.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, 10));
 
-		transform.right = look - transform.position;
+		my_transform.right = look - my_transform.position;
 
 		crosshair.transform.position = look;
 
@@ -69,9 +70,9 @@ public class Player : MonoBehaviour {
 
 		string tosend = "MOVER:" 
 			+ pkgid + "," 
-			+ myTransform.position.x + "," 
-			+ myTransform.position.y + "," 
-			+ myTransform.localEulerAngles.z + ";";
+			+ my_transform.position.x + "," 
+			+ my_transform.position.y + "," 
+			+ my_transform.localEulerAngles.z + ";";
 		
 		if (shootCommand) {
 			shootCommand = false;

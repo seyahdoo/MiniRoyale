@@ -99,10 +99,14 @@ public class CommandDispatcher : MonoBehaviour {
 	void Update(){
 
 		lock (triggerQueueLock) {
-
-			while (triggerQueue.Count > 0) {
-				triggerQueue.Dequeue ().Trigger ();
+			try {
+				while (triggerQueue.Count > 0) {
+					triggerQueue.Dequeue ().Trigger ();
+				}
+			} catch (System.Exception ex) {
+				
 			}
+
 
 		}
 

@@ -15,7 +15,7 @@ prop_shape_to_prop = {}
 
 prop_types = {
     7001: ('rectangle', (1, 1)),
-    7002: ('circle', 1),
+    7002: ('circle', 0.5),
 }
 
 
@@ -36,25 +36,26 @@ class Prop:
         # physics stuff
         self.body = None
         self.shape = None
-        self.create_body()
-        self.body.position = Vec2d(float(pos_x), float(pos_y))
         with props_lock:
             global props
-            self.create_body()
+            self.create_body(pos_x, pos_y)
             props[self.prop_id] = self
 
-    def create_body(self):
+    def create_body(self, pos_x, pos_y):
 
         if self.body_type == 'rectangle':
             if self.is_dynamic:
                 self.body = pymunk.Body(body_type=pymunk.Body.DYNAMIC)
+                self.body.position = pos_x, pos_y
             else:
-                self.body = pymunk.Body(body_type=pymunk.Body.STATIC)
+                self.body = pymunk.Body(body_type=pymunk.Body.KINEMATIC)
+                self.body.position = pos_x, pos_y
 
             self.shape = pymunk.Poly.create_box(self.body, (float(prop_types[self.prop_type][1][0]), float(prop_types[self.prop_type][1][1])))
 
         elif self.body_type == 'circle':
             self.body = pymunk.Body(100, pymunk.inf)
+
             self.shape = pymunk.Circle(self.body, float(prop_types[self.prop_type][1]))
 
         self.shape.elasticity = 0.0
