@@ -4,6 +4,7 @@ import time
 import player
 import bullet
 import pickup
+import prop
 from request_dispatcher import request_dispatcher
 from player import Player
 from math import degrees
@@ -129,7 +130,6 @@ class Client:
                                                       current_bullet.body.position[1],
                                                       current_bullet.angle,
                                                       current_bullet.speed)
-            self.sent_packet_id += 1
             if len(to_send) > 400:
                 self.send(to_send)
                 to_send = ""
@@ -140,11 +140,17 @@ class Client:
                                                       current_pickup.body.position[0],
                                                       current_pickup.body.position[1],
                                                       current_pickup.quantity)
-            self.sent_packet_id += 1
             if len(to_send) > 400:
                 self.send(to_send)
                 to_send = ""
 
+        for pid, current_prop in prop.props.items():
+            to_send += "PROPP:{},{},{},{},{};".format(current_prop.prop_id, current_prop.prop_type,
+                                                      current_prop.body.position[0],
+                                                      current_prop.body.position[1], degrees(current_prop.body.angle))
+            if len(to_send) > 400:
+                self.send(to_send)
+                to_send = ""
 
         # print(to_send)
         self.send(to_send)

@@ -3,6 +3,7 @@ import player
 import game
 import pickup
 import random
+import prop
 
 
 # Check whether game is over or not every time a specific event has occurred
@@ -27,6 +28,16 @@ def spawn_items():
     # item.spawned_item_list[test_item_id] = item.Item(test_item_id, test_item_type, "boi", "bios")
     for i in range(0, 5):
         pickup.Pickup(random.uniform(-3, 3), random.uniform(-3, 3), 5, 5009)
+
+
+def spawn_props():
+    # for i in range(0, 6):
+    #     rand_x = random.uniform(-10, 10)
+    #     rand_y = random.uniform(-10, 10)
+    #     prop.Prop(0, 7001, rand_x, rand_y)
+    #     print('prop coordinate x and y:' + str(rand_x) + ', ' + str(rand_y))
+    for i in range(0, 6):
+        prop.Prop(0, 7002, random.uniform(-10, 10), random.uniform(-10, 10))
 
 
 def game_restart():

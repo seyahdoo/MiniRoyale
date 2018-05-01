@@ -23,20 +23,25 @@ def setup():
     # handler_[X Y]
     # X is first letter of collision first object's name
     # Y is first letter of collision second object's name
-    handler_pb = space.add_collision_handler(
+    handler_player_bullet = space.add_collision_handler(
         collision_types["player"],
         collision_types["bullet"])
-    handler_pb.begin = on_player_bullet_collision_begin
+    handler_player_bullet.begin = on_player_bullet_collision_begin
 
-    handler_pp = space.add_collision_handler(
+    handler_player_pickup = space.add_collision_handler(
         collision_types["player"],
         collision_types["pickup"])
-    handler_pp.begin = on_pickup_player_collision_begin
+    handler_player_pickup.begin = on_pickup_player_collision_begin
 
-    handler_bp = space.add_collision_handler(
+    handler_bullet_pickup = space.add_collision_handler(
         collision_types["bullet"],
         collision_types["pickup"])
-    handler_bp.begin = on_bullet_pickup_collision_begin
+    handler_bullet_pickup.begin = on_bullet_pickup_collision_begin
+
+    handler_bullet_prop = space.add_collision_handler(
+        collision_types["bullet"],
+        collision_types["prop"])
+    handler_bullet_prop.begin = on_bullet_prop_collision_begin
 
 
 def tick(anti_tick_rate):
@@ -85,4 +90,14 @@ def on_pickup_player_collision_begin(arbiter, space, data):
 
 def on_bullet_pickup_collision_begin(arbiter, space, data):
     return False
+
+
+def on_bullet_prop_collision_begin(arbiter, space, data):
+    return False
+    bullet_shape = arbiter.shapes[1]
+    # if 2 object collide at the same time
+    if not bullet_shape:
+        return
+
+
 

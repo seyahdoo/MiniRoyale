@@ -26,7 +26,7 @@ class Bullet:
         self.frame_count = 0
 
         # physics stuff
-        self.body = pymunk.Body(1, pymunk.inf)
+        self.body = pymunk.Body(0, pymunk.inf)
         self.body.position = (pos_x, pos_y)
 
         self.shape = pymunk.Circle(self.body, 0.1)

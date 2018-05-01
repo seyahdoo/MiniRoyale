@@ -60,7 +60,7 @@ class Player:
         # physics stuff
         self.body = None
         self.shape = None
-        self.body = pymunk.Body(99999, pymunk.inf)
+        self.body = pymunk.Body(10, pymunk.inf)
 
         self.shape = pymunk.Circle(self.body, 0.55)
         self.shape.elasticity = 0
