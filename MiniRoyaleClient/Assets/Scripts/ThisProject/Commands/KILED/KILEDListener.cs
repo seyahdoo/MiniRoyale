@@ -5,7 +5,9 @@ using seyahdoo.events;
 
 public class KILEDListener : GameEventUser {
 
-	public NetworkRivalOrchestrator orchestrator;
+
+	[SerializeField] private NetworkRivalOrchestrator orchestrator;
+	[SerializeField] private KillFeedUI killFeed;
 
 	//KILED
 	public override void OnEventInvoked (object eventData)
@@ -14,7 +16,7 @@ public class KILEDListener : GameEventUser {
 
 		//Dispatch to orchestrator
 		orchestrator.KILED (int.Parse (args [0]));
-
+		killFeed.KILED (args [1], args [3], args [4]);
 	}
 
 

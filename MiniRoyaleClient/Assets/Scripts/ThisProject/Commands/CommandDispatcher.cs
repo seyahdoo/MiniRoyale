@@ -21,8 +21,7 @@ public class CommandDispatcher : MonoBehaviour {
 
 	readonly char[] commandSplitter = {';'};
 
-	void Connection_MessageReceivedEvent (string message)
-	{
+	void Connection_MessageReceivedEvent (string message){
 		//Debug.Log ("Dispatching: " + message);
 
 		//Lag Debugging
@@ -78,8 +77,7 @@ public class CommandDispatcher : MonoBehaviour {
 	#endregion
 
 	#region TriggerQueue
-	private class TriggerQueueElement
-	{
+	private class TriggerQueueElement{
 		public ServerCommandHandler handler;
 		public string[] args;
 
@@ -99,14 +97,10 @@ public class CommandDispatcher : MonoBehaviour {
 	void Update(){
 
 		lock (triggerQueueLock) {
-			try {
-				while (triggerQueue.Count > 0) {
-					triggerQueue.Dequeue ().Trigger ();
-				}
-			} catch (System.Exception ex) {
-				
+			
+			while (triggerQueue.Count > 0) {
+				triggerQueue.Dequeue ().Trigger ();
 			}
-
 
 		}
 

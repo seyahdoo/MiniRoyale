@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Name: KILED-Command
   m_EditorClassIdentifier: 
   CommandCode: KILED
-  ArgumentCount: 1
+  ArgumentCount: 5
   DEBUG: 0
   Event: {fileID: 11400000, guid: f3afb7a338465c24c88eebc92e70df04, type: 2}

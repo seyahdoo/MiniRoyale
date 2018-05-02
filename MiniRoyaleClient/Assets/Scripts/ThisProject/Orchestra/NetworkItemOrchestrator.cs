@@ -23,11 +23,7 @@ public class NetworkItemOrchestrator : MonoBehaviour {
 
 	public void PINFO(int playerId, string playerName, List<UniqueItem> items){
 
-		//Debug.Log ("PINFO!");
-
-
 		Rival rival = rivalOrchestrator.GetRival (playerId);
-
 
 		foreach (var item in items) {
 			//Debug.Log ("Trying to equip:"+item.item.itemName);

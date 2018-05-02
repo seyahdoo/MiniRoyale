@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using seyahdoo.events;
+using System;
 
 public class NetworkRivalOrchestrator : MonoBehaviour {
 
@@ -52,9 +53,28 @@ public class NetworkRivalOrchestrator : MonoBehaviour {
 
 	}
 
-	public void CreateRival(int playerID){
-		
-		
+	private Rival CreateRival(int playerID){
+		Rival r;
+
+		//TODO: POOL THIS!
+		//Create Rival
+		if (rivalPool.Count <= 0) {
+			//TODO
+			Debug.LogError ("DEAL WITH THIS!!!");
+		}
+
+		r = rivalPool.Pop ();
+		r.PlayerID = playerID;
+
+		//TODO
+		EnableQueue.Push (r.myGameObject);
+
+		rivals.Add (playerID, r);
+
+		//Request player Info (like what he wears)
+		itemOrchestrator.RequestItemInfo (playerID);
+
+		return r;
 	}
 
 	public NetworkItemOrchestrator itemOrchestrator;
@@ -69,31 +89,24 @@ public class NetworkRivalOrchestrator : MonoBehaviour {
 			//Debug.Log("Orchestrator: Found Rival in dictionary");
 			rival = rivals [playerID];
 		} else {
-
-
-			//TODO: POOL THIS!
-			//Create Rival
-			//Debug.Log("Orchestrator: getting Rival from pool");
-			if (rivalPool.Count <= 0) {
-				//TODO
-				Debug.LogError ("DEAL WITH THIS!!!");
-			}
-
-			rival = rivalPool.Pop ();
-			rival.PlayerID = playerID;
-
-			//TODO
-			EnableQueue.Push (rival.myGameObject);
-
-			rivals.Add (playerID, rival);
-
-			//Request player Info (like what he wears)
-			itemOrchestrator.RequestItemInfo (playerID);
+			rival = CreateRival (playerID);
 		}
 
 		return rival;
 	}
+		
 
+	public void PINFO(int playerId, string playerName, bool isDead){
+
+		Rival rival = GetRival (playerId);
+
+		rival.PlayerName = playerName;
+
+		if (isDead) {
+			rival.Killed ();
+		}
+
+	}
 
 	public void MOVED(int playerID,float posx,float posy,float rot){
 		//Debug.LogWarning ("Orchestrator: MOVED");
