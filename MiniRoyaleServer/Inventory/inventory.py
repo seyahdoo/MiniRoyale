@@ -28,7 +28,7 @@ class Inventory:
         item_description = None
 
         if item_type == 1001:
-            item_name = "USP"
+            item_name = "G18"
             item_description = "Trusted weapons of officers because of it's strong power"
         elif item_type == 1111:
             item_name = "M4"
@@ -65,3 +65,6 @@ class Inventory:
         print("In inventory, the message is:{}".format(items_in_inventory))
         
         return items_in_inventory
+
+    def get_weapon_used(self):
+        return str(self.main_hand_item.item_name)

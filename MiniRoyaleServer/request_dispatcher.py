@@ -54,7 +54,7 @@ def request_dispatcher(client_thread, buffer):
             player_id = int(cmd[6:])
             player_information = player.get_player_info_command_message(player_id)
             # PINFO:12342,SnowDaddy,[232323+1.3332131+2]
-            print("PIREQ: " + player_information)
+            print("PINFO to incoming PIREQ: " + player_information)
             client_thread.send(player_information)
 
         # Shoot as connected player

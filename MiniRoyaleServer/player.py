@@ -6,12 +6,16 @@ import director
 import bullet
 import pymunk
 import pickup
+import player
 from math import radians
 from pymunk import Vec2d
 from math import degrees
 import client
 
 import physics
+
+player_id_count = 10000
+player_id_count_lock = threading.Lock()
 
 players = {}
 players_lock = threading.Lock()
@@ -44,12 +48,13 @@ class Player:
 
         # generate random player id and add it to the list
         # TODO make player id count from 0-inf incremented (like prop_id)
-        player_id = random.randint(1, 5000)
-        with players_lock:
-            while player_id in players:
-                player_id = random.randint(1, 5000)
-            players[player_id] = self
-            self.player_id = player_id
+        with player_id_count_lock:
+            global player_id_count
+            player_id_count += 1
+            self.player_id = player_id_count
+
+            with players_lock:
+                players[self.player_id] = self
 
         self.inventory = Inventory()
         print("player initiated, id:{}".format(self.player_id))
@@ -145,14 +150,27 @@ class Player:
         self.health -= bullet_obj.damage
         print('got hit! ' + str(self.health))
         if self.health < 0:
-            self.killed()
+            self.killed(bullet_obj)
 
-    def killed(self):
+    def killed(self, cause_of_death):
         self.health = 0
         self.dead = True
         print("im dead as {}".format(self.name))
         # send info to clients
-        client.send_message_to_nearby_clients(self.body.position[0], self.body.position[1], "KILED:{}".format(self.player_id))
+
+        # death_message = ""
+
+        if isinstance(cause_of_death, bullet.Bullet):
+
+            weapon_used = player.players.get(cause_of_death.player_id).inventory.get_weapon_used()
+            killer_player_name = player.players.get(cause_of_death.player_id).name
+
+            death_message = "KILED:{},{},{},{},{};".format(self.player_id, self.name, cause_of_death.player_id, killer_player_name, weapon_used)
+        else:
+            weapon_used = "Explosion"
+            death_message = "KILED:{},{},{},{},{};".format(self.player_id, self.name, 0, "Mother Nature", weapon_used)
+
+        client.send_death_info_to_all_players(death_message)
 
         with physics.physics_lock:
             physics.space.remove(self.body, self.shape)
@@ -204,9 +222,11 @@ def get_player_info_command_message(player_id):
     p = players.get(player_id)
 
     try:
-        player_information += str("PINFO:{},{},[{}];".format(player_id, p.name, p.inventory.get_item_list()))
+        player_information += str("PINFO:{},{},[{}]".format(player_id, p.name, p.inventory.get_item_list()))
         if p.dead:
-            player_information += str("KILED:{};".format(player_id))
+            player_information += str(",{};".format(True))
+        else:
+            player_information += str(",{};".format(False))
     except:
         pass
 

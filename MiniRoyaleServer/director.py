@@ -5,6 +5,10 @@ import pickup
 import random
 import prop
 
+random_ammo_count = 256
+random_square_prop_count = 128
+random_circle_prop_count = 128
+
 
 # Check whether game is over or not every time a specific event has occurred
 # Like when a player has died
@@ -26,15 +30,16 @@ def spawn_items():
     # item.item_id_counter += 1
     # test_item_type = 1
     # item.spawned_item_list[test_item_id] = item.Item(test_item_id, test_item_type, "boi", "bios")
-    for i in range(0, 5):
-        pickup.Pickup(random.uniform(-3, 3), random.uniform(-3, 3), 5, 5009)
+
+    for i in range(0, random_ammo_count):
+        pickup.Pickup(random.uniform(-100.0, 100.0), random.uniform(-100.0, 100.0), 5, 5009)
 
 
 def spawn_props():
-    for i in range(0, 6):
-        prop.Prop(0, 7001, random.uniform(-10.0, 10.0), random.uniform(-10.0, 10.0))
-    for i in range(0, 6):
-        prop.Prop(0, 7002, random.uniform(-10.0, 10.0), random.uniform(-10.0, 10.0))
+    for i in range(0, random_square_prop_count):
+        prop.Prop(0, 7001, random.uniform(-100.0, 100.0), random.uniform(-100.0, 100.0))
+    for i in range(0, random_circle_prop_count):
+        prop.Prop(0, 7002, random.uniform(-100.0, 100.0), random.uniform(-100.0, 100.0))
 
 
 def game_restart():

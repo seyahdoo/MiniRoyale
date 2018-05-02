@@ -179,9 +179,22 @@ def send_game_info_to_all_clients():
         current_client.send_game_info(copy_of_bullets, copy_of_players, copy_of_pickup)
 
 
+def send_death_info_to_all_players(death_message):
+    global clients
+
+    print(death_message)
+
+    copy_of_clients = clients.copy()
+    for current_client in copy_of_clients.values():
+        current_client.send(death_message)
+
+
 def send_message_to_nearby_clients(pos_x, pos_y, message):
     global clients
-    for current_client in clients.values():
+
+    copy_of_clients = clients.copy()
+
+    for current_client in copy_of_clients.values():
         current_client.send(message)
         # print("Inside client:" + message)
     # TODO optimize this
