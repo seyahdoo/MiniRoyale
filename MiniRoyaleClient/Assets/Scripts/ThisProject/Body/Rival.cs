@@ -6,6 +6,8 @@ public class Rival : MonoBehaviour {
 
 	public int PlayerID;
 
+	public string PlayerName = "";
+
 	public Pawn pawn;
 
 	public float NewPositionTime;

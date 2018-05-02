@@ -6,32 +6,18 @@ using seyahdoo.events;
 public class PINFOListener : GameEventUser {
 
 	public NetworkItemOrchestrator itemOrchestrator;
+	public NetworkRivalOrchestrator rivalOrchestrator;
 
 	public ItemDictionary itemDictionary;
 
 	//PINFO
 	public override void OnEventInvoked (object eventData)
 	{
-		//Debug.Log ("PORTo!!!!!!!!");
-
-		if (eventData == null) {
-			Debug.Log ("PINFO event data must not be null");
-			return;
-		}
-
-		if(eventData.GetType() != typeof(string[]) ){
-			Debug.Log ("event data must be type of string[]");
-			return;
-		}
 
 		string[] args = (string[])eventData;
+	
+		rivalOrchestrator.PINFO (int.Parse (args [0]), args [1], bool.Parse (args [3]));
 
-		if (args.Length != 3) {
-			Debug.Log ("PINFO will get 3 arguments!");
-			return;
-		}
-
-		//connection.ChangePort (int.Parse (args [0]));
 
 		List<UniqueItem> items = ParseItemList (args [2]);
 
