@@ -40,7 +40,7 @@ class Client:
     def run(self):
         print("creating socket")
         # Binding of Ip
-        # TODO not any ip, player ip DAMN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        # TODO bind to client's ip -> self.address[0]
         self.server_ip = "0.0.0.0"
         # Random available Port
         self.server_port = 0  # random write zero here

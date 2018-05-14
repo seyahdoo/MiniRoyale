@@ -1,12 +1,20 @@
 import socket
 import threading
 import time
-import client
-import game
 import argparse
+import os
 
 IP = "0.0.0.0"
 PORT = 11999
+
+# server settings
+ServerMaxPlayerSize = 30
+ServerStartTime = 50
+
+LastServerIP = ""
+LastServerPort = 0
+LastServerPopulation = 0
+LastServerCreateTime = 0
 
 
 def connection_server():
@@ -14,31 +22,34 @@ def connection_server():
     sock.bind((IP, PORT))
 
     print("Server started at {} port {}".format(IP, PORT))
-    
+
     while True:
         data, address = sock.recvfrom(1024)  # buffer size is 1024 bytes
         text = data.decode('utf-8')
         # print ("received message:"+text+"|from:"+str(address))
-        if text[0:5] == "CNNRQ":
-            # create new connection
-            # that will deal with itself
-            client.new_connection(address)
-            # DONE
-    
+        if text[0:5] == "MATCH":
+            # create a game if not present
+            print("tried to connect properly")
+            connect_one(address)
+
+
+def connect_one(address):
+    if LastServerPopulation == 0 or LastServerCreateTime + ServerStartTime < time.time():
+        # create server
+        os.system("venv\Scripts\python.exe game_server_main.py -port=11998")
+        # TODO remote ip
+
+    # TODO connect
+
 
 if __name__ == "__main__":
 
-    # parse arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("-port", nargs='?', default=11999)
     args = parser.parse_args()
 
     PORT = int(args.port)
 
-    # initialize game
-    game.game_init()
-
-    # listen for connections
     connection_server_thread = threading.Thread(target=connection_server)
     connection_server_thread.daemon = True
 
