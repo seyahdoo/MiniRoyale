@@ -10,6 +10,7 @@ public class FindGameButton : MonoBehaviour {
 	[SerializeField] Button button;
 
 	public void ButtonPressed(){
+		connection.ResetAdress ();
 		connection.Send ("MATCH;");
 		Invoke ("ReenableButton", 5f);
 	}

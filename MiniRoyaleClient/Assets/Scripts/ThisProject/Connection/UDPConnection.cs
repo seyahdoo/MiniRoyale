@@ -14,7 +14,7 @@ public class UDPConnection : MonoBehaviour {
 	UdpPeer connection = new UdpPeer ();
 
 	//Ip and port information of server (can change dynamically) 
-	public IPEndPoint ServerEndPoint;
+	[SerializeField] public IPEndPoint ServerEndPoint;
 
 	void Awake(){
 
@@ -34,6 +34,14 @@ public class UDPConnection : MonoBehaviour {
 	void OnDisable(){
 		//data events
 		connection.OnData -= Connection_OnData;
+	}
+
+	/// <summary>
+	/// Resets IP adress to send messages to
+	/// </summary>
+	public void ResetAdress(){
+		//Set Server ip port from settings
+		ServerEndPoint = new IPEndPoint (IPAddress.Parse (settings.serverAdress), settings.port);
 	}
 
 	/// <summary>

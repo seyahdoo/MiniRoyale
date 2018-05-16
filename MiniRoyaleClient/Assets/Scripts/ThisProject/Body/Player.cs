@@ -17,6 +17,7 @@ public class Player : MonoBehaviour {
 	private Rigidbody2D body;
 
 	public Camera cam;
+	public SmoothFollow follow;
 
 	public GameObject crosshair;
 
@@ -37,16 +38,15 @@ public class Player : MonoBehaviour {
 		CancelInvoke ("Tick");
 	}
 
-	public Vector2 direction;
-
 	//Update will determine player position
 	void Update(){
+		Vector2 direction;
 		direction.x = Input.GetAxis ("Horizontal");
 		direction.y = Input.GetAxis ("Vertical");
+		direction = Vector2.ClampMagnitude (direction, 1f);
 		direction *= Speed.Value;
 
 		body.velocity = direction;
-		//body.AddForce(direction);
 
 		Vector2 mousePos = Input.mousePosition;
 		Vector3 look = cam.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, 10));
@@ -55,10 +55,16 @@ public class Player : MonoBehaviour {
 
 		crosshair.transform.position = look;
 
+		//TODO investigate why we do this on TICK
 		if (Input.GetButtonDown ("Fire1")) {
 			shootCommand = true;
 		}
 
+	}
+
+	public void SetPosition(float posx, float posy){
+		my_transform.position = new Vector2 (posx, posy);
+		follow.TeleportToTarget ();
 	}
 
 	int pkgid = 0;
@@ -79,7 +85,6 @@ public class Player : MonoBehaviour {
 			tosend += "SHOOT;";
 		}
 
-		//Debug.Log (tosend);
 		connection.Send(tosend);
 
 	}

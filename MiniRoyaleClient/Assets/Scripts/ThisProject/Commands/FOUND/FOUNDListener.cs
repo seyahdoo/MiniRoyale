@@ -13,6 +13,8 @@ public class FOUNDListener : GameEventUser {
 
 		string[] args = (string[])eventData;
 
+		Debug.Log (args [0] + ":" + args [1]);
+
 		connection.ChangeAdress (args [0]);
 		connection.ChangePort (int.Parse(args [1]));
 

@@ -9,9 +9,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 991c3bc74e7103c419502eebd95e568d, type: 3}
-  m_Name: FOUND-Command
+  m_Name: MOVRJ-Command
   m_EditorClassIdentifier: 
-  CommandCode: FOUND
+  CommandCode: MOVRJ
   ArgumentCount: 2
-  DEBUG: 0
-  Event: {fileID: 11400000, guid: d75013ed2b21d194784c7ccc8e72cfd9, type: 2}
+  DEBUG: 1
+  Event: {fileID: 11400000, guid: 5778997c3804a3743aef40a07a2bfbd4, type: 2}
