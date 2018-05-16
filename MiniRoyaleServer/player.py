@@ -11,6 +11,8 @@ from math import radians
 from pymunk import Vec2d
 from math import degrees
 import client
+import timeit
+from math import sqrt
 
 import physics
 
@@ -41,6 +43,7 @@ class Player:
         self.health = 100
         self.dead = False
         self.name = "Unknown"
+        self.speed = 10.0
 
         self.dropout_time = 0
         self.last_packet_id = 0
@@ -87,26 +90,42 @@ class Player:
         with alive_player_count_lock:
             alive_player_count += 1
 
+        self.time_since_last_movement = 0
         print("player body initiated, id:{}".format(self.player_id))
 
-    def move(self, packet_id, pos_x, pos_y, angle):
-        # TODO computate max possible distance player can move since last move request
-        # TODO and make this computation done by pymunk
+    # Get Move request
+    # Speed check if movement is possible
+    # Move body
+    def move_request(self, packet_id, pos_x, pos_y, angle):
         if self.dead:
             return
-        # print("player_id:{} trying to move to ({},{})".format(str(self.player_id), str(pos_x), str(pos_y)))
+        # print("player_id:{} trying to move_request to ({},{})".format(str(self.player_id), str(pos_x), str(pos_y)))
         # drop packet id
         if self.last_packet_id > int(packet_id):
             return
         else:
             self.last_packet_id = int(packet_id)
         try:
-            self.body.position = Vec2d(float(pos_x), float(pos_y))
-            self.body.angle = radians(float(angle))
+            self.check_speed_and_move(pos_x, pos_y, angle)
         except:
             print("Error: Can not parse position info. Playerid:{} ".format(self.player_id))
 
-        # print("player_id:{} current position ({},{})".format(str(self.player_id), str(self.pos_x), str(self.pos_y)))
+    def check_speed_and_move(self, pos_x, pos_y, angle):
+        movement_threshold = ((timeit.default_timer() - self.time_since_last_movement) * self.speed)
+        distance_between_positions = sqrt(
+            ((float(pos_x) - self.body.position[0]) ** 2) + ((float(pos_y) - self.body.position[1]) ** 2))
+
+        if distance_between_positions <= movement_threshold:
+            self.move_body(pos_x, pos_y, angle)
+        else:
+            to_reply = "MOVRJ:{},{};".format(self.body.position[0], self.body.position[1])
+            self.client.send(to_reply)
+
+        self.time_since_last_movement = timeit.default_timer()
+
+    def move_body(self, pos_x, pos_y, angle):
+        self.body.position = Vec2d(float(pos_x), float(pos_y))
+        self.body.angle = radians(float(angle))
 
     def add_cheat_items_for_testing(self):
         with item.item_id_lock:
@@ -188,6 +207,8 @@ class Player:
 
         with physics.physics_lock:
             physics.space.add(self.body, self.shape)
+
+        self.body.position = Vec2d(random.uniform(-100, 100), random.uniform(-100, 100))
 
     def pickup_item(self, pickup_id, quantity):
         print("Pickup item and quantity:{}, {}".format(pickup_id, quantity))

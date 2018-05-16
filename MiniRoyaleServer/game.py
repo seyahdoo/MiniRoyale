@@ -46,7 +46,7 @@ class Game:
             # Create new bullets
             # bullet.spawn_bullets_to_be_spawned()
 
-            # move players
+            # move_request players
 
             # Update Physics
             physics.tick(anti_tick_rate)
@@ -93,7 +93,6 @@ def game_logic():
 def game_restart():
     player.grant_life_to_all_defilers()
     player.spawn_players()
-    #
 
 
 def game_init():

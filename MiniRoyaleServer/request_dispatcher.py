@@ -17,7 +17,7 @@ def request_dispatcher(client_thread, buffer):
             # print(str(args))
             
             # if last packet number is > args[0] return
-            client_thread.player.move(args[0], args[1], args[2], args[3])
+            client_thread.player.move_request(args[0], args[1], args[2], args[3])
             
         # Says im still alive, Pong
         # PONGO;

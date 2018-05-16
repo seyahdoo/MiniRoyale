@@ -9,7 +9,7 @@ import subprocess
 IP = "0.0.0.0"
 PORT = 11999
 
-REMOTE_IP = "192.168.1.2"
+REMOTE_IP = "192.168.1.4"
 REMOTE_PORT = 11998
 
 # server settings
@@ -41,15 +41,19 @@ def connection_server():
 
 
 def connect_one(address):
-
+    global LastServerPopulation
+    global LastServerCreateTime
     if LastServerPopulation == 0 or LastServerCreateTime + ServerStartTime < time.time():
-        # create server
+        print("Printing time.time: ", time.time())
+        LastServerCreateTime = time.time()
         # TODO random_port =
         subprocess.Popen(["venv\Scripts\python", "game_server_main.py", "-port=11998"])
+        time.sleep(1)
         # TODO get remote ip
 
-    print("FOUND!, {}".format(address))
-    sender_socket.sendto(bytes("FOUND:{},{};".format(REMOTE_IP,REMOTE_PORT), 'utf-8'), address)
+    LastServerPopulation += 1
+    print("FOUND:{},{};".format(REMOTE_IP, REMOTE_PORT))
+    sender_socket.sendto(bytes("FOUND:{},{};".format(REMOTE_IP, REMOTE_PORT), 'utf-8'), address)
 
 
 if __name__ == "__main__":
