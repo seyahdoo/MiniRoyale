@@ -37,6 +37,14 @@ public class UDPConnection : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Changes ip adress of server connection
+	/// </summary>
+	/// <param name="adress">Ip adress as string</param>
+	public void ChangeAdress(string adress){
+		ServerEndPoint.Address = IPAddress.Parse (adress);
+	}
+
+	/// <summary>
 	/// Changes the port of server connection.
 	/// </summary>
 	/// <param name="port">Port.</param>

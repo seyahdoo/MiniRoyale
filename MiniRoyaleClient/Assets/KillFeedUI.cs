@@ -5,7 +5,7 @@ using TMPro;
 
 public class KillFeedUI : MonoBehaviour {
 
-	private List<string> KilledTexts = new List<string>();
+	//private List<string> KilledTexts = new List<string>();
 
 	[SerializeField] private TextMeshProUGUI text;
 

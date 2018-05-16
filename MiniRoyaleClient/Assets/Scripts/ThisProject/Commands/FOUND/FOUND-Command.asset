@@ -8,8 +8,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2b3249d4c2cb0d545889e4aacbce72c4, type: 3}
-  m_Name: DefaultConnection
+  m_Script: {fileID: 11500000, guid: 991c3bc74e7103c419502eebd95e568d, type: 3}
+  m_Name: FOUND-Command
   m_EditorClassIdentifier: 
-  serverAdress: 192.168.1.2
-  port: 11999
+  CommandCode: FOUND
+  ArgumentCount: 2
+  DEBUG: 1
+  Event: {fileID: 11400000, guid: d75013ed2b21d194784c7ccc8e72cfd9, type: 2}

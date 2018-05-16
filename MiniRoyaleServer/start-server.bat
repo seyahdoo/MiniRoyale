@@ -1,1 +1,1 @@
-venv\Scripts\python.exe game_server_main.py
+venv\Scripts\python.exe matchmaking_master.py

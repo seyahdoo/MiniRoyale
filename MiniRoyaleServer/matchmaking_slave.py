@@ -8,13 +8,7 @@ IP = "0.0.0.0"
 PORT = 11999
 
 # server settings
-ServerMaxPlayerSize = 30
-ServerStartTime = 50
 
-LastServerIP = ""
-LastServerPort = 0
-LastServerPopulation = 0
-LastServerCreateTime = 0
 
 
 def connection_server():
@@ -37,10 +31,15 @@ def connect_one(address):
     if LastServerPopulation == 0 or LastServerCreateTime + ServerStartTime < time.time():
         # create server
         os.system("venv\Scripts\python.exe game_server_main.py -port=11998")
-        # TODO remote ip
+        # TODO get remote ip
 
     # TODO connect
 
+
+# matchmaking master
+
+# matchmaking slave
+# game servers (on same machine)
 
 if __name__ == "__main__":
 
