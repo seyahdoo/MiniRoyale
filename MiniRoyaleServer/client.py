@@ -19,6 +19,8 @@ class Client:
     def __init__(self, address):
         print("Client Init")
 
+        self.disconnected = False
+
         # Client Address
         self.address = address
         self.server_ip = None
@@ -54,6 +56,11 @@ class Client:
         # create or login a player
         self.player = Player(self)
         print("created Player for Client, player_id:{}".format(self.player.player_id))
+
+        # Send SINFO to make client store itself's player id
+        self.send("SINFO:{};".format(self.player.player_id))
+
+        # Send PINFO to load inventory and stuff
         self.send(player.get_player_info_command_message(self.player.player_id))
 
         # listen with a new thread
@@ -101,9 +108,10 @@ class Client:
             else:
                 print("Client with player_id:{} has not responded to PINGO for {} seconds.".format(self.player.player_id,self.player.dropout_time))
                 # TODO terminate client
+                self.disconnected = True
                 return
 
-    def send(self,text):
+    def send(self, text):
         # print("UDP:Sending:"+text)
         self.socket.sendto(bytes(text, 'utf-8'), self.address)
 
@@ -112,48 +120,49 @@ class Client:
         # print("UDP:Received:"+text)
         request_dispatcher(self, text)
 
-    def send_game_info(self, copy_of_bullets, copy_of_players, copy_of_pickups):
+    def disconnect(self):
+        self.disconnected = True
 
-        # TODO send spawned item information to player
-
+    def send_game_info(self, copy_of_bullets, copy_of_players, copy_of_pickups, copy_of_props):
         to_send = ""
-        for rid, rival in copy_of_players.items():
-            to_send += "MOVED:{},{},{},{},{};".format(self.sent_packet_id, rid, rival.body.position[0], rival.body.position[1], degrees(rival.body.angle))
-            self.sent_packet_id += 1
-            if len(to_send) > 400:
-                self.send(to_send)
-                to_send = ""
+        if not self.disconnected:
+            for rid, rival in copy_of_players.items():
+                to_send += "MOVED:{},{},{},{},{};".format(self.sent_packet_id, rid, rival.body.position[0], rival.body.position[1], degrees(rival.body.angle))
+                self.sent_packet_id += 1
+                if len(to_send) > 400:
+                    self.send(to_send)
+                    to_send = ""
 
-        for b_id, current_bullet in copy_of_bullets.items():
-            to_send += "SHOTT:{},{},{},{},{};".format(b_id,
-                                                      current_bullet.body.position[0],
-                                                      current_bullet.body.position[1],
-                                                      current_bullet.angle,
-                                                      current_bullet.speed)
-            if len(to_send) > 400:
-                self.send(to_send)
-                to_send = ""
+            for b_id, current_bullet in copy_of_bullets.items():
+                to_send += "SHOTT:{},{},{},{},{};".format(b_id,
+                                                          current_bullet.body.position[0],
+                                                          current_bullet.body.position[1],
+                                                          current_bullet.angle,
+                                                          current_bullet.speed)
+                if len(to_send) > 400:
+                    self.send(to_send)
+                    to_send = ""
 
-        for p_id, current_pickup in copy_of_pickups.items():
-            to_send += "PCKIN:{},{},{},{},{};".format(p_id,
-                                                      current_pickup.item_type,
-                                                      current_pickup.body.position[0],
-                                                      current_pickup.body.position[1],
-                                                      current_pickup.quantity)
-            if len(to_send) > 400:
-                self.send(to_send)
-                to_send = ""
+            for p_id, current_pickup in copy_of_pickups.items():
+                to_send += "PCKIN:{},{},{},{},{};".format(p_id,
+                                                          current_pickup.item_type,
+                                                          current_pickup.body.position[0],
+                                                          current_pickup.body.position[1],
+                                                          current_pickup.quantity)
+                if len(to_send) > 400:
+                    self.send(to_send)
+                    to_send = ""
 
-        for pid, current_prop in prop.props.items():
-            to_send += "PROPP:{},{},{},{},{};".format(current_prop.prop_id, current_prop.prop_type,
-                                                      current_prop.body.position[0],
-                                                      current_prop.body.position[1], degrees(current_prop.body.angle))
-            if len(to_send) > 400:
-                self.send(to_send)
-                to_send = ""
+            for pid, current_prop in copy_of_props.items():
+                to_send += "PROPP:{},{},{},{},{};".format(current_prop.prop_id, current_prop.prop_type,
+                                                          current_prop.body.position[0],
+                                                          current_prop.body.position[1], degrees(current_prop.body.angle))
+                if len(to_send) > 400:
+                    self.send(to_send)
+                    to_send = ""
 
-        # print(to_send)
-        self.send(to_send)
+            # print(to_send)
+            self.send(to_send)
 
 
 def new_connection(address):
@@ -171,12 +180,18 @@ def new_connection(address):
 def send_game_info_to_all_clients():
     # TODO Implement thread safe client
     global clients
-    copy_of_bullets = bullet.bullets.copy()
-    copy_of_players = player.players.copy()
-    copy_of_pickup = pickup.pickups.copy()
+
+    with bullet.bullets_lock:
+        copy_of_bullets = bullet.bullets.copy()
+    with player.players_lock:
+        copy_of_players = player.players.copy()
+    with pickup.pickup_lock:
+        copy_of_pickup = pickup.pickups.copy()
+    with prop.props_lock:
+        copy_of_props = prop.props.copy()
 
     for current_client in clients.values():
-        current_client.send_game_info(copy_of_bullets, copy_of_players, copy_of_pickup)
+        current_client.send_game_info(copy_of_bullets, copy_of_players, copy_of_pickup, copy_of_props)
 
 
 def send_death_info_to_all_players(death_message):

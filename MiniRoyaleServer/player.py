@@ -43,7 +43,7 @@ class Player:
         self.health = 100
         self.dead = False
         self.name = "Unknown"
-        self.speed = 10.0
+        self.speed = 12.0
 
         self.dropout_time = 0
         self.last_packet_id = 0
@@ -208,34 +208,36 @@ class Player:
         with physics.physics_lock:
             physics.space.add(self.body, self.shape)
 
-        self.body.position = Vec2d(random.uniform(-100, 100), random.uniform(-100, 100))
+        # self.body.position = Vec2d(random.uniform(-100, 100), random.uniform(-100, 100))
+        self.body.position = Vec2d(random.uniform(-5, 5), random.uniform(-5, 5))
 
     def pickup_item(self, pickup_id, quantity):
-        print("Pickup item and quantity:{}, {}".format(pickup_id, quantity))
+        if not self.dead:
+            print("Pickup item and quantity:{}, {}".format(pickup_id, quantity))
 
-        if pickup.pickups[pickup_id].item_type == 5009:
-            self.inventory.ammo_nine_mm_count += quantity
+            if pickup.pickups[pickup_id].item_type == 5009:
+                self.inventory.ammo_nine_mm_count += quantity
 
-        elif pickup.pickups[pickup_id].item_type == 1001:
-            with item.item_id_lock:
-                item.item_id_counter += 1
-                item_id = item.item_id_counter
+            elif pickup.pickups[pickup_id].item_type == 1001:
+                with item.item_id_lock:
+                    item.item_id_counter += 1
+                    item_id = item.item_id_counter
 
-            self.inventory.add_item(item_id, pickup.pickups[pickup_id].item_type)
+                self.inventory.add_item(item_id, pickup.pickups[pickup_id].item_type)
 
-        # TODO Make this in another function
-        with pickup.pickup_lock:
-            deleted_pickup_info = "PCKDL:{};".format(pickup.pickups[pickup_id].pickup_id)
-            deleted_pickup_pos_x = pickup.pickups[pickup_id].body.position[0]
-            deleted_pickup_pos_y = pickup.pickups[pickup_id].body.position[1]
+            # TODO Make this in another function
+            with pickup.pickup_lock:
+                deleted_pickup_info = "PCKDL:{};".format(pickup.pickups[pickup_id].pickup_id)
+                deleted_pickup_pos_x = pickup.pickups[pickup_id].body.position[0]
+                deleted_pickup_pos_y = pickup.pickups[pickup_id].body.position[1]
 
-            with physics.physics_lock:
-                physics.space.remove(pickup.pickups[pickup_id].body, pickup.pickups[pickup_id].shape)
+                with physics.physics_lock:
+                    physics.space.remove(pickup.pickups[pickup_id].body, pickup.pickups[pickup_id].shape)
 
-            del pickup.pickups[pickup.pickups[pickup_id].pickup_id]
+                del pickup.pickups[pickup.pickups[pickup_id].pickup_id]
 
-            # print(deleted_pickup_info + str(deleted_pickup_pos_x) + str(deleted_pickup_pos_y))
-            client.send_message_to_nearby_clients(deleted_pickup_pos_x, deleted_pickup_pos_y, deleted_pickup_info)
+                # print(deleted_pickup_info + str(deleted_pickup_pos_x) + str(deleted_pickup_pos_y))
+                client.send_message_to_nearby_clients(deleted_pickup_pos_x, deleted_pickup_pos_y, deleted_pickup_info)
 
 
 def get_player_info_command_message(player_id):
@@ -266,7 +268,6 @@ def get_alive_player_count():
     return alive_player_count
 
 
-# Buraya bak
 def get_winner_player():
     global players
 

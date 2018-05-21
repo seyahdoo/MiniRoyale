@@ -38,7 +38,7 @@ class Game:
             # get current time
             enter_time = timeit.default_timer()
 
-            # Add clients to be added to client list
+            # Add clients to be added or removed to client list
             if len(client.clients_to_be_added) > 0:
                 client.add_clients_to_be_added()
 

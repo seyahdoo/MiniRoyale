@@ -32,7 +32,7 @@ def spawn_items():
     # item.spawned_item_list[test_item_id] = item.Item(test_item_id, test_item_type, "boi", "bios")
 
     for i in range(0, random_ammo_count):
-        pickup.Pickup(random.uniform(-100.0, 100.0), random.uniform(-100.0, 100.0), 5, 5009)
+        pickup.Pickup(random.uniform(-100.0, 100.0), random.uniform(-100.0, 100.0), random.randint(15, 30), 5009)
 
 
 def spawn_props():
