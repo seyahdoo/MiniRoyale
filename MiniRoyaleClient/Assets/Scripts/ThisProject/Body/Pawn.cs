@@ -7,13 +7,17 @@ public class Pawn : MonoBehaviour {
 
 	public string PlayerName;
 
-	public SpriteRenderer bodyRenderer; 
+    public bool isDead;
+    public Sprite DeadSprite;
 
+	public SpriteRenderer bodyRenderer; 
 	public SpriteRenderer weaponRenderer;
+    public GameObject EyeL;
+    public GameObject EyeR;
+
 
 	public Dictionary<int,Item> inventory = new Dictionary<int,Item>();
 
-	public Rival rival;
 
 	Queue<UniqueItem> EquipItemQueue = new Queue<UniqueItem>();
 	Queue<UniqueItem> DeEquipItemQueue = new Queue<UniqueItem>();
@@ -56,5 +60,15 @@ public class Pawn : MonoBehaviour {
 		DeEquipItemQueue.Enqueue (item);
 	}
 
+    public void Killed() {
+
+        isDead = true;
+
+        bodyRenderer.sprite = DeadSprite;
+        weaponRenderer.sprite = null;
+        EyeL.SetActive(false);
+        EyeR.SetActive(false);
+
+    }
 
 }

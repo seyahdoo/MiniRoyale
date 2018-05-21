@@ -6,8 +6,6 @@ public class Rival : MonoBehaviour {
 
 	public int PlayerID;
 
-	public string PlayerName = "";
-
 	public Pawn pawn;
 
 	public float NewPositionTime;
@@ -24,17 +22,13 @@ public class Rival : MonoBehaviour {
 
 	bool positionJustUpdated = false;
 
-	public Sprite DeadSprite;
-
-	public bool isDead = false;
-
 	void Awake(){
 		myTransform = transform;
 		myGameObject = gameObject;
 	}
 
 
-	public void setPosition(Vector2 pos,float rot){
+	public void SetPosition(Vector2 pos,float rot){
 		OldPosition = NewPosition;
 		OldPositionTime = NewPositionTime;
 		NewPosition = pos;
@@ -72,17 +66,12 @@ public class Rival : MonoBehaviour {
 
 		myTransform.position = pos;
 		myTransform.localEulerAngles = new Vector3 (0f, 0f, rot);
-		//Debug.Log (rot);
 	}
 
 	public void Killed ()
 	{
 
-		//Debug.Log ("im dead");
-		isDead = true;
-
-		pawn.bodyRenderer.sprite = DeadSprite;
-		pawn.weaponRenderer.sprite = null;
+        pawn.Killed();
 
 	}
 

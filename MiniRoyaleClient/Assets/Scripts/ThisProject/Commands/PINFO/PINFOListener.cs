@@ -10,13 +10,19 @@ public class PINFOListener : GameEventUser {
 
 	public ItemDictionary itemDictionary;
 
+    [SerializeField] 
+
 	//PINFO
 	public override void OnEventInvoked (object eventData)
 	{
 
 		string[] args = (string[])eventData;
 	
-		rivalOrchestrator.PINFO (int.Parse (args [0]), args [1], bool.Parse (args [3]));
+		rivalOrchestrator.PINFO (
+            int.Parse (args [0]), 
+            args [1], 
+            bool.Parse (args [3])
+        );
 
 
 		List<UniqueItem> items = ParseItemList (args [2]);

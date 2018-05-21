@@ -23,12 +23,12 @@ public class NetworkItemOrchestrator : MonoBehaviour {
 
 	public void PINFO(int playerId, string playerName, List<UniqueItem> items){
 
-		Rival rival = rivalOrchestrator.GetRival (playerId);
+        Pawn pawn = rivalOrchestrator.GetPawn(playerId);
 
 		foreach (var item in items) {
-			//Debug.Log ("Trying to equip:"+item.item.itemName);
+            //Debug.Log ("Trying to equip:"+item.item.itemName);
 
-			rival.pawn.EquipThreadSafe (item);
+            pawn.EquipThreadSafe (item);
 		}
 
 	

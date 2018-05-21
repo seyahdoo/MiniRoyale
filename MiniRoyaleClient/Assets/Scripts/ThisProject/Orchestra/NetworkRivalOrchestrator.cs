@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using seyahdoo.events;
 using System;
+using RoboRyanTron.Unite2017.Variables;
 
 public class NetworkRivalOrchestrator : MonoBehaviour {
 
@@ -18,7 +19,10 @@ public class NetworkRivalOrchestrator : MonoBehaviour {
 	[SerializeField]
 	private int rivalStartpoolCount = 10;
 
-	void Awake(){
+    [SerializeField] IntegerReference SelfPlayerID;
+    [SerializeField] Player player;
+
+    void Awake(){
 		rivals = new Dictionary<int, Rival> ();
 		rivalPool = new Stack<Rival> ();
 
@@ -94,34 +98,53 @@ public class NetworkRivalOrchestrator : MonoBehaviour {
 
 		return rival;
 	}
-		
+
+    public Pawn GetPawn(int playerID) {
+        Pawn pawn;
+
+        if (playerID == SelfPlayerID.Value)
+        {
+            Debug.Log("Self Pawn Get!" + playerID +":"+ SelfPlayerID.Value);
+            pawn = player.pawn;
+        }
+        else
+        {
+            pawn = GetRival(playerID).pawn;
+        }
+
+        return pawn;
+    }
 
 	public void PINFO(int playerId, string playerName, bool isDead){
 
-		Rival rival = GetRival (playerId);
+        Pawn pawn = GetPawn(playerId);
 
-		rival.PlayerName = playerName;
+        pawn.PlayerName = playerName;
 
 		if (isDead) {
-			rival.Killed ();
+			pawn.Killed ();
 		}
 
 	}
 
 	public void MOVED(int playerID,float posx,float posy,float rot){
-		//Debug.LogWarning ("Orchestrator: MOVED");
+
+        //dont move yourself
+        if (playerID == player.GetPlayerID()) {
+            return;
+        }
 
 		Rival rival = GetRival (playerID);
 
-		rival.setPosition (new Vector2(posx,posy),rot);
+        rival.SetPosition (new Vector2(posx,posy),rot);
+
 	}
 
 	public void KILED(int playerID){
-	
 
-		Rival rival = GetRival (playerID);
+		Pawn pawn = GetPawn (playerID);
 
-		rival.Killed ();
+        pawn.Killed ();
 
 	}
 
