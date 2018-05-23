@@ -30,10 +30,10 @@ if __name__ == "__main__":
 
     # parse arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("-port", nargs='?', default=11999)
+    parser.add_argument("-address", nargs='?', default=("192.168.1.4", 19998))
     args = parser.parse_args()
 
-    PORT = int(args.port)
+    # PORT = int(args.port)
 
     # initialize game
     game.game_init()

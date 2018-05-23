@@ -2,9 +2,9 @@ import socket
 import threading
 import time
 import argparse
-import os
+import matchmaking_slave
+import random
 
-import subprocess
 
 IP = "0.0.0.0"
 PORT = 11999
@@ -23,8 +23,11 @@ LastServerCreateTime = 0
 
 sender_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
+slaves = []
 
-def connection_server():
+
+def master_connection_listener():
+    global slaves
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # internet, UDP
     sock.bind((IP, PORT))
 
@@ -33,27 +36,32 @@ def connection_server():
     while True:
         data, address = sock.recvfrom(1024)  # buffer size is 1024 bytes
         text = data.decode('utf-8')
-        print ("received message:"+text+"|from:"+str(address))
+        print("received message:"+text+"|from:"+str(address))
         if text[0:5] == "MATCH":
             # create a game if not present
             print("tried to connect properly")
-            connect_one(address)
+            get_service_provider(address)
+        elif text[0:5] == "SLAVS":
+            arguments = text[6:]
+            arguments = arguments.split(',')
+            slaves.append((arguments[0], arguments[1]))
+
+            pass
 
 
-def connect_one(address):
-    global LastServerPopulation
-    global LastServerCreateTime
-    if LastServerPopulation == 0 or LastServerCreateTime + ServerStartTime < time.time():
-        print("Printing time.time: ", time.time())
-        LastServerCreateTime = time.time()
-        # TODO random_port =
-        subprocess.Popen(["venv\Scripts\python", "game_server_main.py", "-port=11998"])
-        time.sleep(1)
-        # TODO get remote ip
 
-    LastServerPopulation += 1
-    print("FOUND:{},{};".format(REMOTE_IP, REMOTE_PORT))
-    sender_socket.sendto(bytes("FOUND:{},{};".format(REMOTE_IP, REMOTE_PORT), 'utf-8'), address)
+
+def get_service_provider(address):
+
+    if len(slaves) == 0:
+        subprocess.Popen(["venv\Scripts\python", "matchmaking_slave.py", "-address={}".format(address)])
+        slaves[new_slave.address] = new_slave
+
+    request = "MATCH:{},{};".format(address[0], address[1])
+
+    # TODO make o load balancer for selecting slave
+    selected_slave_address = random.choice(list(slaves))
+    sender_socket.sendto(bytes(request, 'utf-8'), selected_slave_address)
 
 
 if __name__ == "__main__":
@@ -64,7 +72,7 @@ if __name__ == "__main__":
 
     PORT = int(args.port)
 
-    connection_server_thread = threading.Thread(target=connection_server)
+    connection_server_thread = threading.Thread(target=master_connection_listener)
     connection_server_thread.daemon = True
 
     try:

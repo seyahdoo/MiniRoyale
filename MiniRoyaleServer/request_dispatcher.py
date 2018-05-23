@@ -13,9 +13,7 @@ def request_dispatcher(client_thread, buffer):
         if cmd[0:5] == "MOVER":
             args = cmd[6:]
             args = args.split(',')
-            
-            # print(str(args))
-            
+
             # if last packet number is > args[0] return
             client_thread.player.move_request(args[0], args[1], args[2], args[3])
             
