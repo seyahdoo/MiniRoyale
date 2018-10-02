@@ -3,13 +3,14 @@ import threading
 import time
 import argparse
 import matchmaking_slave
+import subprocess
 import random
 
 
 IP = "0.0.0.0"
 PORT = 11999
 
-REMOTE_IP = "192.168.1.4"
+REMOTE_IP = "192.168.1.22"
 REMOTE_PORT = 11998
 
 # server settings
@@ -45,23 +46,25 @@ def master_connection_listener():
             arguments = text[6:]
             arguments = arguments.split(',')
             slaves.append((arguments[0], arguments[1]))
-
             pass
-
-
 
 
 def get_service_provider(address):
 
     if len(slaves) == 0:
-        subprocess.Popen(["venv\Scripts\python", "matchmaking_slave.py", "-address={}".format(address)])
-        slaves[new_slave.address] = new_slave
+        # TODO Create a slave if not exist
+        pass
 
     request = "MATCH:{},{};".format(address[0], address[1])
 
     # TODO make o load balancer for selecting slave
     selected_slave_address = random.choice(list(slaves))
     sender_socket.sendto(bytes(request, 'utf-8'), selected_slave_address)
+
+
+def create_slave():
+    # TODO create slave machine from AWS using AWS api
+    pass
 
 
 if __name__ == "__main__":
