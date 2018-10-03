@@ -62,6 +62,7 @@ class Game:
 
             # Check whether game is over or not every time a specific event has occurred
             # Like when a player has died
+            # TODO optimize this, make it into a function
             if self.winner_player is not None:
                 print('Winner name and player_id: {}, {}'.format(self.winner_player.name, self.winner_player.player_id))
                 self.winner_player = None
