@@ -2,8 +2,6 @@ import socket
 import threading
 import time
 import argparse
-import matchmaking_slave
-import subprocess
 import random
 
 
@@ -38,28 +36,32 @@ def master_connection_listener():
         data, address = sock.recvfrom(1024)  # buffer size is 1024 bytes
         text = data.decode('utf-8')
         print("received message:"+text+"|from:"+str(address))
-        if text[0:5] == "MATCH":
-            # create a game if not present
-            print("tried to connect properly")
-            get_service_provider(address)
-        elif text[0:5] == "SLAVS":
-            arguments = text[6:]
-            arguments = arguments.split(',')
-            slaves.append((arguments[0], arguments[1]))
-            pass
+        for cmd in text.split(';'):
+            if cmd[0:5] == "MATCH":
+                # create a game if not present
+                print("tried to connect properly")
+                get_service_provider(address)
+            elif cmd[0:5] == "SLAVS":
+                arguments = cmd[6:]
+                arguments = arguments.split(',')
+                slaves.append((arguments[0], int(arguments[1])))
+                pass
 
 
 def get_service_provider(address):
 
     if len(slaves) == 0:
         # TODO Create a slave if not exist
-        pass
+        create_slave()
+        sender_socket.sendto(bytes("ERROR:NO SERVER AVAILABLE;", 'utf-8'), address)
+        return
 
     request = "MATCH:{},{};".format(address[0], address[1])
 
-    # TODO make o load balancer for selecting slave
-    selected_slave_address = random.choice(list(slaves))
+    # TODO make o load balancer for selecting slave OR some other cool way
+    selected_slave_address = slaves[0]
     sender_socket.sendto(bytes(request, 'utf-8'), selected_slave_address)
+    return
 
 
 def create_slave():
@@ -84,4 +86,3 @@ if __name__ == "__main__":
             time.sleep(100)
     except (KeyboardInterrupt, SystemExit):
         exit()
-exit()

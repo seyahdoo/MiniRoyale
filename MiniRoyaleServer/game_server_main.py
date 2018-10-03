@@ -6,12 +6,14 @@ import game
 import argparse
 
 IP = "0.0.0.0"
-PORT = 11999
+PORT = 0
 
 
 def connection_server():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # internet, UDP
     sock.bind((IP, PORT))
+
+    print("PORT:{}".format(sock.getsockname()[1]))
 
     print("Server started at {} port {}".format(IP, PORT))
     
@@ -29,11 +31,12 @@ def connection_server():
 if __name__ == "__main__":
 
     # parse arguments
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-address", nargs='?', default=("192.168.1.4", 19998))
-    args = parser.parse_args()
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument("-address", nargs='?', default=("192.168.1.22", 0))
+    # args = parser.parse_args()
 
     # PORT = int(args.port)
+    PORT = 0
 
     # initialize game
     game.game_init()
@@ -48,4 +51,4 @@ if __name__ == "__main__":
             time.sleep(100)
     except (KeyboardInterrupt, SystemExit):
         exit()
-exit()
+

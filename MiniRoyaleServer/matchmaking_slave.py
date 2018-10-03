@@ -1,11 +1,9 @@
 import socket
 import threading
-import time
 import argparse
-import os
 import subprocess
 import time
-
+from requests import get
 
 # Use this later
 # from requests import get
@@ -14,27 +12,13 @@ import time
 # print('My public IP address is: {}'.format(ip))
 
 IP = "0.0.0.0"
-PORT = 11999
+PORT = 0
 
 ServerMaxPlayerSize = 30
 ServerStartTime = 50
 
-games = {}
+games = []
 games_lock = threading.Lock()
-
-master_ip = ""
-master_port = 0
-
-ip_address = master_ip
-port = 0
-address = "", 0
-
-listener_thread = threading.Thread(target=connection_server)
-listener_thread.daemon = True
-listener_thread.start()
-
-# Wait for port to be assigned
-time.sleep(1)
 
 last_game_server_ip = ""
 last_game_server_port = 0
@@ -42,56 +26,93 @@ last_game_server_population = 0
 last_game_server_creation_time = 0
 sender_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
+# find master adress
+master_ip = socket.gethostbyname('master1.royale.seyahdoo.com')
+
+# find my adress
+# my_ip = get('https://api.ipify.org').text
+# TODO delete this and use proper one (this is for testing only)
+my_ip = "192.168.1.33"
+
 def connection_server():
 
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # internet, UDP
-    sock.bind((ip_address, port))
-    port = sock.getsockname()[1]
-    address = ip_address, port
+    global PORT
 
-    print("Slave started at {} port {}".format(ip_address, port))
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # internet, UDP
+    sock.bind((IP, PORT))
+    PORT = sock.getsockname()[1]
+    address = IP, PORT
+
+    print("Slave started at {} port {}".format(IP, PORT))
+
+    # send info to master
+    sender_socket.sendto(
+        bytes("SLAVS:{},{};".format(my_ip, PORT), 'utf-8'),
+        (master_ip, 11999))
 
     while True:
         data, address = sock.recvfrom(1024)  # buffer size is 1024 bytes
         text = data.decode('utf-8')
-        # print ("received message:"+text+"|from:"+str(address))
-        if text[0:5] == "MATCH":
-            # create a game if not present
-            arguments = text[6:]
-            arguments = arguments.split(',')
+        print ("received message:"+text+"|from:"+str(address))
+        for cmd in text.split(";"):
+            if cmd[0:5] == "MATCH":
+                # create a game if not present
+                arguments = cmd[6:]
+                arguments = arguments.split(',')
 
-            # if last packet number is > args[0] return
-            connect_one(arguments[0], arguments[1])
-            print("tried to connect properly")
-            connect_one(address)
+                connect_one(arguments[0], arguments[1])
+                print("tried to connect properly")
 
-        # Game Created
-        elif text[0:5] == "GAMEC":
+            # Game Created
+            # TODO Noo need, now we use PIPES(from os)
+            elif cmd[0:5] == "GAMEC":
+                pass
+                #print("FOUND:{},{};".format(last_game_server_ip, last_game_server_port))
+                #sender_socket.sendto(
+                #    bytes("FOUND:{},{};".format(last_game_server_ip, last_game_server_port), 'utf-8'),
+                #    client_address)
 
-            print("FOUND:{},{};".format(last_game_server_ip, last_game_server_port))
-            sender_socket.sendto(
-                bytes("FOUND:{},{};".format(last_game_server_ip, last_game_server_port), 'utf-8'),
-                client_address)
 
 def connect_one(client_ip, client_port):
     client_address = client_ip, client_port
+
+    global last_game_server_creation_time
+    global last_game_server_population
 
     if \
             len(games) <= 0 or\
             last_game_server_creation_time + ServerStartTime < time.time() or\
             last_game_server_population >= ServerMaxPlayerSize:
 
-        print("Printing time.time: ", time.time())
+        # print("Printing time.time: ", time.time())
         last_game_server_creation_time = time.time()
         last_game_server_population = 0
 
-        subprocess.Popen(["venv\Scripts\python", "game_server_main.py", "-address={}".format(address)])
+        game_port = create_game()
+        games.append(game_port)
+
+    # TODO logically select a proper game
+    selected_game_port = games[0]
+    #FOUND: ipaddr, port;
+    print("Sending -> " + "FOUND:{},{};".format(my_ip, selected_game_port))
+    sender_socket.sendto(
+        bytes("FOUND:{},{};".format(my_ip, selected_game_port), 'utf-8'),
+        (client_ip, int(client_port)))
+
+def create_game():
+    process = subprocess.Popen(["venv\Scripts\python", "game_server_main.py", "-address={}".format((IP,PORT))],stdout=subprocess.PIPE)
+    for line in iter(process.stdout.readline, ''):
+        cmd = line[0:4].decode()
+        if cmd == "PORT":
+            return int(line[5:-2].decode())
+
+    return
 
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-port", nargs='?', default=11999)
+    parser.add_argument("-port", nargs='?', default=0)
     args = parser.parse_args()
 
     PORT = int(args.port)
@@ -99,10 +120,10 @@ if __name__ == "__main__":
     connection_server_thread = threading.Thread(target=connection_server)
     connection_server_thread.daemon = True
 
+
     try:
         connection_server_thread.start()
         while True:
             time.sleep(100)
     except (KeyboardInterrupt, SystemExit):
         exit()
-exit()

@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/MiniRoyaleServer.iml" filepath="$PROJECT_DIR$/.idea/MiniRoyaleServer.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../../Python/NameSpaceTest/.idea/NameSpaceTest.iml" filepath="$PROJECT_DIR$/../../../Python/NameSpaceTest/.idea/NameSpaceTest.iml" />
     </modules>
   </component>
 </project>
