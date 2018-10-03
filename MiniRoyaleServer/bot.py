@@ -5,7 +5,7 @@ class Bot:
 
     def __init__(self):
         self.player = None
-        
+
         pass
 
     def step(self):
@@ -25,4 +25,10 @@ class Bot:
         pass
 
 
+
+def Add_Bot():
+    pass
+
+def Remove_Bot(bot_obj):
+    pass
 
