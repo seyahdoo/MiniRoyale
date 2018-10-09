@@ -72,15 +72,16 @@ def on_player_bullet_collision_begin(arbiter, space, data):
     deleted_bullet_pos_x = bullet_obj.body.position[0]
     deleted_bullet_pos_y = bullet_obj.body.position[1]
 
-    with physics_lock:
-        space.remove(bullet_obj.body, bullet_obj.shape)
-
     with bullet.bullets_lock:
-        del bullet.bullets[bullet_obj.bullet_id]
+        if bullet_obj.bullet_id in bullet.bullets:
+            with physics_lock:
+                space.remove(bullet_obj.body, bullet_obj.shape)
+
+            del bullet.bullets[bullet_obj.bullet_id]
+            client.send_message_to_nearby_clients(deleted_bullet_pos_x, deleted_bullet_pos_y, deleted_bullet_info)
+
     # mark bullet to be deleted
     # bullet.bullet_indexes_to_be_deleted.append(bullet_obj.bullet_id)
-
-    client.send_message_to_nearby_clients(deleted_bullet_pos_x, deleted_bullet_pos_y, deleted_bullet_info)
 
     return False
 

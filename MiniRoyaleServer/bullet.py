@@ -75,12 +75,11 @@ class Bullet:
                 deleted_bullet_pos_x = self.body.position[0]
                 deleted_bullet_pos_y = self.body.position[1]
 
-                with physics.physics_lock:
-                    physics.space.remove(self.body, self.shape)
-
-                del bullets[self.bullet_id]
-
-                client.send_message_to_nearby_clients(deleted_bullet_pos_x, deleted_bullet_pos_y, deleted_bullet_info)
+                if self.bullet_id in bullets:
+                    with physics.physics_lock:
+                        physics.space.remove(self.body, self.shape)
+                    del bullets[self.bullet_id]
+                    client.send_message_to_nearby_clients(deleted_bullet_pos_x, deleted_bullet_pos_y, deleted_bullet_info)
 
             # Mark for delete
             # bullet_indexes_to_be_deleted.append(self.bullet_id)
@@ -91,9 +90,9 @@ class Bullet:
 
 def update_bullet_state():
     global bullets, bullets_to_be_updated
-    bullets_to_be_updated = bullets.copy()
 
     with bullets_lock:
+        bullets_to_be_updated = bullets.copy()
         for current_bullet in bullets_to_be_updated.values():
             current_bullet.update()
 

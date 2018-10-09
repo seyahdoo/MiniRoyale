@@ -26,6 +26,10 @@ class Game:
         # Spawn items
         director.spawn_items()
         director.spawn_props()
+
+        director.spawn_bots()
+
+
         print("initiated game")
 
         self.game_thread = threading.Thread(target=self.run)

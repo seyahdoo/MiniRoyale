@@ -4,6 +4,7 @@ import game
 import pickup
 import random
 import prop
+import bot
 
 random_ammo_count = 256
 random_square_prop_count = 128
@@ -40,6 +41,11 @@ def spawn_props():
         prop.Prop(0, 7001, random.uniform(-100.0, 100.0), random.uniform(-100.0, 100.0))
     for i in range(0, random_circle_prop_count):
         prop.Prop(0, 7002, random.uniform(-100.0, 100.0), random.uniform(-100.0, 100.0))
+
+
+def spawn_bots():
+    for i in range(10):
+        bot.add_bot()
 
 
 def game_restart():

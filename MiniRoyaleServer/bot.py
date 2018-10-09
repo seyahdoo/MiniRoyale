@@ -1,12 +1,12 @@
-
+import player
 
 
 class Bot:
 
     def __init__(self):
-        self.player = None
+        self.player = player.Player(None)
 
-        pass
+
 
     def step(self):
 
@@ -21,14 +21,13 @@ class Bot:
         # do otherwise
         # collect ammo
 
-
         pass
 
 
+def add_bot():
+    Bot()
 
-def Add_Bot():
-    pass
 
-def Remove_Bot(bot_obj):
+def remove_bot(bot_obj):
     pass
 
