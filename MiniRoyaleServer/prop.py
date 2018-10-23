@@ -15,7 +15,7 @@ prop_shape_to_prop = {}
 
 prop_types = {
     7001: ('rectangle', (1.10, 1.10)),
-    7002: ('circle', 0.55),
+    7002: ('circle', 0.58),
 }
 
 

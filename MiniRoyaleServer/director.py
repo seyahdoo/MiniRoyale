@@ -11,6 +11,10 @@ random_square_prop_count = 128
 random_circle_prop_count = 128
 
 
+# TODO spawn items, props and such with fixed ranges in quantity distributed across regions of the maps
+# For example: top left section -> 8-10 items with 6-7 props, bottom left section -> 7-8 items with 10-13 props and such
+
+
 # Check whether game is over or not every time a specific event has occurred
 # Like when a player has died
 def on_player_killed():
@@ -45,7 +49,17 @@ def spawn_props():
 
 def spawn_bots():
     for i in range(10):
-        bot.add_bot()
+        bot.Bot()
+    pass
+
+
+def find_bots():
+    with player.players_lock:
+        copy_of_players = player.players.copy()
+
+    for bott in copy_of_players.values():
+        if bott.client is not None:
+            bot.bots[bot.player_id] = bott
 
 
 def game_restart():

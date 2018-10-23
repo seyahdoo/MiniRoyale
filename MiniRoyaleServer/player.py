@@ -39,10 +39,16 @@ class Player:
 
         self.client = _client
 
-        self.movement_speed = 0
         self.health = 100
         self.dead = False
         self.name = "Unknown"
+
+        # Give default names depending if player is bot or not
+        if self.client is None:
+            self.name = "Bot - {}".format(self.player_id - 10000)
+        else:
+            self.name = "Player - {}".format(self.player_id - 10000)
+
         self.speed = 12.0
 
         self.dropout_time = 0
@@ -70,7 +76,7 @@ class Player:
         self.shape = None
         self.body = pymunk.Body(10, pymunk.inf)
 
-        self.shape = pymunk.Circle(self.body, 0.55)
+        self.shape = pymunk.Circle(self.body, 0.58)
         self.shape.elasticity = 0
         self.shape.collision_type = physics.collision_types["player"]
 
@@ -101,14 +107,18 @@ class Player:
             return
         # print("player_id:{} trying to move_request to ({},{})".format(str(self.player_id), str(pos_x), str(pos_y)))
         # drop packet id
-        if self.last_packet_id > int(packet_id):
-            return
-        else:
-            self.last_packet_id = int(packet_id)
-        try:
-            self.check_speed_and_move(pos_x, pos_y, angle)
-        except:
-            print("Error: Can not parse position info. Playerid:{} ".format(self.player_id))
+
+        # Check whether player is a bot or not
+        if self.client is not None:
+
+            if self.last_packet_id > int(packet_id):
+                return
+            else:
+                self.last_packet_id = int(packet_id)
+            try:
+                self.check_speed_and_move(pos_x, pos_y, angle)
+            except:
+                print("Error: Can not parse position info. Playerid:{} ".format(self.player_id))
 
     def check_speed_and_move(self, pos_x, pos_y, angle):
         movement_threshold = ((timeit.default_timer() - self.time_since_last_movement) * self.speed)
@@ -162,8 +172,10 @@ class Player:
             speed = 15
             damage = 20
 
-        bullet.Bullet(self.player_id, self.body.position[0], self.body.position[1], degrees(self.body.angle), speed,
-                      damage)
+        # Maybe player died after coming into this method, then body_position will be None, check for this
+        if not self.dead:
+            bullet.Bullet(self.player_id, self.body.position[0], self.body.position[1], degrees(self.body.angle), speed,
+                          damage)
 
     def on_bullet_hit(self, bullet_obj):
         self.health -= bullet_obj.damage

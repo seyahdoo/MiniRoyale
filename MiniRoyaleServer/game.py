@@ -7,6 +7,7 @@ import client
 import player
 import physics
 import director
+import bot
 
 # Global Variables
 game_instance = None
@@ -28,7 +29,7 @@ class Game:
         director.spawn_props()
 
         director.spawn_bots()
-
+        director.find_bots()
 
         print("initiated game")
 
@@ -63,6 +64,12 @@ class Game:
 
             # Send updated game info to all players
             client.send_game_info_to_all_clients()
+
+            # Send updated game info to all bots
+            # bot.send_game_info_to_all_bots()
+
+            # Move bots
+            bot.step_all_bots()
 
             # Check whether game is over or not every time a specific event has occurred
             # Like when a player has died

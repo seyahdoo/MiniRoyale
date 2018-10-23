@@ -127,11 +127,12 @@ class Client:
         to_send = ""
         if not self.disconnected:
             for rid, rival in copy_of_players.items():
-                to_send += "MOVED:{},{},{},{},{};".format(self.sent_packet_id, rid, rival.body.position[0], rival.body.position[1], degrees(rival.body.angle))
-                self.sent_packet_id += 1
-                if len(to_send) > 400:
-                    self.send(to_send)
-                    to_send = ""
+                if not rival.dead:
+                    to_send += "MOVED:{},{},{},{},{};".format(self.sent_packet_id, rid, rival.body.position[0], rival.body.position[1], degrees(rival.body.angle))
+                    self.sent_packet_id += 1
+                    if len(to_send) > 400:
+                        self.send(to_send)
+                        to_send = ""
 
             for b_id, current_bullet in copy_of_bullets.items():
                 to_send += "SHOTT:{},{},{},{},{};".format(b_id,
@@ -190,6 +191,7 @@ def send_game_info_to_all_clients():
     with prop.props_lock:
         copy_of_props = prop.props.copy()
 
+    # TODO Check if this is thread safe
     for current_client in clients.values():
         current_client.send_game_info(copy_of_bullets, copy_of_players, copy_of_pickup, copy_of_props)
 

@@ -15,9 +15,10 @@ bullet_shape_to_bullet = {}
 bullet_id_counter_lock = threading.Lock()
 bullet_id_counter = 10000
 
+
 class Bullet:
+
     def __init__(self, player_id, pos_x, pos_y, angle, speed, damage):
-        global bullets_to_be_spawned
 
         self.player_id = int(player_id)
         self.speed = speed

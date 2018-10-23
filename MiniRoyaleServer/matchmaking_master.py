@@ -59,7 +59,7 @@ def get_service_provider(address):
     request = "MATCH:{},{};".format(address[0], address[1])
 
     # TODO make o load balancer for selecting slave OR some other cool way
-    selected_slave_address = slaves[0]
+    selected_slave_address = slaves[-1]
     sender_socket.sendto(bytes(request, 'utf-8'), selected_slave_address)
     return
 
