@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using seyahdoo.pooling.v3;
 
-public class Bullet : MonoBehaviour {
+public class Bullet : MonoBehaviour, IPoolable {
 
 	[SerializeField]
 	private Rigidbody2D rb;
@@ -21,15 +22,16 @@ public class Bullet : MonoBehaviour {
 
 	}
 
-	public void Delete(){
+    public void OnPoolInstantiate()
+    {
+    }
 
-		//TODO pool This
-		Destroy (this.gameObject);
+    public void OnPoolRelease()
+    {
+        rb.velocity = Vector3.zero;
+    }
 
-	}
-
-
-
-
-
+    public void OnPoolGet()
+    {
+    }
 }

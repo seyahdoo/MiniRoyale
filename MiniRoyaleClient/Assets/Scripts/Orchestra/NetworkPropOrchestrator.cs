@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -38,12 +39,11 @@ public class NetworkPropOrchestrator : MonoBehaviour {
 
 		p.SetPosition (posx, posy, rot);
 
-
-
-
-
-
 		
 	}
 
+    internal void Cleanup()
+    {
+        throw new NotImplementedException();
+    }
 }

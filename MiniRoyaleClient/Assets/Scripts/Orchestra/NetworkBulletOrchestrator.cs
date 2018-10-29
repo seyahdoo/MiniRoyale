@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using seyahdoo.pooling.v3;
 
 public class NetworkBulletOrchestrator : MonoBehaviour {
 
@@ -12,11 +13,9 @@ public class NetworkBulletOrchestrator : MonoBehaviour {
 	//SHOTT:bullet_id,posx,posy,bullet_speed;
 	public void SHOTT(int id, float posx, float posy, float angle, float speed){
 
-		//print (id);
-
 		if (!bullets.ContainsKey (id)) {
-			GameObject bulletobj = GameObject.Instantiate (BulletPrefab); 
-			Bullet b = bulletobj.GetComponent<Bullet> ();
+
+            Bullet b = Pool.Get<Bullet>();
 
 			bullets.Add (id, b);
 
@@ -40,14 +39,28 @@ public class NetworkBulletOrchestrator : MonoBehaviour {
 
 		if (bullets.ContainsKey (id)) {
 			Bullet b = bullets [id];
-			b.Delete ();
+
+            Pool.Release<Bullet>(b);
+            bullets.Remove(id);
+
 			return true;
-		
-		} else {
+
+        } else {
 			return false;
 		}
 
 	}
 
+
+    /// <summary>
+    /// Cleanup gamescene from bullets after game finishes
+    /// </summary>
+    public void Cleanup()
+    {
+        Pool.ReleaseAll<Bullet>();
+
+        bullets.Clear();
+
+    }
 
 }

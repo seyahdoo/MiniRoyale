@@ -27,6 +27,7 @@ public class NetworkPickupOrchestrator : MonoBehaviour {
 
 		if (!pickups.ContainsKey (pickupID)) {
 			//create pickup
+            //TODO Pool
 			GameObject go = Instantiate (pickupObject);
 			p = go.GetComponent<Pickup> ();
 			p.orchestrator = this;
@@ -99,10 +100,23 @@ public class NetworkPickupOrchestrator : MonoBehaviour {
 		}
 
 		if (Input.GetKeyDown (KeyCode.F)) {
-			Debug.Log("picked up "+ chosenPickup.ToString());
-			connection.Send ("PCKUP:" + chosenPickup.PickupID + "," + chosenPickup.Quantity + ";");
+            if (chosenPickup)
+            {
+			    Debug.Log("picked up "+ chosenPickup.ToString());
+			    connection.Send ("PCKUP:" + chosenPickup.PickupID + "," + chosenPickup.Quantity + ";");
+            }
 		}
 
 	}
+
+    public void Cleanup()
+    {
+        //TODO
+
+
+
+
+
+    }
 
 }

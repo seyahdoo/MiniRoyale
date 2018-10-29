@@ -42,6 +42,30 @@ public class NetworkRivalOrchestrator : MonoBehaviour {
 		rivalPool.Push (rival);
 	}
 
+    void ReleaseRival(Rival rival)
+    {
+        if (rivals.ContainsKey(rival.PlayerID))
+        {
+            rivals.Remove(rival.PlayerID);
+        }
+        rival.gameObject.SetActive(false);
+
+
+        rivalPool.Push(rival);
+    }
+
+    void RelaseAllRivals()
+    {
+
+        foreach (Rival r in rivals.Values)
+        {
+            rivalPool.Push(r);
+        }
+
+        rivals.Clear();
+
+    }
+
 
 	void Update(){
 		
@@ -60,17 +84,14 @@ public class NetworkRivalOrchestrator : MonoBehaviour {
 	private Rival CreateRival(int playerID){
 		Rival r;
 
-		//TODO: POOL THIS!
 		//Create Rival
 		if (rivalPool.Count <= 0) {
-			//TODO
-			Debug.LogError ("DEAL WITH THIS!!!");
+            GrowRivalPool();
 		}
 
 		r = rivalPool.Pop ();
 		r.PlayerID = playerID;
 
-		//TODO
 		EnableQueue.Push (r.myGameObject);
 
 		rivals.Add (playerID, r);
@@ -147,5 +168,13 @@ public class NetworkRivalOrchestrator : MonoBehaviour {
         pawn.Killed ();
 
 	}
+
+    public void Cleanup()
+    {
+
+        RelaseAllRivals();
+
+    }
+
 
 }
