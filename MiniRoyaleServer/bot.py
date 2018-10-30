@@ -44,6 +44,7 @@ class Bot:
                 self.change_direction(self.player.speed / 2, 10)
                 self.time_since_last_direction_change = timeit.default_timer()
             else:
+
                 self.change_direction(self.player.speed / 20, 5)
 
             # Reset step counter every 1 second

@@ -43,12 +43,6 @@ class Player:
         self.dead = False
         self.name = "Unknown"
 
-        # Give default names depending if player is bot or not
-        if self.client is None:
-            self.name = "Bot - {}".format(self.player_id - 10000)
-        else:
-            self.name = "Player - {}".format(self.player_id - 10000)
-
         self.speed = 12.0
 
         self.dropout_time = 0
@@ -86,6 +80,12 @@ class Player:
 
             self.create_body()
             players[self.player_id] = self
+
+        # Give default names depending if player is bot or not
+        if self.client is None:
+            self.name = "Bot - {}".format(self.player_id - 10000)
+        else:
+            self.name = "Player - {}".format(self.player_id - 10000)
 
         global total_player_count
         global alive_player_count
