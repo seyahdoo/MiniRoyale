@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using seyahdoo.pooling.v3;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,17 +20,19 @@ public class NetworkPickupOrchestrator : MonoBehaviour {
 	public Pickup chosenPickup;
 	public Transform playerPosition;
 
+    private void Awake()
+    {
+        Pool.CreatePool<Pickup>(pickupObject, 10, 100);
 
+    }
 
-	public void PCKIN(int pickupID, int itemID, float posx, float posy, int quantity ){
+    public void PCKIN(int pickupID, int itemID, float posx, float posy, int quantity ){
 			
 		Pickup p;
 
 		if (!pickups.ContainsKey (pickupID)) {
-			//create pickup
-            //TODO Pool
-			GameObject go = Instantiate (pickupObject);
-			p = go.GetComponent<Pickup> ();
+
+            p = Pool.Get<Pickup>();
 			p.orchestrator = this;
 			pickups.Add (pickupID, p);
 
@@ -46,7 +49,7 @@ public class NetworkPickupOrchestrator : MonoBehaviour {
 	public void PCKDL(int pickupID){
 
 		if (pickups.ContainsKey (pickupID)) {
-			//Debug.Log ("Will delete");
+
 			Pickup p;
 			p = pickups [pickupID];
 			if (chosenPickup == p) {
@@ -55,7 +58,9 @@ public class NetworkPickupOrchestrator : MonoBehaviour {
 
 			}
 
-			Destroy (p.gameObject);
+            pickups.Remove(pickupID);
+
+            Pool.Release<Pickup>(p);
 				
 		}
 	
@@ -111,10 +116,11 @@ public class NetworkPickupOrchestrator : MonoBehaviour {
 
     public void Cleanup()
     {
-        //TODO
+        Pool.ReleaseAll<Pickup>();
 
-
-
+        pickups.Clear();
+        nearPickups.Clear();
+        chosenPickup = null;
 
 
     }

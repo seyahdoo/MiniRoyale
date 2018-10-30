@@ -1,24 +1,20 @@
-﻿using System;
+﻿using seyahdoo.pooling.v3;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class NetworkPropOrchestrator : MonoBehaviour {
 
-	[SerializeField]
-	private int[] propTypeIDs;
-	[SerializeField]
-	private GameObject[] propTypeObjects;
-	private Dictionary<int, GameObject> propTypes = new Dictionary<int, GameObject>();
+    public GameObject circlePropPrefab;
+    public GameObject squarePropPrefab;
 
 	void Awake(){
-	
-		//Propulate reference dictionary
-		for (int i = 0; i < propTypeIDs.Length; i++) {
-			propTypes.Add (propTypeIDs [i], propTypeObjects [i]);
-		}
 
-	}
+        Pool.CreatePool<CircleProp>(circlePropPrefab, 100, 1000);
+        Pool.CreatePool<SquareProp>(squarePropPrefab, 100, 1000);
+
+    }
 
 
 	public Dictionary<int, Prop> props = new Dictionary<int, Prop> ();
@@ -28,9 +24,19 @@ public class NetworkPropOrchestrator : MonoBehaviour {
 		Prop p;
 
 		if (!props.ContainsKey (propID)) {
-		
-			GameObject go = Instantiate (propTypes [PropType]);
-			p = go.GetComponent<Prop> ();
+
+            switch (PropType)
+            {
+                case 7001:
+                    p = Pool.Get<CircleProp>();
+                    break;
+                case 7002:
+                    p = Pool.Get<SquareProp>();
+                    break;
+                default:
+                    p = Pool.Get<SquareProp>();
+                    break;
+            }
 
 			props.Add (propID, p);
 		} else {
@@ -44,6 +50,9 @@ public class NetworkPropOrchestrator : MonoBehaviour {
 
     internal void Cleanup()
     {
-        throw new NotImplementedException();
+        Pool.ReleaseAll<SquareProp>();
+        Pool.ReleaseAll<CircleProp>();
+
+        props.Clear();
     }
 }

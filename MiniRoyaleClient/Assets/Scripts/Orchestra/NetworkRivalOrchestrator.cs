@@ -4,6 +4,7 @@ using UnityEngine;
 using seyahdoo.events;
 using System;
 using RoboRyanTron.Unite2017.Variables;
+using seyahdoo.pooling.v3;
 
 public class NetworkRivalOrchestrator : MonoBehaviour {
 
@@ -11,10 +12,6 @@ public class NetworkRivalOrchestrator : MonoBehaviour {
 
 	[SerializeField]
 	private GameObject rivalPrefab;
-
-	private Stack<Rival> rivalPool;
-
-	private Stack<GameObject> EnableQueue;
 
 	[SerializeField]
 	private int rivalStartpoolCount = 10;
@@ -24,43 +21,15 @@ public class NetworkRivalOrchestrator : MonoBehaviour {
 
     void Awake(){
 		rivals = new Dictionary<int, Rival> ();
-		rivalPool = new Stack<Rival> ();
 
-		for (int i = 0; i < rivalStartpoolCount; i++) {
-			GrowRivalPool ();
-		}
+        Pool.CreatePool<Rival>(rivalPrefab, rivalStartpoolCount, 1000);
 
-		EnableQueue = new Stack<GameObject> ();
 	}
-
-	void GrowRivalPool(){
-	
-		GameObject rivalobj = Instantiate (rivalPrefab);
-		Rival rival = rivalobj.GetComponent<Rival> ();
-		rivalobj.SetActive (false);
-
-		rivalPool.Push (rival);
-	}
-
-    void ReleaseRival(Rival rival)
-    {
-        if (rivals.ContainsKey(rival.PlayerID))
-        {
-            rivals.Remove(rival.PlayerID);
-        }
-        rival.gameObject.SetActive(false);
-
-
-        rivalPool.Push(rival);
-    }
 
     void RelaseAllRivals()
     {
 
-        foreach (Rival r in rivals.Values)
-        {
-            rivalPool.Push(r);
-        }
+        Pool.ReleaseAll<Rival>();
 
         rivals.Clear();
 
@@ -69,10 +38,6 @@ public class NetworkRivalOrchestrator : MonoBehaviour {
 
 	void Update(){
 		
-		while (EnableQueue.Count > 0) {
-			EnableQueue.Pop ().SetActive (true);
-		}
-
 		float time = Time.time;
 
 		foreach (Rival rival in rivals.Values) {
@@ -84,16 +49,8 @@ public class NetworkRivalOrchestrator : MonoBehaviour {
 	private Rival CreateRival(int playerID){
 		Rival r;
 
-		//Create Rival
-		if (rivalPool.Count <= 0) {
-            GrowRivalPool();
-		}
-
-		r = rivalPool.Pop ();
+        r = Pool.Get<Rival>();
 		r.PlayerID = playerID;
-
-		EnableQueue.Push (r.myGameObject);
-
 		rivals.Add (playerID, r);
 
 		//Request player Info (like what he wears)
