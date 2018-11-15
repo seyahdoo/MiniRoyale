@@ -34,6 +34,7 @@ master_ip = socket.gethostbyname('master1.royale.seyahdoo.com')
 # TODO delete this and use proper one (this is for testing only)
 my_ip = "192.168.1.22"
 
+
 def connection_server():
 
     global PORT

@@ -5,6 +5,7 @@ import player
 import bullet
 import pickup
 import prop
+import safe_zone
 from request_dispatcher import request_dispatcher
 from player import Player
 from math import degrees
@@ -162,6 +163,13 @@ class Client:
                     self.send(to_send)
                     to_send = ""
 
+            to_send += "CRCLE:{},{},{};".format(safe_zone.safe_zone_instance.pos_x,
+                                                safe_zone.safe_zone_instance.pos_y,
+                                                safe_zone.safe_zone_instance.radius)
+
+            # for current_outer_circle_body in copy_of_pickups.items():
+
+
             # print(to_send)
             self.send(to_send)
 
@@ -190,6 +198,7 @@ def send_game_info_to_all_clients():
         copy_of_pickup = pickup.pickups.copy()
     with prop.props_lock:
         copy_of_props = prop.props.copy()
+    # copy_of_outer_circles = safe_zone.outer_circles.copy()
 
     # TODO Check if this is thread safe
     for current_client in clients.values():
