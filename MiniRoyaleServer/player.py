@@ -2,11 +2,11 @@ from Inventory.inventory import Inventory
 import Inventory.Items.item as item
 import random
 import threading
-import director
 import bullet
 import pymunk
 import pickup
 import player
+import game
 from math import radians
 from pymunk import Vec2d
 from math import degrees
@@ -128,8 +128,9 @@ class Player:
         if distance_between_positions <= movement_threshold:
             self.move_body(pos_x, pos_y, angle)
         else:
-            to_reply = "MOVRJ:{},{};".format(self.body.position[0], self.body.position[1])
-            self.client.send(to_reply)
+            if self.client is not None:
+                to_reply = "MOVRJ:{},{};".format(self.body.position[0], self.body.position[1])
+                self.client.send(to_reply)
 
         self.time_since_last_movement = timeit.default_timer()
 
@@ -206,7 +207,7 @@ class Player:
         with physics.physics_lock:
             physics.space.remove(self.body, self.shape)
 
-        director.on_player_killed()
+        game.on_player_killed()
 
     def create_body(self):
         self.body = pymunk.Body(500, pymunk.inf)
