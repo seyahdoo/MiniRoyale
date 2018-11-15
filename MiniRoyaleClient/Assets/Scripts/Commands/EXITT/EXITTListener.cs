@@ -16,19 +16,14 @@ public class EXITTListener : GameEventUser {
 	public override void OnEventInvoked (object eventData)
 	{
 
-		//string[] args = (string[])eventData;
 
         player.SetActive(false);
         bulletOrchestrator.Cleanup();
         rivalOrchestrator.Cleanup();
-
         propOrchestrator.Cleanup();
-
         pickupOrchestrator.Cleanup();
 
-
-		//TODO Cleanup game, its finished
-
+        //TODO Load Start Scene
 
 	}
 

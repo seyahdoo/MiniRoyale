@@ -20,8 +20,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4810261320529464}
   - component: {fileID: 212185837854881742}
-  - component: {fileID: 114064280908889218}
   - component: {fileID: 61662587227360002}
+  - component: {fileID: 114670378897710110}
   m_Layer: 0
   m_Name: SquareProp
   m_TagString: Untagged
@@ -67,7 +67,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &114064280908889218
+--- !u!114 &114670378897710110
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -75,7 +75,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1564978320427508}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 52177badd3323d0468a4b7b3bd8be64c, type: 3}
+  m_Script: {fileID: 11500000, guid: 6457865fd751935419a6fced55445f54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!212 &212185837854881742

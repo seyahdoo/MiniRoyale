@@ -9,9 +9,13 @@ public class NetworkBulletOrchestrator : MonoBehaviour {
 
 	public Dictionary<int,Bullet> bullets = new Dictionary<int, Bullet> ();
 
+    private void Awake()
+    {
+        Pool.CreatePool<Bullet>(BulletPrefab, 10, 10000);
+    }
 
-	//SHOTT:bullet_id,posx,posy,bullet_speed;
-	public void SHOTT(int id, float posx, float posy, float angle, float speed){
+    //SHOTT:bullet_id,posx,posy,bullet_speed;
+    public void SHOTT(int id, float posx, float posy, float angle, float speed){
 
 		if (!bullets.ContainsKey (id)) {
 

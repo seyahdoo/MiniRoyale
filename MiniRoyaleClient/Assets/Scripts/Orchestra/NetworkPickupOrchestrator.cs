@@ -22,7 +22,7 @@ public class NetworkPickupOrchestrator : MonoBehaviour {
 
     private void Awake()
     {
-        Pool.CreatePool<Pickup>(pickupObject, 10, 100);
+        Pool.CreatePool<Pickup>(pickupObject, 10, 10000);
 
     }
 
