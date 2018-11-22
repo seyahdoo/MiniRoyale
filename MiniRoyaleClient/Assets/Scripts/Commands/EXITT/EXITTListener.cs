@@ -5,6 +5,8 @@ using seyahdoo.events;
 
 public class EXITTListener : GameEventUser {
 
+    public UDPConnection connection;
+
     public NetworkBulletOrchestrator bulletOrchestrator;
     public NetworkRivalOrchestrator rivalOrchestrator;
 
@@ -13,19 +15,28 @@ public class EXITTListener : GameEventUser {
 
     public GameObject player;
 
+    public AutoConnector autoConnector;
+
 	public override void OnEventInvoked (object eventData)
 	{
+        ExitGame();
+	}
 
-
+    public void ExitGame()
+    {
         player.SetActive(false);
+
+        connection.ResetAdress();
+
         bulletOrchestrator.Cleanup();
         rivalOrchestrator.Cleanup();
         propOrchestrator.Cleanup();
         pickupOrchestrator.Cleanup();
 
-        //TODO Load Start Scene
+        autoConnector.isInGame = false;
 
-	}
+        //TODO Load Start Scene
+    }
 
 
 }

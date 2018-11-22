@@ -70,39 +70,38 @@ public class NetworkPickupOrchestrator : MonoBehaviour {
 	//TODO fix this
 
 	public void InsideRange(Pickup p){
-		if (nearPickups.Count <= 0) {
-			chosenPickup = p;
-			p.Chosen ();
-		}
 		nearPickups.Add (p);
 	}
 
 	public void OutsideRange(Pickup p){
 		nearPickups.Remove (p);
-		//BUG HERE Probaby
-		if (chosenPickup == p) {
-			chosenPickup.UnChosen ();
-			chosenPickup = null;
-		}
+
+        if(chosenPickup == p)
+        {
+            p.UnChosen();
+            chosenPickup = null;
+        }
+
 	}
 
 	void Update(){
 
-		if (nearPickups.Count >= 2) {
-			float neardist = float.PositiveInfinity;
+		float neardist = float.PositiveInfinity;
 
-			foreach (Pickup p in nearPickups) {
-				float dist = Vector3.Distance (playerPosition.position, p.transform.position);
-				if(dist < neardist){
-					neardist = dist;
-					chosenPickup.UnChosen ();
-					p.Chosen ();
-					chosenPickup = p;
-				}
-
+		foreach (Pickup p in nearPickups) {
+			float dist = Vector3.Distance (playerPosition.position, p.transform.position);
+			if(dist < neardist){
+				neardist = dist;
+                if (chosenPickup)
+                {
+				    chosenPickup.UnChosen ();
+                }
+				p.Chosen ();
+				chosenPickup = p;
 			}
-		
+
 		}
+		
 
 		if (Input.GetKeyDown (KeyCode.F)) {
             if (chosenPickup)

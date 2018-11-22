@@ -7,6 +7,7 @@ public class FOUNDListener : GameEventUser {
 
 	[SerializeField] UDPConnection connection;
 	[SerializeField] GameObject playerObject;
+	[SerializeField] AutoConnector autoConnector;
 
 	public override void OnEventInvoked (object eventData)
 	{
@@ -20,6 +21,7 @@ public class FOUNDListener : GameEventUser {
 
 		playerObject.SetActive (true);
 
+        autoConnector.isInGame = true;
 
 	}
 

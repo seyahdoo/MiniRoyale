@@ -13,5 +13,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CommandCode: CRCLE
   ArgumentCount: 3
-  DEBUG: 1
+  DEBUG: 0
   Event: {fileID: 11400000, guid: a9eb0e9c3a210ba48a3944f1e9739239, type: 2}
