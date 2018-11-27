@@ -42,9 +42,8 @@ def request_dispatcher(client_thread, buffer):
             args = cmd[6:]
             args = args.split(',')
 
-            # print("equip request has come")
+            print("equip request has come")
             client_thread.player.pickup_item(int(args[0]), int(args[1]))
-
 
         # Player info request
         # PIREQ:playerid;
@@ -61,3 +60,7 @@ def request_dispatcher(client_thread, buffer):
 
             client_thread.player.shoot()
             #print("Succesfull shoot action!")
+
+        elif cmd[0:5] == "EXITT":
+            print("Disconnect request has come")
+            client_thread.disconnect()

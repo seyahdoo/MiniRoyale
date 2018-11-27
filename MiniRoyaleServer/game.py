@@ -88,7 +88,8 @@ class Game:
             if self.winner_player is not None:
                 print('Winner name and player_id: {}, {}'.format(self.winner_player.name, self.winner_player.player_id))
                 self.winner_player = None
-                game_restart()
+                finalize_game()
+                # game_restart()
 
             # Shrink safe zone
             safe_zone.safe_zone_instance.shrink_safe_zone()
@@ -180,3 +181,10 @@ def find_bots():
 
 def game_restart():
     player.grant_life_to_all_defilers()
+
+
+def finalize_game():
+    # For every client, send Disconnect message to them
+    copy_of_clients = client.clients.copy()
+    for current_client in copy_of_clients.values():
+        current_client.disconnect()

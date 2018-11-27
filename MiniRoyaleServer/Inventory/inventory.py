@@ -10,8 +10,7 @@ class Inventory:
         self.un_equipped_items = {}
 
         self.main_hand_item = None
-        self.ammo_nine_mm_count = 5
-
+        self.ammo_nine_mm_count = 100
 
     # TODO - Check if player is near enough to take an item from loot or spawnItem
     def add_item(self, item_id, item_type):

@@ -10,17 +10,16 @@ outer_circles = []
 
 class SafeZone:
 
-    def __init__(self, pos_x, pos_y, outer_circle_count=36):
+    def __init__(self, pos_x, pos_y, outer_circle_count=100):
+        # Server ile unitydeki edgeler aynı değil, player circledaki açıklıklardan kayıp gidebiliyor
 
         self.outer_circle_count = outer_circle_count
-        self.radius = 200.0 * 1.5
-        self.outer_circle_radius = 5.0
+        self.radius = 30.0 * 1.5
+        self.outer_circle_radius = 20.0
         self.pos_x = 0
         self.pos_y = 0
 
-        # physics stuff
-        self.body = None
-        self.shape = None
+        self.shrink_angle = 0.0
 
         self.create_body()
 
@@ -48,25 +47,33 @@ class SafeZone:
                 physics.space.add(current_circle_body, current_circle_shape)
                 outer_circles.append(current_circle_body)
 
+            self.shrink_angle = 45.0
+
     def shrink_safe_zone(self):
-        new_angle = float(random.uniform(0, 360))
+        # new_angle = float(random.uniform(0, 360))
+
+        new_angle = self.shrink_angle
 
         # When shrink_radius_by value is low the safe zone will be small, when it has a high value safe zone will be big
         # shrink_radius_by = random.uniform(*self.outer_circle_radius, self.radius - (self.radius / 100))
-        shrink_radius_by = self.radius - (self.radius / 1000)
-        self.pos_x = self.radius * math.cos(new_angle) - (shrink_radius_by * math.cos(new_angle))
-        self.pos_y = self.radius * math.sin(new_angle) - (shrink_radius_by * math.sin(new_angle))
+        shrink_radius_by = self.radius - (self.radius / 10000)
+
+        # self.pos_x = self.radius * math.cos(new_angle) - (shrink_radius_by * math.cos(new_angle))
+        # self.pos_y = self.radius * math.sin(new_angle) - (shrink_radius_by * math.sin(new_angle))
+
+        self.pos_x = self.pos_x + ((self.radius - shrink_radius_by) * math.cos(new_angle))
+        self.pos_y = self.pos_y + ((self.radius - shrink_radius_by) * math.sin(new_angle))
+
+        self.radius = shrink_radius_by
 
         global outer_circles
         for i in range(0, self.outer_circle_count):
             # outer_circles[i] represents body of the outer circle
 
-            new_pos_x = self.pos_x + (self.radius - shrink_radius_by) * math.cos(outer_circles[i].angle)
-            new_pos_y = self.pos_y + (self.radius - shrink_radius_by) * math.sin(outer_circles[i].angle)
+            new_pos_x = self.pos_x + (self.radius + self.outer_circle_radius) * math.cos(outer_circles[i].angle)
+            new_pos_y = self.pos_y + (self.radius + self.outer_circle_radius ) * math.sin(outer_circles[i].angle)
 
             outer_circles[i].position = new_pos_x, new_pos_y
-
-        self.radius = shrink_radius_by
 
 
 def initialize_safe_zone(pos_x=0, pos_y=0):

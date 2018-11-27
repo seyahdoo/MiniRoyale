@@ -79,7 +79,6 @@ class Player:
         with players_lock:
 
             self.create_body()
-            players[self.player_id] = self
 
         # Give default names depending if player is bot or not
         if self.client is None:
@@ -199,7 +198,7 @@ class Player:
 
             death_message = "KILED:{},{},{},{},{};".format(self.player_id, self.name, cause_of_death.player_id, killer_player_name, weapon_used)
         else:
-            weapon_used = "Explosion"
+            weapon_used = "Magic"
             death_message = "KILED:{},{},{},{},{};".format(self.player_id, self.name, 0, "Mother Nature", weapon_used)
 
         client.send_death_info_to_all_players(death_message)

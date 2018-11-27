@@ -56,7 +56,7 @@ class Client:
 
         # create or login a player
         self.player = Player(self)
-        print("created Player for Client, player_id:{}".format(self.player.player_id))
+        print("created Player for Client {}, player_id:{}".format(self.address, self.player.player_id))
 
         # Send SINFO to make client store itself's player id
         self.send("SINFO:{};".format(self.player.player_id))
@@ -81,7 +81,7 @@ class Client:
 
     def listener(self):
         # Listen to the port
-        while True:
+        while not self.disconnected:
             # Receive
             try:
                 data, address = self.socket.recvfrom(1024)
@@ -98,7 +98,7 @@ class Client:
         # Disconnect if no answer has came for 60 seconds
         # Close main thread and delete player information in players dictionary
         dropout_time = 60
-        while True:
+        while not self.disconnected:
             if self.player.dropout_time < dropout_time:
                 text = "PINGO;"
                 # print("sending ping request, player_id:{}".format(self.player.player_id))
@@ -108,21 +108,18 @@ class Client:
                 time.sleep(1)
             else:
                 print("Client with player_id:{} has not responded to PINGO for {} seconds.".format(self.player.player_id,self.player.dropout_time))
-                # TODO terminate client
-                self.disconnected = True
-                return
+                self.disconnect()
 
     def send(self, text):
         # print("UDP:Sending:"+text)
-        self.socket.sendto(bytes(text, 'utf-8'), self.address)
+        if not self.disconnected:
+            self.socket.sendto(bytes(text, 'utf-8'), self.address)
 
     # dispatch incoming player commands
     def msg_received(self,text):
         # print("UDP:Received:"+text)
-        request_dispatcher(self, text)
 
-    def disconnect(self):
-        self.disconnected = True
+        request_dispatcher(self, text)
 
     def send_game_info(self, copy_of_bullets, copy_of_players, copy_of_pickups, copy_of_props):
         to_send = ""
@@ -167,23 +164,33 @@ class Client:
                                                 safe_zone.safe_zone_instance.pos_y,
                                                 safe_zone.safe_zone_instance.radius)
 
-            # for current_outer_circle_body in copy_of_pickups.items():
-
-
             # print(to_send)
             self.send(to_send)
+
+    def disconnect(self):
+        self.disconnected = True
+        self.send("EXITT;")
+
+        # TODO fix locking issue
+        self.player.client = None
+        global clients
+        del clients[self.address]
+
+        print("Disconnected and deleted {} from clients list".format(self.address))
 
 
 def new_connection(address):
     global clients
     global clients_to_be_added
 
+    print("{}, client.new_connection".format(address))
     if address not in clients:
         print("new connection will commence")
         c = Client(address)
         clients_to_be_added.append(c)
     else:
-        print("no new connection")
+        print("no new connection, reconnected")
+        clients[address].disconnected = False
 
 
 def send_game_info_to_all_clients():

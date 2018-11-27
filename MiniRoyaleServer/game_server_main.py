@@ -20,7 +20,7 @@ def connection_server():
     while True:
         data, address = sock.recvfrom(1024)  # buffer size is 1024 bytes
         text = data.decode('utf-8')
-        # print ("received message:"+text+"|from:"+str(address))
+        print("received message:"+text+"|from:"+str(address) + " game_server_main.py")
         if text[0:5] == "CNNRQ":
             # create new connection
             # that will deal with itself
