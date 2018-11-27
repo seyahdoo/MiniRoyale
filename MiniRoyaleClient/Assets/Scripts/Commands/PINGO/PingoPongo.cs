@@ -21,23 +21,28 @@ public class PingoPongo : GameEventUser {
 
 		if (doPingo) {
 			doPingo = false;
-			Pingo ();
+			SendPingo ();
 		}
 	}
 
 	public override void OnEventInvoked (object eventData)
 	{
-		//Debug.Log ("Pingo Got! PONGO!");
-		Connection.Send ("PONGO;");
-
-        lastHeardFromServer = Time.time;
+        OnPingo();
 	}
 
-	public void Pingo(){
+	public void SendPingo(){
 		stopwatch.Reset ();
 		stopwatch.Start ();
 		Connection.Send ("PINGO;");
 	}
+
+    public void OnPingo()
+    {
+        //Debug.Log ("Pingo Got! PONGO!");
+        Connection.Send("PONGO;");
+
+        lastHeardFromServer = Time.time;
+    }
 
 	public void OnPongo(){
 

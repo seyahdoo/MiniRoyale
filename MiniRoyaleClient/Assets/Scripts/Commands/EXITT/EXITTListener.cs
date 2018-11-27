@@ -24,6 +24,9 @@ public class EXITTListener : GameEventUser {
 
     public void ExitGame()
     {
+
+        connection.Send("EXITT;");
+
         player.SetActive(false);
 
         connection.ResetAdress();
@@ -35,7 +38,6 @@ public class EXITTListener : GameEventUser {
 
         autoConnector.isInGame = false;
 
-        //TODO Load Start Scene
     }
 
 

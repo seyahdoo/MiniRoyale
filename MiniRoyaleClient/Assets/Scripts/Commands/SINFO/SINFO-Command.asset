@@ -13,5 +13,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CommandCode: SINFO
   ArgumentCount: 1
-  DEBUG: 0
+  DEBUG: 1
   Event: {fileID: 11400000, guid: 8853bfd0f76d0ef4aba8aee0d9e879b0, type: 2}

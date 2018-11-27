@@ -664,7 +664,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ef4e58eaec0fb3479085b1267d4eafb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  connection: {fileID: 0}
+  connection: {fileID: 391746329}
   bulletOrchestrator: {fileID: 1601829981}
   rivalOrchestrator: {fileID: 556172017}
   pickupOrchestrator: {fileID: 1556614619}
@@ -2132,6 +2132,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: {fileID: 359961408}
+  fadeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.083333336
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.75
+      value: 1
+      inSlope: 0.00000030436405
+      outSlope: 0.00000030436405
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  feedTotalScreenTime: 5
 --- !u!4 &1689741622
 Transform:
   m_ObjectHideFlags: 0
@@ -2608,6 +2639,7 @@ MonoBehaviour:
   tryInterval: 10
   connection: {fileID: 391746329}
   pingo: {fileID: 1073930755}
+  exittListener: {fileID: 470892481}
 --- !u!4 &2017078285
 Transform:
   m_ObjectHideFlags: 0

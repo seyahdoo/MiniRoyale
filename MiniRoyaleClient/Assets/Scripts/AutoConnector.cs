@@ -17,6 +17,9 @@ public class AutoConnector : MonoBehaviour {
 
     [SerializeField] PingoPongo pingo;
 
+    [SerializeField] EXITTListener exittListener;
+
+
     float pingTimeout = 9f;
     float pingInterval = 3f;
 
@@ -34,16 +37,15 @@ public class AutoConnector : MonoBehaviour {
         else
         {
 
-            if (Time.time - pingo.lastHeardFromServer > tryInterval)
+            if (Time.time - pingo.lastHeardFromServer > pingInterval)
             {
                 if (Time.time - pingo.lastHeardFromServer > pingTimeout)
                 {
-                    connection.ResetAdress();
-                    isInGame = false;
+                    exittListener.ExitGame();
                 }
                 else
                 {
-                    pingo.Pingo();
+                    pingo.SendPingo();
                 }
             }
 

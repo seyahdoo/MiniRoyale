@@ -82,7 +82,7 @@ public class NetworkRivalOrchestrator : MonoBehaviour {
 
         if (playerID == SelfPlayerID.Value)
         {
-            Debug.Log("Self Pawn Get!" + playerID +":"+ SelfPlayerID.Value);
+            //Debug.Log("Self Pawn Get!" + playerID +":"+ SelfPlayerID.Value);
             pawn = player.pawn;
         }
         else

@@ -13,5 +13,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CommandCode: FOUND
   ArgumentCount: 2
-  DEBUG: 1
+  DEBUG: 0
   Event: {fileID: 11400000, guid: d75013ed2b21d194784c7ccc8e72cfd9, type: 2}

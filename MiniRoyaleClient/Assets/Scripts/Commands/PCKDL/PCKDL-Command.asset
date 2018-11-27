@@ -13,5 +13,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CommandCode: PCKDL
   ArgumentCount: 1
-  DEBUG: 1
+  DEBUG: 0
   Event: {fileID: 11400000, guid: 43044dbbce693194fa438c6d0977f875, type: 2}

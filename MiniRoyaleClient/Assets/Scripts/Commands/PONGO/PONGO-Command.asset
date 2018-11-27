@@ -13,4 +13,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CommandCode: PONGO
   ArgumentCount: 0
+  DEBUG: 1
   Event: {fileID: 11400000, guid: 9b2155b7a86b7e646a7687efc70eb193, type: 2}
