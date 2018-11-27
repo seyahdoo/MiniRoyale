@@ -11,7 +11,8 @@ from player import Player
 from math import degrees
 
 clients = {}
-clients_to_be_added = []
+clients_lock = threading.Lock()
+
 ping_lock = threading.Lock()
 
 
@@ -39,6 +40,9 @@ class Client:
         self.player = None
 
         self.ping_thread = None
+
+        with clients_lock:
+            clients[address] = self
 
     def run(self):
         print("creating socket")
@@ -121,44 +125,45 @@ class Client:
 
         request_dispatcher(self, text)
 
-    def send_game_info(self, copy_of_bullets, copy_of_players, copy_of_pickups, copy_of_props):
+    def send_game_info(self):
         to_send = ""
         if not self.disconnected:
-            for rid, rival in copy_of_players.items():
-                if not rival.dead:
-                    to_send += "MOVED:{},{},{},{},{};".format(self.sent_packet_id, rid, rival.body.position[0], rival.body.position[1], degrees(rival.body.angle))
-                    self.sent_packet_id += 1
+            with player.players_lock:
+                for rid, rival in player.players.items():
+                    if not rival.dead:
+                        to_send += "MOVED:{},{},{},{},{};".format(self.sent_packet_id, rid, rival.body.position[0], rival.body.position[1], degrees(rival.body.angle))
+                        self.sent_packet_id += 1
+                        if len(to_send) > 400:
+                            self.send(to_send)
+                            to_send = ""
+            with bullet.bullets_lock:
+                for b_id, current_bullet in bullet.bullets.items():
+                    to_send += "SHOTT:{},{},{},{},{};".format(b_id,
+                                                              current_bullet.body.position[0],
+                                                              current_bullet.body.position[1],
+                                                              current_bullet.angle,
+                                                              current_bullet.speed)
                     if len(to_send) > 400:
                         self.send(to_send)
                         to_send = ""
-
-            for b_id, current_bullet in copy_of_bullets.items():
-                to_send += "SHOTT:{},{},{},{},{};".format(b_id,
-                                                          current_bullet.body.position[0],
-                                                          current_bullet.body.position[1],
-                                                          current_bullet.angle,
-                                                          current_bullet.speed)
-                if len(to_send) > 400:
-                    self.send(to_send)
-                    to_send = ""
-
-            for p_id, current_pickup in copy_of_pickups.items():
-                to_send += "PCKIN:{},{},{},{},{};".format(p_id,
-                                                          current_pickup.item_type,
-                                                          current_pickup.body.position[0],
-                                                          current_pickup.body.position[1],
-                                                          current_pickup.quantity)
-                if len(to_send) > 400:
-                    self.send(to_send)
-                    to_send = ""
-
-            for pid, current_prop in copy_of_props.items():
-                to_send += "PROPP:{},{},{},{},{};".format(current_prop.prop_id, current_prop.prop_type,
-                                                          current_prop.body.position[0],
-                                                          current_prop.body.position[1], degrees(current_prop.body.angle))
-                if len(to_send) > 400:
-                    self.send(to_send)
-                    to_send = ""
+            with pickup.pickup_lock:
+                for p_id, current_pickup in pickup.pickups.items():
+                    to_send += "PCKIN:{},{},{},{},{};".format(p_id,
+                                                              current_pickup.item_type,
+                                                              current_pickup.body.position[0],
+                                                              current_pickup.body.position[1],
+                                                              current_pickup.quantity)
+                    if len(to_send) > 400:
+                        self.send(to_send)
+                        to_send = ""
+            with prop.props_lock:
+                for pid, current_prop in prop.props.items():
+                    to_send += "PROPP:{},{},{},{},{};".format(current_prop.prop_id, current_prop.prop_type,
+                                                              current_prop.body.position[0],
+                                                              current_prop.body.position[1], degrees(current_prop.body.angle))
+                    if len(to_send) > 400:
+                        self.send(to_send)
+                        to_send = ""
 
             to_send += "CRCLE:{},{},{};".format(safe_zone.safe_zone_instance.pos_x,
                                                 safe_zone.safe_zone_instance.pos_y,
@@ -171,66 +176,51 @@ class Client:
         self.disconnected = True
         self.send("EXITT;")
 
-        # TODO fix locking issue
         self.player.client = None
         global clients
-        del clients[self.address]
+
+        with clients_lock:
+            del clients[self.address]
 
         print("Disconnected and deleted {} from clients list".format(self.address))
 
 
 def new_connection(address):
     global clients
-    global clients_to_be_added
-
     print("{}, client.new_connection".format(address))
     if address not in clients:
         print("new connection will commence")
         c = Client(address)
-        clients_to_be_added.append(c)
     else:
         print("no new connection, reconnected")
         clients[address].disconnected = False
 
 
 def send_game_info_to_all_clients():
-    # TODO Implement thread safe client
     global clients
 
-    with bullet.bullets_lock:
-        copy_of_bullets = bullet.bullets.copy()
-    with player.players_lock:
-        copy_of_players = player.players.copy()
-    with pickup.pickup_lock:
-        copy_of_pickup = pickup.pickups.copy()
-    with prop.props_lock:
-        copy_of_props = prop.props.copy()
-    # copy_of_outer_circles = safe_zone.outer_circles.copy()
-
-    # TODO Check if this is thread safe
-    for current_client in clients.values():
-        current_client.send_game_info(copy_of_bullets, copy_of_players, copy_of_pickup, copy_of_props)
+    with clients_lock:
+        for current_client in clients.values():
+            current_client.send_game_info()
 
 
 def send_death_info_to_all_players(death_message):
     global clients
 
     print(death_message)
-
-    copy_of_clients = clients.copy()
-    for current_client in copy_of_clients.values():
-        current_client.send(death_message)
+    with clients_lock:
+        for current_client in clients.values():
+            current_client.send(death_message)
 
 
 def send_message_to_nearby_clients(pos_x, pos_y, message):
     global clients
 
-    copy_of_clients = clients.copy()
-
-    for current_client in copy_of_clients.values():
-        current_client.send(message)
-        # print("Inside client:" + message)
-    # TODO optimize this
+    with clients_lock:
+        for current_client in clients.values():
+            current_client.send(message)
+            # print("Inside client:" + message)
+        # TODO optimize this
 
 
 def send_winner_information_to_all_players(winner_player):
@@ -240,12 +230,3 @@ def send_winner_information_to_all_players(winner_player):
     #     current_client.send()
     pass
 
-
-def add_clients_to_be_added():
-    global clients_to_be_added
-    global clients
-
-    for current_client in clients_to_be_added:
-        clients[current_client.address] = current_client
-
-    clients_to_be_added = []

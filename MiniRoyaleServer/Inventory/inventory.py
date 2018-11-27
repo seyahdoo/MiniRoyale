@@ -1,6 +1,7 @@
 import Inventory.Items.item as item
 import Inventory.Items.Weapons.weapon as weapon
 
+# todo delete this module
 
 class Inventory:
     def __init__(self):

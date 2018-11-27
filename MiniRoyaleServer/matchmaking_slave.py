@@ -32,7 +32,7 @@ master_ip = socket.gethostbyname('master1.royale.seyahdoo.com')
 # find my adress
 # my_ip = get('https://api.ipify.org').text
 # TODO delete this and use proper one (this is for testing only)
-my_ip = "192.168.1.22"
+my_ip = "192.168.1.33"
 
 
 def connection_server():

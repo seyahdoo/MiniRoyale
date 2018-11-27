@@ -54,10 +54,6 @@ class Game:
             # get current time
             enter_time = timeit.default_timer()
 
-            # Add clients to be added or removed to client list
-            if len(client.clients_to_be_added) > 0:
-                client.add_clients_to_be_added()
-
             # Get current actions
             # Create new bullets
             # bullet.spawn_bullets_to_be_spawned()
@@ -185,6 +181,6 @@ def game_restart():
 
 def finalize_game():
     # For every client, send Disconnect message to them
-    copy_of_clients = client.clients.copy()
-    for current_client in copy_of_clients.values():
-        current_client.disconnect()
+    with client.clients_lock:
+        for current_client in client.clients.values():
+            current_client.disconnect()

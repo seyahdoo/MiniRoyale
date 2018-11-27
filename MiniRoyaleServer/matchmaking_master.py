@@ -8,7 +8,7 @@ import random
 IP = "0.0.0.0"
 PORT = 11999
 
-REMOTE_IP = "192.168.1.22"
+REMOTE_IP = "192.168.1.33"
 REMOTE_PORT = 11998
 
 # server settings
