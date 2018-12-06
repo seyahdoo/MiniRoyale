@@ -98,8 +98,11 @@ def step_all_bots():
 
 def send_game_info_to_all_bots():
     # TODO Check this
+    print("-> Entering bullet lock from bot, trying to copy bullets")
     with bullet.bullets_lock:
+        print("- entered bullet lock from bot, trying to copy bullets")
         copy_of_bullets = bullet.bullets.copy()
+    print("<- Exiting bullet lock from bot, trying to copy bullets")
     with player.players_lock:
         copy_of_players = player.players.copy()
     with pickup.pickup_lock:
