@@ -5,6 +5,7 @@ import pymunk
 import threading
 from pymunk import Vec2d
 from math import radians
+import sys
 
 bullets = {}
 bullets_to_be_updated = {}
@@ -49,6 +50,7 @@ class Bullet:
         self.body.velocity_func = constant_velocity
         ###
         print("-> Entering bullet lock from bullet, trying to create bullet")
+        sys.stdout.flush()
         with bullets_lock:
             print("- entered bullet lock from bullet, trying to create bullet")
             global bullets
@@ -73,6 +75,7 @@ class Bullet:
         else:
             print("Trying to delete bullet_id:{}".format(self.bullet_id))
             print("-> Entering bullet lock from bullet, trying to update bullet")
+            sys.stdout.flush()
             with bullets_lock:
                 print("- entered bullet lock from bullet, trying to update bullet")
                 deleted_bullet_info = "DELBL:{};".format(self.bullet_id)
@@ -95,6 +98,7 @@ class Bullet:
 def update_bullet_state():
     global bullets, bullets_to_be_updated
     print("-> Entering bullet lock from bullet, trying to update bullet state")
+    sys.stdout.flush()
     with bullets_lock:
         print("- entered  bullet lock from bullet, trying to update bullet state")
         bullets_to_be_updated = bullets.copy()

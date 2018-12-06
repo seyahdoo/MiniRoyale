@@ -104,6 +104,7 @@ def connect_one(client_ip, client_port):
 def create_game():
     process = subprocess.Popen(["venv\Scripts\python", "game_server_main.py", "-address={}".format((IP,PORT))],stdout=subprocess.PIPE)
     for line in iter(process.stdout.readline, ''):
+        threading.Thread(target=lambda a: while True: process.stdout.readline())
         cmd = line[0:4].decode()
         if cmd == "PORT":
             return int(line[5:-2].decode())

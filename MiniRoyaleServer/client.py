@@ -6,6 +6,7 @@ import bullet
 import pickup
 import prop
 import safe_zone
+import sys
 from request_dispatcher import request_dispatcher
 from player import Player
 from math import degrees
@@ -137,6 +138,7 @@ class Client:
                             self.send(to_send)
                             to_send = ""
             print("-> Entering bullet lock from client, trying to send info")
+            sys.stdout.flush()
             with bullet.bullets_lock:
                 print("- Entered bullet lock from client, trying to send info")
                 for b_id, current_bullet in bullet.bullets.items():

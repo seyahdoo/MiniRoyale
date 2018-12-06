@@ -3,6 +3,7 @@ import player
 import bullet
 import threading
 import client
+import sys
 
 collision_types = {
     "player": 1,
@@ -72,6 +73,7 @@ def on_player_bullet_collision_begin(arbiter, space, data):
     deleted_bullet_pos_x = bullet_obj.body.position[0]
     deleted_bullet_pos_y = bullet_obj.body.position[1]
     print("-> Entering bullet lock from pyhsics, trying to handle collision")
+    sys.stdout.flush()
     with bullet.bullets_lock:
         print("- entered bullet lock from pyhsics, trying to handle collision")
         if bullet_obj.bullet_id in bullet.bullets:
