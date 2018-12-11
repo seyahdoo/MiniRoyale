@@ -39,8 +39,8 @@ class Game:
         spawn_items()
         spawn_props()
 
-        spawn_bots()
-        find_bots()
+        # spawn_bots()
+        # find_bots()
 
         print("initiated game")
 
@@ -76,7 +76,8 @@ class Game:
             # bot.send_game_info_to_all_bots()
 
             # Move bots
-            bot.step_all_bots()
+            # TODO Check if there are any bots left alive before doing this
+            # bot.step_all_bots()
 
             # Check whether game is over or not every time a specific event has occurred
             # Like when a player has died
