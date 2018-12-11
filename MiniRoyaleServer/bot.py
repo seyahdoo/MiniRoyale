@@ -59,7 +59,9 @@ class Bot:
     # If bot is in the safe area, move randomly to find ammo, kill players and such
     # Look at this for ideas http://qiao.github.io/PathFinding.js/visual/
     def move(self):
-
+	
+		#DONE TODO - sort out git. achievement unlocked! Mission Clear. Quest Completed.
+		
         # # For 1 second, decide a direction and move in that direction
         # bot_speed = self.player.speed / 2
         # if self.step_counter == 1:
