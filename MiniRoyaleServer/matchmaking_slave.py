@@ -3,7 +3,9 @@ import threading
 import argparse
 import subprocess
 import time
-from requests import get
+import os
+
+
 
 # Use this later
 # from requests import get
@@ -32,7 +34,7 @@ master_ip = socket.gethostbyname('master1.royale.seyahdoo.com')
 # find my adress
 # my_ip = get('https://api.ipify.org').text
 # TODO delete this and use proper one (this is for testing only)
-my_ip = "192.168.1.22"
+my_ip = "104.248.101.181"
 
 
 def connection_server():
@@ -102,7 +104,16 @@ def connect_one(client_ip, client_port):
 
 
 def create_game():
-    process = subprocess.Popen(["venv\Scripts\python", "game_server_main.py", "-address={}".format((IP,PORT))],stdout=subprocess.PIPE)
+    # Check if current os is windows or is posix based
+    if os.name == 'nt':
+        process = subprocess.Popen(["venv\Scripts\python", "game_server_main.py", "-address={}".format((IP, PORT))], stdout=subprocess.PIPE)
+        print("Process is opened on windows")
+    elif os.name == 'posix':
+        process = subprocess.Popen(["python3.6", "game_server_main.py", "-address={}".format((IP, PORT))], stdout=subprocess.PIPE)
+        print("Process is opened on posix")
+    else:
+        pass
+
     for line in iter(process.stdout.readline, ''):
         cmd = line[0:4].decode()
         if cmd == "PORT":

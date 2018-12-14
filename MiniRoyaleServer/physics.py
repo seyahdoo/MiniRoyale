@@ -72,17 +72,17 @@ def on_player_bullet_collision_begin(arbiter, space, data):
     deleted_bullet_info = "DELBL:{};".format(bullet_obj.bullet_id)
     deleted_bullet_pos_x = bullet_obj.body.position[0]
     deleted_bullet_pos_y = bullet_obj.body.position[1]
-    print("-> Entering bullet lock from pyhsics, trying to handle collision")
+    # print("-> Entering bullet lock from pyhsics, trying to handle collision")
     sys.stdout.flush()
     with bullet.bullets_lock:
-        print("- entered bullet lock from pyhsics, trying to handle collision")
+        # print("- entered bullet lock from pyhsics, trying to handle collision")
         if bullet_obj.bullet_id in bullet.bullets:
             with physics_lock:
                 space.remove(bullet_obj.body, bullet_obj.shape)
 
             del bullet.bullets[bullet_obj.bullet_id]
             client.send_message_to_nearby_clients(deleted_bullet_pos_x, deleted_bullet_pos_y, deleted_bullet_info)
-    print("<- exiting bullet lock from pyhsics, trying to handle collision")
+    # print("<- exiting bullet lock from pyhsics, trying to handle collision")
     # mark bullet to be deleted
     # bullet.bullet_indexes_to_be_deleted.append(bullet_obj.bullet_id)
 

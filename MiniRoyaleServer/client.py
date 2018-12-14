@@ -137,10 +137,10 @@ class Client:
                         if len(to_send) > 400:
                             self.send(to_send)
                             to_send = ""
-            print("-> Entering bullet lock from client, trying to send info")
+            # print("-> Entering bullet lock from client, trying to send info")
             sys.stdout.flush()
             with bullet.bullets_lock:
-                print("- Entered bullet lock from client, trying to send info")
+                # print("- Entered bullet lock from client, trying to send info")
                 for b_id, current_bullet in bullet.bullets.items():
                     to_send += "SHOTT:{},{},{},{},{};".format(b_id,
                                                               current_bullet.body.position[0],
@@ -150,7 +150,7 @@ class Client:
                     if len(to_send) > 400:
                         self.send(to_send)
                         to_send = ""
-            print("<- Exiting bullet lock from client, trying to send info")
+            # print("<- Exiting bullet lock from client, trying to send info")
             with pickup.pickup_lock:
                 for p_id, current_pickup in pickup.pickups.items():
                     to_send += "PCKIN:{},{},{},{},{};".format(p_id,

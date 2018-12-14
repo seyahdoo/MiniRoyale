@@ -49,10 +49,10 @@ class Bullet:
 
         self.body.velocity_func = constant_velocity
         ###
-        print("-> Entering bullet lock from bullet, trying to create bullet")
+        # print("-> Entering bullet lock from bullet, trying to create bullet")
         sys.stdout.flush()
         with bullets_lock:
-            print("- entered bullet lock from bullet, trying to create bullet")
+            # print("- entered bullet lock from bullet, trying to create bullet")
             global bullets
             global bullet_id_counter
 
@@ -64,7 +64,7 @@ class Bullet:
                 physics.space.add(self.body, self.shape)
 
             bullets[self.bullet_id] = self
-        print("<- exiting bullet lock from bullet, trying to create bullet")
+        # print("<- exiting bullet lock from bullet, trying to create bullet")
 
     def update(self):
         # Delete bullet in 3 seconds
@@ -73,11 +73,11 @@ class Bullet:
             self.frame_count += 1
             return True
         else:
-            print("Trying to delete bullet_id:{}".format(self.bullet_id))
-            print("-> Entering bullet lock from bullet, trying to update bullet")
+            # print("Trying to delete bullet_id:{}".format(self.bullet_id))
+            # print("-> Entering bullet lock from bullet, trying to update bullet")
             sys.stdout.flush()
             with bullets_lock:
-                print("- entered bullet lock from bullet, trying to update bullet")
+                # print("- entered bullet lock from bullet, trying to update bullet")
                 deleted_bullet_info = "DELBL:{};".format(self.bullet_id)
                 deleted_bullet_pos_x = self.body.position[0]
                 deleted_bullet_pos_y = self.body.position[1]
@@ -87,7 +87,7 @@ class Bullet:
                         physics.space.remove(self.body, self.shape)
                     del bullets[self.bullet_id]
                     client.send_message_to_nearby_clients(deleted_bullet_pos_x, deleted_bullet_pos_y, deleted_bullet_info)
-            print("<- exiting bullet lock from bullet, trying to update bullet")
+            # print("<- exiting bullet lock from bullet, trying to update bullet")
             # Mark for delete
             # bullet_indexes_to_be_deleted.append(self.bullet_id)
 
@@ -97,12 +97,12 @@ class Bullet:
 
 def update_bullet_state():
     global bullets, bullets_to_be_updated
-    print("-> Entering bullet lock from bullet, trying to update bullet state")
+    # print("-> Entering bullet lock from bullet, trying to update bullet state")
     sys.stdout.flush()
     with bullets_lock:
-        print("- entered  bullet lock from bullet, trying to update bullet state")
+        # print("- entered  bullet lock from bullet, trying to update bullet state")
         bullets_to_be_updated = bullets.copy()
         for current_bullet in bullets_to_be_updated.values():
             current_bullet.update()
-    print("<- exiting bullet lock from bullet, trying to update bullet state")
+    # print("<- exiting bullet lock from bullet, trying to update bullet state")
     bullets_to_be_updated = {}
