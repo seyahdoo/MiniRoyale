@@ -109,7 +109,7 @@ def create_game():
         process = subprocess.Popen(["venv\Scripts\python", "game_server_main.py", "-address={}".format((IP, PORT))], stdout=subprocess.PIPE)
         print("Process is opened on windows")
     elif os.name == 'posix':
-        process = subprocess.Popen(["python3.6", "game_server_main.py", "-address={}".format((IP, PORT))], stdout=subprocess.PIPE)
+        process = subprocess.Popen(["python3", "game_server_main.py", "-address={}".format((IP, PORT))], stdout=subprocess.PIPE)
         print("Process is opened on posix")
     else:
         pass
