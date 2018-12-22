@@ -11,3 +11,5 @@
 7. apt install libffi-dev
 8. pip3 install -r requirements.txt
 9. python3 server.py
+
+sudo apt-get install subversion 
