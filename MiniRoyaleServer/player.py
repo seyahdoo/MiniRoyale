@@ -223,30 +223,29 @@ class Player:
         # self.body.position = Vec2d(random.uniform(-100, 100), random.uniform(-100, 100))
         self.body.position = Vec2d(random.uniform(-5, 5), random.uniform(-5, 5))
 
-    def pickup_item(self, pickup_id, quantity):
+    def pickup_item(self, pickup_id):
         if not self.dead:
-            print("Pickup item and quantity:{}, {}".format(pickup_id, quantity))
+            picked_pickup: pickup.Pickup = pickup.pickups[pickup_id]
+            print("Pickup item and quantity:{}, {}".format(pickup_id, picked_pickup.quantity))
 
-            if pickup.pickups[pickup_id].item_type == 5009:
-                self.inventory.ammo_nine_mm_count += quantity
-
-            elif pickup.pickups[pickup_id].item_type == 1001:
+            if picked_pickup.item_type == 5009:
+                self.inventory.ammo_nine_mm_count += picked_pickup.quantity
+            elif picked_pickup.item_type == 1001:
                 with item.item_id_lock:
                     item.item_id_counter += 1
                     item_id = item.item_id_counter
+                self.inventory.add_item(item_id, picked_pickup.item_type)
+                picked_pickup.pickup_id
 
-                self.inventory.add_item(item_id, pickup.pickups[pickup_id].item_type)
-
-            # TODO Make this in another function
             with pickup.pickup_lock:
-                deleted_pickup_info = "PCKDL:{};".format(pickup.pickups[pickup_id].pickup_id)
-                deleted_pickup_pos_x = pickup.pickups[pickup_id].body.position[0]
-                deleted_pickup_pos_y = pickup.pickups[pickup_id].body.position[1]
+                deleted_pickup_info = "PCKDL:{};".format(pickup_id)
+                deleted_pickup_pos_x = picked_pickup.body.position[0]
+                deleted_pickup_pos_y = picked_pickup.body.position[1]
 
                 with physics.physics_lock:
-                    physics.space.remove(pickup.pickups[pickup_id].body, pickup.pickups[pickup_id].shape)
+                    physics.space.remove(picked_pickup.body, picked_pickup.shape)
 
-                del pickup.pickups[pickup.pickups[pickup_id].pickup_id]
+                del pickup.pickups[pickup_id]
 
                 # print(deleted_pickup_info + str(deleted_pickup_pos_x) + str(deleted_pickup_pos_y))
                 client.send_message_to_nearby_clients(deleted_pickup_pos_x, deleted_pickup_pos_y, deleted_pickup_info)

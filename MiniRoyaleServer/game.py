@@ -36,7 +36,7 @@ class Game:
         safe_zone.initialize_safe_zone()
 
         # Spawn items
-        spawn_items()
+        # spawn_ammo_pickups()
         spawn_props()
 
         # spawn_bots()
@@ -144,12 +144,7 @@ def on_player_killed():
     return
 
 
-def spawn_items():
-    # test_item_id = item.item_id_counter
-    # item.item_id_counter += 1
-    # test_item_type = 1
-    # item.spawned_item_list[test_item_id] = item.Item(test_item_id, test_item_type, "boi", "bios")
-
+def spawn_ammo_pickups():
     for i in range(0, random_ammo_count):
         pickup.Pickup(random.uniform(-100.0, 100.0), random.uniform(-100.0, 100.0), random.randint(15, 30), 5009)
 

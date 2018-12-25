@@ -40,10 +40,9 @@ def request_dispatcher(client_thread, buffer):
 
         elif cmd[0:5] == "PCKUP":
             args = cmd[6:]
-            args = args.split(',')
 
             print("equip request has come")
-            client_thread.player.pickup_item(int(args[0]), int(args[1]))
+            client_thread.player.pickup_item(int(args[0]))
 
         # Player info request
         # PIREQ:playerid;
