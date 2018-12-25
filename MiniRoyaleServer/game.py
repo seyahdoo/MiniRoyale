@@ -39,8 +39,7 @@ class Game:
         # spawn_ammo_pickups()
         spawn_props()
 
-        # spawn_bots()
-        # find_bots()
+        spawn_bots()
 
         print("initiated game")
 
@@ -77,7 +76,7 @@ class Game:
 
             # Move bots
             # TODO Check if there are any bots left alive before doing this
-            # bot.step_all_bots()
+            bot.step_all_bots()
 
             # Check whether game is over or not every time a specific event has occurred
             # Like when a player has died
@@ -160,15 +159,6 @@ def spawn_bots():
     for i in range(10):
         bot.Bot()
     pass
-
-
-def find_bots():
-    with player.players_lock:
-        copy_of_players = player.players.copy()
-
-    for bott in copy_of_players.values():
-        if bott.client is not None:
-            bot.bots[bot.player_id] = bott
 
 
 def game_restart():

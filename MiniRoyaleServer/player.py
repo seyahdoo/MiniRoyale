@@ -102,24 +102,20 @@ class Player:
     # Speed check if movement is possible
     # Move body
     def move_request(self, packet_id, pos_x, pos_y, angle):
-        if self.dead:
+        if self.last_packet_id > int(packet_id):
             return
-        # print("player_id:{} trying to move_request to ({},{})".format(str(self.player_id), str(pos_x), str(pos_y)))
-        # drop packet id
+        else:
+            self.last_packet_id = int(packet_id)
 
-        # Check whether player is a bot or not
-        if self.client is not None:
-
-            if self.last_packet_id > int(packet_id):
-                return
-            else:
-                self.last_packet_id = int(packet_id)
-            try:
-                self.check_speed_and_move(pos_x, pos_y, angle)
-            except:
-                print("Error: Can not parse position info. Playerid:{} ".format(self.player_id))
+        try:
+            self.check_speed_and_move(pos_x, pos_y, angle)
+        except:
+            print("Error: Can not parse position info. Playerid:{} ".format(self.player_id))
 
     def check_speed_and_move(self, pos_x, pos_y, angle):
+        if self.dead:
+            return
+
         movement_threshold = ((timeit.default_timer() - self.time_since_last_movement) * self.speed)
         distance_between_positions = sqrt(
             ((float(pos_x) - self.body.position[0]) ** 2) + ((float(pos_y) - self.body.position[1]) ** 2))

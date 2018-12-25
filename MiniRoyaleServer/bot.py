@@ -19,7 +19,7 @@ class Bot:
         # self.step_counter = 1
         self.moving_direction = (0.0, 0.0)
         self.angle_direction = 0.0
-        self.change_direction(self.player.speed / 2, 10)
+        self.change_direction(self.player.speed, 10)
 
         self.time_since_last_direction_change = timeit.default_timer()
 
@@ -80,7 +80,10 @@ class Bot:
 
         self.player.check_speed_and_move(bot_pos_x, bot_pos_y, bot_angle)
 
+        # player.move_request(args[0], args[1], args[2], args[3])
+
     def change_direction(self, speed_multiplier, angle_multiplier):
+        speed_multiplier /= 2
         self.moving_direction = (random.uniform(-speed_multiplier, speed_multiplier)), \
                                 (random.uniform(-speed_multiplier, speed_multiplier))
         self.angle_direction = random.uniform(-angle_multiplier, angle_multiplier)
