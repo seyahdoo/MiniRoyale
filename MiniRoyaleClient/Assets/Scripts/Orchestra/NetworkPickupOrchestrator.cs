@@ -107,7 +107,7 @@ public class NetworkPickupOrchestrator : MonoBehaviour {
             if (chosenPickup)
             {
 			    Debug.Log("picked up "+ chosenPickup.ToString());
-			    connection.Send ("PCKUP:" + chosenPickup.PickupID + "," + chosenPickup.Quantity + ";");
+			    connection.Send ("PCKUP:" + chosenPickup.PickupID + ";");
             }
 		}
 
