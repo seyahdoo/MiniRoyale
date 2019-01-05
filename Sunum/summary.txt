@@ -1,0 +1,23 @@
+
+Giriş
+-> Credits
+-> Proje Özeti
+
+
+Oynanış
+-> Demo Video
+
+İç sistemler
+-> Server tarafı özet
+-> Client tarafı özet
+-> Protokol [Gifler sayfası]
+->-> Senaryolar , mini demolar
+
+Sorunlar
+-> Project management [KANBAN, trello]
+-> Hole punching
+-> Interpolasyon
+-> Deployement
+
+Teşekkürler
+
