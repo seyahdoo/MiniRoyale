@@ -15,7 +15,8 @@ Oynanış
 
 Sorunlar
 -> Project management [KANBAN, trello]
--> Hole punching
+-> Sunucu Dil seçimi [Başta c++ karar verilmişti.]
+-> Hole punching [Bu konuda Fatih'den destel alındı]
 -> Interpolasyon
 -> Deployement
 
